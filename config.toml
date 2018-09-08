@@ -1,0 +1,46 @@
+baseurl = "/"
+languageCode = "ja-JP"
+title = "R Club"
+theme = "hugo-xmin"
+googleAnalytics = ""
+disqusShortname = ""
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+preserveTaxonomyNames = true
+footnotereturnlinkcontents = "↩"
+
+[permalinks]
+    post = "/post/:year/:month/:day/:slug/"
+    note = "/note/:year/:month/:day/:slug/"
+    drill = "/drill/:year/:month/:day/:slug/"
+
+[[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+[[menu.main]]
+    name = "Drills"
+    url = "/drill/"
+    weight = 2
+[[menu.main]]
+    name = "Data"
+    url = "/data/"
+    weight = 3
+[[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 4
+[[menu.main]]
+    name = "Categories"
+    url = "/categories/"
+    weight = 5
+[[menu.main]]
+    name = "Tags"
+    url = "/tags/"
+    weight = 6
+[[menu.main]]
+    name = "Subscribe"
+    url = "/index.xml"
+
+[params]
+    description = "R Club at Osaka Prefecture University."
+    footer = "&copy; [RClub/OPU](http://opue.co/rclub) 2018 | [Github](https://github.com/opueco)"
