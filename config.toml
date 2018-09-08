@@ -1,4 +1,4 @@
-baseurl = "/"
+baseurl = "https://opur.club/"
 languageCode = "ja-JP"
 title = "R Club"
 theme = "hugo-xmin"
