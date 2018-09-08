@@ -14,6 +14,3 @@ title: Home
 大阪府大の学生・院生であれば誰でも参加できます。プログラミング初心者も大歓迎！
 
 どんなことをやってるのかな？と気になった方は [About R Club](/about/) を読んでみてください。
-
-
-All pages not under the root directory of the website are listed below. You can also visit the list page of a single section, e.g., [posts](/post/), or [notes](/note/). See the [About](/about/) page for the usage of this theme.
