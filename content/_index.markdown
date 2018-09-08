@@ -4,7 +4,7 @@ title: Home
 
 [<img src="/images/logo.png" style="max-width:30%;min-width:60px;float:right;" alt="R Club Logo" />](https://github.com/opu-rclub)
 
-# R Club/OPU
+# OPU R Club
 
 ## _データサイエンスを体験してみよう！_
 
