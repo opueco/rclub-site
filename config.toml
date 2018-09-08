@@ -19,7 +19,7 @@ footnotereturnlinkcontents = "↩"
     weight = 1
 [[menu.main]]
     name = "Drills"
-    url = "/drill/"
+    url = "/categories/drill/"
     weight = 2
 [[menu.main]]
     name = "Data"
