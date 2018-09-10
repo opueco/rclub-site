@@ -1,7 +1,7 @@
 ---
 title: "Incomplete [2018-1st] R を使ってみよう！"
 author: Kenji Sato
-date: '2018-09-03'
+date: '2018-10-03'
 categories:
   - drill
 slug: 2018-1st
