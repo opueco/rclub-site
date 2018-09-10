@@ -18,25 +18,29 @@ footnotereturnlinkcontents = "↩"
     url = "/"
     weight = 1
 [[menu.main]]
+    name = "Schedule"
+    url = "/schedule"
+    weight = 2
+[[menu.main]]
     name = "Drills"
     url = "/categories/drill/"
-    weight = 2
+    weight = 3
 [[menu.main]]
     name = "Data"
     url = "/data/"
-    weight = 3
+    weight = 4
 [[menu.main]]
     name = "About"
     url = "/about/"
-    weight = 4
+    weight = 5
 [[menu.main]]
     name = "Categories"
     url = "/categories/"
-    weight = 5
+    weight = 6
 [[menu.main]]
     name = "Tags"
     url = "/tags/"
-    weight = 6
+    weight = 7
 [[menu.main]]
     name = "RSS"
     url = "/index.xml"
