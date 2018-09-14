@@ -1,0 +1,173 @@
+---
+title: "Lesson 1-1: R を使ってみよう！"
+date: '2018-10-03'
+categories:
+  - text
+slug: 2018-1-1
+output: 
+  blogdown::html_page:
+    toc: true
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#r-r-">R とR を取り巻く環境</a><ul>
+<li><a>コミュニティに助けを求める</a></li>
+</ul></li>
+<li><a href="#rstudio">RStudio</a><ul>
+<li><a href="#rstudio-">RStudio を開いてみよう</a></li>
+<li><a href="#rstudio-">RStudio の構成部品を覚えよう</a></li>
+<li><a href="#rstudio-">RStudio の便利な機能</a></li>
+</ul></li>
+<li><a href="#r-">R を電卓として使う</a><ul>
+<li><a>脱線：コード例の読み方</a></li>
+<li><a>練習問題</a><ul>
+<li><a href="#section"></a></li>
+</ul></li>
+</ul></li>
+<li><a>変数を作って複雑な計算をする</a></li>
+<li><a>次のステップ</a></li>
+</ul>
+</div>
+
+<p>第1回は R, RStudio の基本的な使い方を説明します。</p>
+<div id="r-r-" class="section level1">
+<h1>R とR を取り巻く環境</h1>
+<p><a href="https://www.r-project.org">R</a> の成り立ちから話を始めることが多いのですが・・・・細かいことは気にせず 「<a href="https://www.r-project.org">R</a> は統計処理と可視化が得意な<a href="https://ja.wikipedia.org/wiki/フリーソフトウェア">フリーソフトウェア</a> 」とだけ考えておいてください。</p>
+<p>次のことを押さえましょう。</p>
+<ul>
+<li>R は<u>プログラミング環境</u>である
+<ul>
+<li>プログラミング言語＋実行環境
+<ul>
+<li>プログラミング言語＝コンピュータに送る命令を書くためのルールのこと。</li>
+<li>実行環境＝ルール通りに書いた命令をコンピュータに実行させるプログラムのこと。</li>
+</ul></li>
+</ul></li>
+<li>統計学者が作り，拡張しているので<u>統計処理が得意</u>である</li>
+<li><u>無料</u>で誰でも使うことができる
+<ul>
+<li><u>パッケージ</u>を作って機能を拡張することができる
+<ul>
+<li>CRAN や Bioconductor というところで配布されているパッケージを利用できる
+<ul>
+<li><a href="https://cran.r-project.org/web/views/">CRAN Task Views</a></li>
+<li><a href="https://bioconductor.org/packages/release/BiocViews.html">Bioconductor ≫ BiocViews</a></li>
+</ul></li>
+<li><strong>もちろん自分で作ることもできる</strong></li>
+</ul></li>
+</ul></li>
+<li>ユーザーコミュニティが多いので困ったときはメーリングリストで助けてもらえる
+<ul>
+<li>ただし，事前の努力が要求される</li>
+</ul></li>
+</ul>
+<div class="section level2">
+<h2>コミュニティに助けを求める</h2>
+<p>R Club に参加している方は，困ったことがあれば直接主催者に聞いてもらうか <a href="https://opu-rclub.slack.com">Slack</a>で質問してください。できる限りお手伝いします。ただ残念ながら，あまりに高度な内容となると手に負えないということがあるかもしれません。</p>
+<p>しかし，ご安心ください。R には大きなユーザーコミュニティがあるので，英語で質問を書けばたいていすぐに回答が得られます。質問のタイプごとに質問すべき相手が変わってきますので，自分が直面している問題の本質を見極めた上で質問を書きましょう。質問の書き方についての相談も歓迎します。</p>
+<ul>
+<li>R の使い方についての質問
+<ul>
+<li><a href="https://stackoverflow.com/questions/tagged/r">stackoverflow</a></li>
+<li><a href="https://stat.ethz.ch/mailman/listinfo/r-help">R-help</a></li>
+</ul></li>
+<li>R のパッケージ開発に関する質問
+<ul>
+<li><a href="https://stat.ethz.ch/mailman/listinfo/r-package-devel">R-package-devel</a></li>
+</ul></li>
+<li>「統計手法」に関する質問は <a href="https://stats.stackexchange.com">Cross Validated</a></li>
+</ul>
+<p>効率的に回答を得るために <a href="https://reprex.tidyverse.org">reprex</a> を使ってみてください。</p>
+<p><strong>注意！</strong></p>
+<ul>
+<li>投稿前にポスティングガイドを確認すること。</li>
+<li>複数のメーリングリスト・質問サイトに同じ質問を投稿することは「クロスポスティング」といってすごく嫌われてしまいます。回答がすぐに得られなくても気長に待つか，質問の内容を見直しましょう。</li>
+</ul>
+</div>
+</div>
+<div id="rstudio" class="section level1">
+<h1>RStudio</h1>
+<p><a href="https://www.rstudio.com">RStudio</a> はRを便利に使うためのソフトウェアです。Rと同様，RStudio も無料で使うことができます。R Club では RStudio 上で Rのプログラムを実行します。</p>
+<div id="rstudio-" class="section level2">
+<h2>RStudio を開いてみよう</h2>
+<div class="figure">
+<img src="/images/2018-lesson1-1-rstudio-top.png" alt="Fig: RStudio 起動後の画面（Macの場合）" />
+<p class="caption">Fig: RStudio 起動後の画面（Macの場合）</p>
+</div>
+</div>
+<div id="rstudio-" class="section level2">
+<h2>RStudio の構成部品を覚えよう</h2>
+</div>
+<div id="rstudio-" class="section level2">
+<h2>RStudio の便利な機能</h2>
+</div>
+</div>
+<div id="r-" class="section level1">
+<h1>R を電卓として使う</h1>
+<p>コンピュータを「計算機」とも言うように，コンピュータの重要な仕事は「計算」です。「計算」が意味していることを一言で表すのは難しいのですが，ひとまず以下の一連の流れを覚えておいてください。</p>
+<ol style="list-style-type: decimal">
+<li>人間はコンピュータに「命令」する</li>
+<li>コンピュータは「命令」にしたがって計算する</li>
+<li>コンピュータは人間に計算結果を示す（ただし，そう命令された場合）</li>
+</ol>
+<p>「計算結果を示す」という所まで「命令」しないといけないというのは面倒に思えるかもしれません。多くの場合は，実行環境であるRが面倒を見てくれます。ときどき，そうでない場合があって，「なんで表示されないの？？」と困惑してしまう状況に出くわすかもしれません。そのときは「表示する命令を出さないといけない」ことを思い出しましょう。</p>
+<p>さて，ここまで説明したところで早速 R を電卓（関数電卓）として使ってみましょう。</p>
+<p>「コンソール（Console）」でキーボードのカーソルがカチカチ点滅していることを確認してください。点滅していなければコンソールをクリックしてください。（ショットカットキー「Ctrl + 2」でも移動できます。）</p>
+<p>次のように打ち込んで，最後にエンターキー（リターンキー）を押してください。</p>
+<pre class="r"><code>&gt; 90 + 30</code></pre>
+<pre><code>## [1] 120</code></pre>
+<p>簡単ですね。色々な計算をやってみましょう。</p>
+<div class="section level3">
+<h3>脱線：コード例の読み方</h3>
+<p>上のコード例は次のようになっていました。2段並んでいる場合，</p>
+<ul>
+<li>上の段が実行してほしいコード</li>
+<li>下の段がその結果</li>
+</ul>
+<p>となっています。実行してほしいコードに，<code>&gt;</code> という記号がついている場合は，「コンソールで打ち込んでください」という意味です。 これがあるとコピー＆ペーストがやりにくいのですが，自分の手で打ち込む（写経する）ことで，筋肉が覚えてくれる側面もあるので，面倒ですがお付き合いください。</p>
+<p>下段のハッシュ（#）は，コンソールには表示されませんが，テキスト上で「出力であることをわかりやすくするため」のお約束と思っておいてください。続く <code>[1]</code> は，その「右側にある数字が結果の1番目の数字だ」ということを表しています。後でベクトルの話がでてきたときに，役に立つことが分かると思います。</p>
+<div class="figure">
+<img src="/images/2018-lesson1-1-prompt.png" alt="Fig: コードサンプルの読み方" />
+<p class="caption">Fig: コードサンプルの読み方</p>
+</div>
+</div>
+<div class="section level2">
+<h2>練習問題</h2>
+<div id="section" class="section level3">
+<h3></h3>
+<p>以下のコードはそれぞれどのような結果を返すか。結果を予想し，コンソールで実行して確認せよ。</p>
+<p><strong>Code 1-1</strong></p>
+<pre class="r"><code>&gt; 90 + 30</code></pre>
+<p><details> <summary>答</summary></p>
+<pre><code>## [1] 120</code></pre>
+<p></details> <details> <summary>解説</summary> <code>+</code> は足し算の記号です。 </details></p>
+<p><strong>Code 1-2</strong></p>
+<pre class="r"><code>&gt; 1093 - 805</code></pre>
+<p><details> <summary>答</summary></p>
+<pre><code>## [1] 288</code></pre>
+<p></details> <details> <summary>解説</summary> <code>-</code> は引き算の記号です。負の数を作るときにも同じ記号を使います。</p>
+<pre class="r"><code>&gt;  - 100</code></pre>
+<pre><code>## [1] -100</code></pre>
+<p></details></p>
+<p><strong>Code 1-3</strong></p>
+<pre class="r"><code>&gt;  3 * 0.12</code></pre>
+<p><details> <summary>答</summary></p>
+<pre><code>## [1] 0.36</code></pre>
+<p></details></p>
+<p><strong>Code 1-4</strong></p>
+<pre class="r"><code>&gt; 50 / 60</code></pre>
+<p><details> <summary>答</summary></p>
+<pre><code>## [1] 0.8333333</code></pre>
+<p></details></p>
+</div>
+</div>
+</div>
+<div class="section level1">
+<h1>変数を作って複雑な計算をする</h1>
+</div>
+<div class="section level1">
+<h1>次のステップ</h1>
+<p><a href="{{% ref "2018-lesson1-02.html" %}}">1-2: はじめての R スクリプト</a></p>
+</div>
