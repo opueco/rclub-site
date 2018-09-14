@@ -48,3 +48,4 @@ footnotereturnlinkcontents = "↩"
 [params]
     description = "R Club at Osaka Prefecture University."
     footer = "&copy; [OPU R Club](https://opur.club/) 2018 | [Github](https://github.com/opueco)"
+    custom_css = ["css/custom.css"]
