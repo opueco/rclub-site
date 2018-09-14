@@ -1,6 +1,5 @@
 ---
 title: About R Club
-author: kenjisato
 ---
 
 **R Club** は[マネジメント学類](http://www.mgt.osakafu-u.ac.jp)教員有志による [統計ソフト R](https://www.r-project.org) の勉強会です。ハンズオン形式のセミナーを通して，データサイエンスの入口を体験してもらいと思っています。
@@ -18,7 +17,7 @@ author: kenjisato
 　　　**対象**: 府大生・院生  
 　　**開催日**: 毎週水曜5コマ（※ 新教材の提供は第1・3水曜のみ）  
 　　　**場所**: B3-611  
-**Webサイト**: [opue.co/rclub](opue.co/rclub)
+**Webサイト**: [opur.club](opur.club)
 
 
 **ファシリテーター**: 佐藤健治 <sato@eco.osakafu-u.ac.jp>  

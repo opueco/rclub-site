@@ -1,0 +1,13 @@
+---
+title: "Lesson 1-2: はじめてのRスクリプト"
+date: '2018-10-03'
+categories:
+  - text
+slug: 2018-1-2
+output: 
+  blogdown::html_page:
+    toc: true
+---
+
+
+
