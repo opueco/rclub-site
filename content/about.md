@@ -17,7 +17,7 @@ title: About R Club
 　　　**対象**: 府大生・院生  
 　　**開催日**: 毎週水曜5コマ（※ 新教材の提供は第1・3水曜のみ）  
 　　　**場所**: B3-611  
-**Webサイト**: [opuer.club](opur.club)
+**Webサイト**: [opur.club](opur.club)
 
 
 **ファシリテーター**: 佐藤健治 <sato@eco.osakafu-u.ac.jp>  
