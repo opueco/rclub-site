@@ -12,27 +12,29 @@ output:
 
 <div id="TOC">
 <ul>
-<li><a href="#r-r-">R とR を取り巻く環境</a><ul>
-<li><a>コミュニティに助けを求める</a></li>
+<li><a href="#r-community">R とR を取り巻く環境</a><ul>
+<li><a href="#getting-help">コミュニティに助けを求める</a></li>
 </ul></li>
 <li><a href="#rstudio">RStudio</a><ul>
-<li><a href="#rstudio-">RStudio を開いてみよう</a></li>
-<li><a href="#rstudio-">RStudio の構成部品を覚えよう</a></li>
-<li><a href="#rstudio-">RStudio の便利な機能</a></li>
+<li><a href="#rstudio-launch">RStudio を開いてみよう</a></li>
+<li><a href="#rstudio-components">RStudio の構成部品を見てみよう</a></li>
 </ul></li>
 <li><a href="#r-">R を電卓として使う</a><ul>
-<li><a>脱線：コード例の読み方</a></li>
-<li><a>練習問題</a><ul>
-<li><a href="#section"></a></li>
+<li><a href="#exercise1">練習問題1</a></li>
 </ul></li>
+<li><a href="#using-functions">関数を使う</a><ul>
+<li><a href="#log-exp">対数関数と指数関数</a></li>
+<li><a href="#plotting">形を見てみよう</a></li>
+<li><a href="#exercise2">練習問題2</a></li>
+<li><a href="#about-functions">補遺：数学の関数とプログラムの「関数」</a></li>
 </ul></li>
-<li><a>変数を作って複雑な計算をする</a></li>
+<li><a href="#summary">まとめ</a></li>
 <li><a>次のステップ</a></li>
 </ul>
 </div>
 
-<p>第1回は R, RStudio の基本的な使い方を説明します。</p>
-<div id="r-r-" class="section level1">
+<p>第1回（その1）は R, RStudio の基本的な使い方を説明します。</p>
+<div id="r-community" class="section level1">
 <h1>R とR を取り巻く環境</h1>
 <p><a href="https://www.r-project.org">R</a> の成り立ちから話を始めることが多いのですが・・・・細かいことは気にせず 「<a href="https://www.r-project.org">R</a> は統計処理と可視化が得意な<a href="https://ja.wikipedia.org/wiki/フリーソフトウェア">フリーソフトウェア</a> 」とだけ考えておいてください。</p>
 <p>次のことを押さえましょう。</p>
@@ -63,7 +65,7 @@ output:
 <li>ただし，事前の努力が要求される</li>
 </ul></li>
 </ul>
-<div class="section level2">
+<div id="getting-help" class="section level2">
 <h2>コミュニティに助けを求める</h2>
 <p>R Club に参加している方は，困ったことがあれば直接主催者に聞いてもらうか <a href="https://opu-rclub.slack.com">Slack</a>で質問してください。できる限りお手伝いします。ただ残念ながら，あまりに高度な内容となると手に負えないということがあるかもしれません。</p>
 <p>しかし，ご安心ください。R には大きなユーザーコミュニティがあるので，英語で質問を書けばたいていすぐに回答が得られます。質問のタイプごとに質問すべき相手が変わってきますので，自分が直面している問題の本質を見極めた上で質問を書きましょう。質問の書き方についての相談も歓迎します。</p>
@@ -90,18 +92,26 @@ output:
 <div id="rstudio" class="section level1">
 <h1>RStudio</h1>
 <p><a href="https://www.rstudio.com">RStudio</a> はRを便利に使うためのソフトウェアです。Rと同様，RStudio も無料で使うことができます。R Club では RStudio 上で Rのプログラムを実行します。</p>
-<div id="rstudio-" class="section level2">
+<div id="rstudio-launch" class="section level2">
 <h2>RStudio を開いてみよう</h2>
+<p>デスクトップのショートカットやプログラムメニューから RStudio を探して起動してみてください。次のような画面が表示されましたでしょうか。</p>
 <div class="figure">
 <img src="/images/2018-lesson1-1-rstudio-top.png" alt="Fig: RStudio 起動後の画面（Macの場合）" />
 <p class="caption">Fig: RStudio 起動後の画面（Macの場合）</p>
 </div>
 </div>
-<div id="rstudio-" class="section level2">
-<h2>RStudio の構成部品を覚えよう</h2>
-</div>
-<div id="rstudio-" class="section level2">
-<h2>RStudio の便利な機能</h2>
+<div id="rstudio-components" class="section level2">
+<h2>RStudio の構成部品を見てみよう</h2>
+<p>はじめて起動したときには以下のタブ（と他のいくつかのタブ）が開いていると思います。それぞれのタブをクリックしてみて，どのような機能があるか予想してみてください。</p>
+<ul>
+<li>Console / コンソール</li>
+<li>Environment / 環境</li>
+<li>History / 履歴</li>
+<li>Files / ファイル</li>
+<li>Plots / プロット</li>
+<li>Help / ヘルプ</li>
+<li>Viewer / ビューワー</li>
+</ul>
 </div>
 </div>
 <div id="r-" class="section level1">
@@ -119,35 +129,33 @@ output:
 <pre class="r"><code>&gt; 90 + 30</code></pre>
 <pre><code>## [1] 120</code></pre>
 <p>簡単ですね。色々な計算をやってみましょう。</p>
-<div class="section level3">
-<h3>脱線：コード例の読み方</h3>
-<p>上のコード例は次のようになっていました。2段並んでいる場合，</p>
+<div class="hint">
+<h3>コード例の読み方</h3>
+<p>上のコード例では，2段上下にコードが並んでいる格好になっています。この場合，</p>
 <ul>
 <li>上の段が実行してほしいコード</li>
 <li>下の段がその結果</li>
 </ul>
-<p>となっています。実行してほしいコードに，<code>&gt;</code> という記号がついている場合は，「コンソールで打ち込んでください」という意味です。 これがあるとコピー＆ペーストがやりにくいのですが，自分の手で打ち込む（写経する）ことで，筋肉が覚えてくれる側面もあるので，面倒ですがお付き合いください。</p>
+<p>となっています。実行してほしいコードに，<code>&gt;</code> という記号がついている場合は，「コンソールで打ち込んでください」という意味です。 実はこれがあるとコピー＆ペーストがやりにくいのですが，自分の手で打ち込む（写経する）ことで，筋肉が覚えてくれる側面もあるので，面倒ですがお付き合いください。</p>
 <p>下段のハッシュ（#）は，コンソールには表示されませんが，テキスト上で「出力であることをわかりやすくするため」のお約束と思っておいてください。続く <code>[1]</code> は，その「右側にある数字が結果の1番目の数字だ」ということを表しています。後でベクトルの話がでてきたときに，役に立つことが分かると思います。</p>
 <div class="figure">
 <img src="/images/2018-lesson1-1-prompt.png" alt="Fig: コードサンプルの読み方" />
 <p class="caption">Fig: コードサンプルの読み方</p>
 </div>
 </div>
-<div class="section level2">
-<h2>練習問題</h2>
-<div id="section" class="section level3">
-<h3></h3>
-<p>以下のコードはそれぞれどのような結果を返すか。結果を予想し，コンソールで実行して確認せよ。</p>
+<div id="exercise1" class="section level3">
+<h3>練習問題1</h3>
+<p>以下のコードはそれぞれどのような結果を返すか。結果を予想し，コンソールで実行して確認してください。</p>
 <p><strong>Code 1-1</strong></p>
-<pre class="r"><code>&gt; 90 + 30</code></pre>
+<pre class="r"><code>&gt; 120 + 30</code></pre>
 <p><details> <summary>答</summary></p>
-<pre><code>## [1] 120</code></pre>
-<p></details> <details> <summary>解説</summary> <code>+</code> は足し算の記号です。 </details></p>
+<pre><code>## [1] 150</code></pre>
+<p><code>+</code> は足し算の記号です。 </details></p>
 <p><strong>Code 1-2</strong></p>
 <pre class="r"><code>&gt; 1093 - 805</code></pre>
 <p><details> <summary>答</summary></p>
 <pre><code>## [1] 288</code></pre>
-<p></details> <details> <summary>解説</summary> <code>-</code> は引き算の記号です。負の数を作るときにも同じ記号を使います。</p>
+<p><code>-</code> は引き算の記号です。負の数を作るときにも同じ記号を使います。</p>
 <pre class="r"><code>&gt;  - 100</code></pre>
 <pre><code>## [1] -100</code></pre>
 <p></details></p>
@@ -155,17 +163,190 @@ output:
 <pre class="r"><code>&gt;  3 * 0.12</code></pre>
 <p><details> <summary>答</summary></p>
 <pre><code>## [1] 0.36</code></pre>
+<p><code>*</code> は掛け算の記号です。</p>
+<p><code>-</code> と違って，掛け算は2つの数字の間にないとエラーになります。</p>
+<pre class="r"><code>* 10     #=&gt; Error: unexpected &#39;*&#39; in &#39;*&#39;</code></pre>
 <p></details></p>
 <p><strong>Code 1-4</strong></p>
 <pre class="r"><code>&gt; 50 / 60</code></pre>
 <p><details> <summary>答</summary></p>
 <pre><code>## [1] 0.8333333</code></pre>
+<p><code>/</code> は割り算の記号です。ゼロで割ると無限大 <code>Inf</code> になります。</p>
+<pre class="r"><code>&gt; 3 / 0</code></pre>
+<pre><code>## [1] Inf</code></pre>
+<p></details></p>
+<div class="hint">
+<h3 id="-">コンソールに <code>+</code> の記号が出てきた！</h3>
+<p>コマンドを途中まで打ちこんでエンターキーを押してしまうということがよくあります。 例えば，<code>10 * 3</code> と計算しようとして，<code>10 *</code> でエンターを押してしまう，といったことです。</p>
+<p>そんなとき，次のように「<code>+</code>」が表示されます。</p>
+<pre><code>&gt; 10 * 
++</code></pre>
+<p>これは <strong>コマンドが完結していない</strong> ということを表す記号です。続けてコマンドを実行すれば問題ありません。</p>
+<pre class="r"><code>&gt; 10 * 
++ 3</code></pre>
+<pre><code>## [1] 30</code></pre>
+<p>もし，途中で書くのをやめたくなったら Esc キーを押すと中断できます。</p>
+</div>
+<p>それでは，少しひねった問題を出してみましょう。</p>
+<p><strong>Code 1-5</strong></p>
+<pre class="r"><code>&gt; 2 + 3 * 2 </code></pre>
+<p><details> <summary>答</summary></p>
+<pre><code>## [1] 8</code></pre>
+<p>計算が実行される順序が決まっています。「<code>+</code> より先に <code>*</code> を計算する」というのは数学の慣習と一致していますね。<code>+</code> を先に計算したい場合には，カッコを使って次のようにします。</p>
+<pre class="r"><code>&gt; (2 + 3) * 2</code></pre>
+<pre><code>## [1] 10</code></pre>
+<p><code>*</code>, <code>/</code> は <code>+</code>, <code>-</code> より優先されます。 項を括る意味でのカッコは <code>(</code> と <code>)</code> だけを使います。 </details></p>
+<p>次のケースはどうでしょうか。<code>^</code> はべき乗を計算する記号です。</p>
+<p><strong>Code 1-5</strong></p>
+<pre class="r"><code>&gt; 2 + 3 ^ 2 * 2</code></pre>
+<p><details> <summary>答</summary></p>
+<pre><code>## [1] 20</code></pre>
+<p>これは <span class="math inline">\(2 + ((3^2) \times 2)\)</span></p>
 <p></details></p>
 </div>
 </div>
+<div id="using-functions" class="section level1">
+<h1>関数を使う</h1>
+<div id="log-exp" class="section level2">
+<h2>対数関数と指数関数</h2>
+<p>指数関数 <span class="math inline">\(a ^ x\)</span>, <span class="math inline">\(a &gt; 0\)</span> と対数関数 <span class="math inline">\(\log_a x\)</span> の関係については覚えていますか？</p>
+<p><span class="math display">\[a^{\log_a x} = x\]</span></p>
+<p><span class="math display">\[\log_a (a^x) = x\]</span> <span class="math display">\[a^{x + y} = a^x a^y\]</span> <span class="math display">\[\log_a x^\alpha y^\beta  = \alpha \log_a x + \beta \log_a y\]</span></p>
+<p>などなど，いろいろな公式を覚えている（昔覚えたけど忘れている）ものと思います。</p>
+<p><span class="math inline">\(a\)</span> のことを「底」（てい）と呼びますが，無数にある底の中でも特に重要なのが「自然対数の底」（Napier数）と呼ばれるもので <span class="math inline">\(e\)</span> と表します。正規分布の密度関数にも</p>
+<p><span class="math display">\[
+\frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{(x - m)^2}{2\sigma}}
+\]</span></p>
+<p>のように現れます。<span class="math inline">\(e\)</span> の肩がいかにも重たそうなので，<span class="math inline">\(\exp\)</span> を使って</p>
+<p><span class="math display">\[
+\frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x - m)^2}{2\sigma}\right)
+\]</span></p>
+<p>と書くこともよくあります。R では，後者の表現がコマンド名になっています。</p>
+<pre class="r"><code>&gt; exp(10)</code></pre>
+<pre><code>## [1] 22026.47</code></pre>
+<p>自然対数 <span class="math inline">\(\log_e\)</span> または単に <span class="math inline">\(\log\)</span> あるいは <span class="math inline">\(\ln\)</span>（自然対数の底を底に持つ対数関数・・・）は</p>
+<pre class="r"><code>&gt; log(10)</code></pre>
+<pre><code>## [1] 2.302585</code></pre>
+<p><span class="math inline">\(\log(10 \times 5) = \log(10) + \log(5)\)</span> であることを確かめるには</p>
+<pre class="r"><code>&gt; log(10 * 5) - (log(10) + log(5))</code></pre>
+<pre><code>## [1] -4.440892e-16</code></pre>
+<p>ちなみに，<span class="math inline">\(e\)</span> の他にも 2 と 10 は底としてよく使いますので，R には <code>log2</code>, <code>log10</code> が用意されています。</p>
+<div class="hint">
+<h3 id="e-16-">-4.440892e-16 ってどういう意味？</h3>
+<p>結論から言うと，これは</p>
+<p><span class="math display">\[
+-4.440892... \times 10^{-16}
+\]</span> という意味です。<strong>すごく小さい数字ですがゼロではありません</strong>。</p>
+<p>理屈上は整数できれいな答えになるはずの計算であっても，計算の途中に「小数点」を含む計算がでてくるようなケースでは，コンピュータを使ってピッタリ正確に整数の答えがでるという状況はきわめて稀です。</p>
+<p>ひょっとすると <code>log()</code> みたいに難しい関数を計算しなきゃならないから近似してるんでしょ？と思うかもしれませんね。半分正解で，半分間違っています。簡単そうに見える計算でも近似が入ってしまうのです。試しに次の計算をしてみてください。</p>
+<pre><code>&gt; 0.1 + 0.1 + 0.1 - 0.3</code></pre>
+<p>私たちはこの答えが正確にゼロであることを一瞬で見極めることができます。しかし，私たちが普段使っているようなコンピュータはゼロという答えを出せません。これは，数の表現に関連しています。</p>
+<p>私たちは小数を10進数の延長として表現・理解するので <span class="math inline">\(0.1\)</span> は有限小数であるように見えますが，巷のコンピュータは2進数の小数表現を使うので <span class="math inline">\(0.1\)</span> が有限小数にならないのです。当然，コンピュータは無限に長いデータを保持できないので，どこかで打ち切って近似をすることになります。近似によって生まれた誤差が結果の誤差につながったのです。</p>
+<p>小難しい話は忘れてもかまいませんが <strong>小数を含む計算結果を等号で比較してはいけない</strong> ということだけは肝に命じておきましょう。 いずれ使うべきときが来ると思いますが，それまでに <code>all.equal()</code> のヘルプを見ておいてください。</p>
+<pre class="r"><code>&gt; ?all.equal
+&gt; all.equal(log(10 * 5) , (log(10) + log(5)))
+&gt; all.equal(0.1 + 0.1 + 0.1, 0.3)</code></pre>
 </div>
-<div class="section level1">
-<h1>変数を作って複雑な計算をする</h1>
+</div>
+<div id="plotting" class="section level2">
+<h2>形を見てみよう</h2>
+<p>R で 1変数の関数をプロットするのはとても簡単です。次のようにやります。</p>
+<pre class="r"><code>&gt; plot(log)</code></pre>
+<p><img src="/textbook/2018-lesson1-01_files/figure-html/plot-log-1.png" width="672" /></p>
+<pre class="r"><code>&gt; plot(exp)</code></pre>
+<p><img src="/textbook/2018-lesson1-01_files/figure-html/plot-exp-1.png" width="672" /></p>
+<p>じゃあ，いろんな関数のグラフをプロットしてみたいと思いますよね？自然な発想です。やってみましょう。 <span class="math display">\[2e^x\]</span> をプロットしてみてください。（ハッシュ # の右側は「コメント」です。打ち込まなくてもOK）</p>
+<pre class="r"><code>&gt; plot(2 * exp)     # うまく動くかな？</code></pre>
+<p><details> <summary>解説</summary></p>
+<pre><code>## Error in 2 * exp: non-numeric argument to binary operator</code></pre>
+<p>Error と出てしまいましたね。これはうまく行きません。「関数」を予め定義して，<code>plot()</code> の中に書き込まないといけないのです。</p>
+<p></details></p>
+</div>
+<div id="exercise2" class="section level2">
+<h2>練習問題2</h2>
+<p>それぞれのコードがどのような結果を出すか予想してください。その後，実行して結果を確認してみましょう。</p>
+<p><strong>Code 2-1</strong></p>
+<pre class="r"><code>&gt; exp(log(10)) </code></pre>
+<p><details> <summary>答</summary></p>
+<pre><code>## [1] 10</code></pre>
+<p><span class="math inline">\(e^{\log x} = x\)</span> でしたね。</p>
+<p></details></p>
+<p><strong>Code 2-2</strong></p>
+<pre class="r"><code>&gt; log(exp(10)) </code></pre>
+<p><details> <summary>答</summary></p>
+<pre><code>## [1] 10</code></pre>
+<p><span class="math inline">\(\log(e^x) = x\)</span> です。</p>
+<p></details></p>
+<p><strong>Code 2-3</strong></p>
+<pre class="r"><code>&gt; sqrt(9) </code></pre>
+<p><details> <summary>答</summary></p>
+<pre><code>## [1] 3</code></pre>
+<p><code>sqrt(x)</code> は <code>x</code> の平方根(square root)を計算します：<span class="math inline">\(\sqrt{x}\)</span>。<span class="math inline">\(\sqrt{x} = x^{1/2}\)</span> なので，次のようにしても同じ結果になります。</p>
+<pre class="r"><code>9 ^ (1/2)</code></pre>
+<pre><code>## [1] 3</code></pre>
+<p></details></p>
+</div>
+<div id="about-functions" class="section level2">
+<h2>補遺：数学の関数とプログラムの「関数」</h2>
+<p>対数関数のコマンド <code>log(x)</code> や指数関数のコマンド <code>exp(x)</code> は数学における「関数」という概念にぴったり当てはまります。<span class="math inline">\(x\)</span> に数字をあてはめると，<span class="math inline">\(\log x\)</span> の値が定まる，というわけです。</p>
+<p>プログラミングの視点でももちろんこれらは「関数」ですが，プログラムの世界で関数という用語はもう少し広い概念です。 例えば，グラフをプロットするときに使った <code>plot(FUN)</code> は「<code>FUN</code> に関数をあてはめるとグラフが出力される」という「関数」です。</p>
+<p>これから，みなさんはたくさんの「関数」を作ることになります。それは数学的な関数に近い場合もあれば「複雑な仕事に名前をつける」という性質のものになるかもしれません。</p>
+</div>
+</div>
+<div id="summary" class="section level1">
+<h1>まとめ</h1>
+<p>今日学んだ数式と R コマンドの対応関係をまとめておきましょう。</p>
+<table style="width:57%;">
+<colgroup>
+<col width="34%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">数式</th>
+<th align="center">R</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><span class="math inline">\(a + b\)</span></td>
+<td align="center"><code>a + b</code></td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(a - b\)</span></td>
+<td align="center"><code>a - b</code></td>
+</tr>
+<tr class="odd">
+<td align="center"><span class="math inline">\(a \times b\)</span></td>
+<td align="center"><code>a * b</code></td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(a \div b\)</span></td>
+<td align="center"><code>a / b</code></td>
+</tr>
+<tr class="odd">
+<td align="center"><span class="math inline">\(x^a\)</span></td>
+<td align="center"><code>x ^ a</code></td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(e^x\)</span></td>
+<td align="center"><code>exp(x)</code></td>
+</tr>
+<tr class="odd">
+<td align="center"><span class="math inline">\(\log x\)</span> or <span class="math inline">\(\ln x\)</span></td>
+<td align="center"><code>log(x)</code></td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(\log_{10} x\)</span></td>
+<td align="center"><code>log10(x)</code></td>
+</tr>
+<tr class="odd">
+<td align="center"><span class="math inline">\(\sqrt x\)</span></td>
+<td align="center"><code>sqrt(x)</code></td>
+</tr>
+</tbody>
+</table>
+<p>これらのコマンドと括弧を組み合わせれば，それなりに複雑な計算をこなすこともできるでしょう。 しかし先を急がず， R/RStudio の機能をもう少し習得することにしましょう。何事もスマートにこなす方がいいですからね。</p>
 </div>
 <div class="section level1">
 <h1>次のステップ</h1>

@@ -1,4 +1,36 @@
+#TOC {
+  position: relative;
+  padding: 30px 10px 10px;
+  margin: 30px auto;
+  border: 1px dashed gray;
+}
+
+#TOC:before{
+  position: absolute;
+  content: 'Contents';
+  top: 0;
+  left: 0;
+  padding: 0.4em;
+  background: #FFFFFF;/*背景色*/
+}
+
 details {
   padding: 15px;
   border: 1px solid slategray;
+}
+
+.hint {
+  position: relative;
+  padding: 30px 20px 20px 20px;
+  margin: 30px auto;
+  border: 1px dashed gray;
+}
+
+.hint:before{
+  position: absolute;
+  content: 'HINTS';
+  top: 0;
+  left: 0;
+  padding: 0.4em;
+  background: #FFFFFF;/*背景色*/
 }
