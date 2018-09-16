@@ -23,7 +23,7 @@ footnotereturnlinkcontents = "↩"
     weight = 2
 [[menu.main]]
     name = "Textbook"
-    url = "/categories/text/"
+    url = "/categories/textbook/"
     weight = 3
 [[menu.main]]
     name = "Data"
