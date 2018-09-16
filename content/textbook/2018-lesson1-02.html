@@ -15,11 +15,12 @@ output:
 <div id="TOC">
 <ul>
 <li><a href="#pre">前のステップ</a></li>
-<li><a>このセッションの目標</a></li>
+<li><a href="#goal">このセッションの目標</a></li>
 <li><a href="#project">RStudio プロジェクト</a><ul>
-<li><a href="#r">Rプロジェクトを作る</a></li>
+<li><a href="#create-project">Rプロジェクトを作る手順</a></li>
+<li><a href="#project-config">プロジェクトの設定</a></li>
 <li><a href="#r-.rprofile">最初のRスクリプト .Rprofile</a></li>
-<li><a>プロジェクト・フォルダの構成</a></li>
+<li><a href="#project-structure">プロジェクト・フォルダの構成</a></li>
 </ul></li>
 <li><a href="#scripts">スクリプト</a><ul>
 <li><a href="#write-script">スクリプトを書く</a></li>
@@ -45,7 +46,7 @@ output:
 <li>「関数」という言葉の範囲について</li>
 </ul>
 </div>
-<div class="section level1">
+<div id="goal" class="section level1">
 <h1>このセッションの目標</h1>
 <p><a href="({{% ref "2018-lesson1-01.html" %}})">前回</a>実行したような簡単な計算を1回だけ行うのにパソコンを立ち上げるは必要ないかもしれません。しかし，ほとんどの仕事はもっと複雑なもので，</p>
 <ul>
@@ -54,33 +55,88 @@ output:
 <li>あるいはそれらを組み合わせた複雑な処理</li>
 </ul>
 <p>をしなければならない場面が現れます。このようなケースにはプログラミングが本領を発揮してくれます。</p>
-<p>当然のことながら，やらなければならない処理が複雑でなってくると</p>
-<ul>
-<li>コマンドが複雑になってコンソールでは手狭になる</li>
-</ul>
+<p>当然のことながら，やらなければならない処理が複雑になってくると</p>
+<p><strong>コマンドが長くてコンソールでは手狭になる</strong></p>
 <p>という問題が発生します。コマンドをファイルに記録する訳ですが，そうすると</p>
-<ul>
-<li>ファイルが増えて管理が大変になる</li>
-</ul>
+<p><strong>ファイルが増えて管理が大変になる</strong></p>
 <p>という状態が到来するのは目前です。重要なファイルとそうでないファイルがごちゃ混ぜになって散らかってしまう前に，系統だった管理の方法を確認しておきましょう。その後，ファイルにコマンドを書いて実行する方法を説明します。</p>
 </div>
 <div id="project" class="section level1">
 <h1>RStudio プロジェクト</h1>
 <p>RStudio にはプロジェクトを管理する機能があります。何か新しいことを始めようと思ったときには，まずプロジェクトを作成することをおすすめします。</p>
-<div id="r" class="section level2">
-<h2>Rプロジェクトを作る</h2>
+<div id="create-project" class="section level2">
+<h2>Rプロジェクトを作る手順</h2>
+<p>RStudio のウインドウの右上角を見てください。下図のように “Project: (None)” となっているときは，どのプロジェクトも開いていない状態です。</p>
+<div class="figure">
+<img src="/images/2018-1-2-1-noproject.png" alt="Fig: プロジェクトを開いていない状態" />
+<p class="caption">Fig: プロジェクトを開いていない状態</p>
+</div>
+<p>“New Project…” をクリックして，プロジェクトを作りましょう。新しいプロジェクトをセットアップするためのウィザードが開始されます。</p>
+<div class="figure">
+<img src="/images/2018-1-2-2-newproject.png" alt="Fig: 新しいプロジェクト" />
+<p class="caption">Fig: 新しいプロジェクト</p>
+</div>
+<p>“New Directory” か “Existing Directory” のどちらかを選びます：</p>
+<ul>
+<li>New Directory - プロジェクトのフォルダがまだない場合</li>
+<li>Existing Directory - プロジェクトのフォルダをすでに作っている場合</li>
+</ul>
+<p>ここでは “New Directory” を選びます。</p>
+<div class="figure">
+<img src="/images/2018-1-2-3-projecttype.png" alt="Fig: プロジェクトタイプ" />
+<p class="caption">Fig: プロジェクトタイプ</p>
+</div>
+<p>次に “Project Type” を選ぶように促されますので，これは “New Project” を選んでください。</p>
+<p>使用環境に応じて異なる表示をするかもしれませんが，おおよそ次のように表示されます。プロジェクトに相応しい英語の名前をつけましょう。ここでは “RClub” とします。</p>
+<div class="figure">
+<img src="/images/2018-1-2-4-projname.png" alt="Fig: プロジェクト名" />
+<p class="caption">Fig: プロジェクト名</p>
+</div>
+<p>RStudio が新しく開くと，右上に “RClub” と表示されます。これでプロジェクトの作成は完了です。</p>
+<div class="figure">
+<img src="/images/2018-1-2-5-inproject.png" alt="Fig: プロジェクトに入っている状態" />
+<p class="caption">Fig: プロジェクトに入っている状態</p>
+</div>
+<p><strong>練習 1</strong><br />
+RStudio をすべて閉じてください。エクスプローラーで “RClub.Rproj” ファイルを探してダブルクリックします。RStudio が開いて，プロジェクトが開かれていることを確認してください。</p>
+</div>
+<div id="project-config" class="section level2">
+<h2>プロジェクトの設定</h2>
+<p>プロジェクトに対する設定を確認しておきましょう。Files の書かれた枠に “RClub.Rproj” というファイルが見えているはずです。これをクリックしてください。</p>
+<div class="figure">
+<img src="/images/2018-1-2-6-files.png" alt="Fig: Files ペインの RClub.Rproj" />
+<p class="caption">Fig: Files ペインの “RClub.Rproj”</p>
+</div>
+<p>すると，次のような設定画面が表示されます。プロジェクトごとに設定を変えることができますが，基本的には以下の通りに設定することをおすすめします。</p>
+<p><strong>General タブ</strong></p>
+<ul>
+<li>Restore .RData into workspace at startup: No</li>
+<li>Save workspace to .RData on exit: No</li>
+<li>Always save history (even if not saving .RData): Yes</li>
+</ul>
+<div class="figure">
+<img src="/images/2018-1-2-7-general.png" alt="Fig: データはコマンド履歴のみ保存する" />
+<p class="caption">Fig: データはコマンド履歴のみ保存する</p>
+</div>
+<p><strong>Code Editing タブ</strong></p>
+<p>Text encoding が UTF-8 になっていることを確認してください。</p>
+<div class="figure">
+<img src="/images/2018-1-2-8-utf.png" alt="Fig: Text encoding は UTF-8" />
+<p class="caption">Fig: Text encoding は UTF-8</p>
+</div>
 </div>
 <div id="r-.rprofile" class="section level2">
 <h2>最初のRスクリプト .Rprofile</h2>
-<p><code>.Rprofile</code> というファイル（ファイル名の最初がドット，R だけ大文字）は特別なファイルで，プロジェクト・フォルダの直下に置いておくと，プロジェクトを開くたびに最初に実行されます。</p>
-<p><strong>練習 1</strong></p>
-<p>コンソールで次のコマンドを実行して，<code>.Rprofile</code> を作成してください。</p>
+<p>後ほど詳しく説明しますが，「スクリプト」というのはコマンドを書いたテキストファイルのことです。</p>
+<p><code>.Rprofile</code> というファイル（ファイル名の最初がドット，R だけ大文字）は特別なスクリプトで，プロジェクト・フォルダの直下に置いておくと，プロジェクトを開くたびに最初に実行されます。</p>
+<p><strong>練習 2</strong><br />
+コンソールで次のコマンドを実行して，<code>.Rprofile</code> を作成してください。</p>
 <pre class="r"><code>&gt; file.edit(&quot;.Rprofile&quot;)</code></pre>
 <p>内容は次のようにして保存します。ただし，“Kenji” のところはあなたの名前に変えてください。</p>
 <pre class="r"><code># .Rprofile
 message(&quot;Hello, Kenji! Today&#39;s &quot;, Sys.Date(), &quot;.&quot;)</code></pre>
-<p><strong>問題 1</strong></p>
-<p>プロジェクトを再読み込みしてください。起動直後に <code>.Rprofile</code> が何をしたか説明してください。</p>
+<p><strong>問題 1</strong><br />
+プロジェクトを再読み込みしてください。起動直後に <code>.Rprofile</code> が何をしたか説明してください。</p>
 <p><details> <summary>答</summary></p>
 <pre><code>R version 3.5.1 (2018-07-02) -- &quot;Feather Spray&quot;
 Copyright (C) 2018 The R Foundation for Statistical Computing
@@ -94,12 +150,12 @@ Hello, Kenji! Today&#39;s 2018-09-16.    ← ココが増えた！</code></pre>
 <div class="hint">
 <h2 id="rprofile-">.Rprofile の置き場所</h2>
 <p>ホームディレクトリ（<code>~</code>, <a href="{{% ref "/post/2018-10-03-about-paths.html" %}}">コラム参照</a>）に <code>.Rprofile</code> （以下，<code>~/.Rprofile</code>）を置くように推奨している教科書もたくさんありますが，初心者のうちはプロジェクトフォルダだけに <code>.Rprofile</code> を書くようにしましょう。ホームディレクトリの <code>~/.Rprofile</code> ファイルは遠くにある目に見えないファイルで「自分でさえ書いたことを忘れる」ことがよくあるからです。そんな，忘れがちなファイルであるにも関わらず，R はこれを毎回律儀に実行してしまうので，思いもよらぬ結果をもたらすことがあるのです。授業のレポートに R を使ってもらっていて，学生さんに「よく分からないエラーが出て困っている」と聞かれて調べてみると <code>~/.Rprofile</code> が悪さをしていた，ということもありました。</p>
-<p>このセクションで無害な <code>.Rprofile</code> を書いてもらった理由は，<code>~/.Rprofile</code> があっても無視されるからです。別の講座や自習のために <code>~/.Rprofile</code> を作った人がいても，そちらは読み込まれないようになっています。</p>
+<p>このセクションで無害な <code>.Rprofile</code> を書いてもらったのには1つ重要な理由があります。これがあると，<code>~/.Rprofile</code> を無視するからです。別の講座や自習のために <code>~/.Rprofile</code> を作った人がいても，そちらは読み込まれないようになっています。</p>
 <p>もちろん，1つ1つのコードが何をやっているのかが分かるようになってきたら，害のない範囲で <code>~/.Rprofile</code> を育てていくのはよい心がけでしょう。その場合でも，プロジェクトフォルダにも <code>.Rprofile</code> を作って，プロジェクトだけで必要なコードはプロジェクトの <code>.Rprofile</code> だけに書くようにします。最初の行を次のように書いておけば <code>~/.Rprofile</code> も読み込んでくれます。</p>
 <pre><code>if (file.exists(&#39;~/.Rprofile&#39;)) sys.source(&#39;~/.Rprofile&#39;, envir = environment())</code></pre>
 </div>
 </div>
-<div class="section level2">
+<div id="project-structure" class="section level2">
 <h2>プロジェクト・フォルダの構成</h2>
 <p>標準的なデータ分析プロジェクトには，</p>
 <ul>
@@ -128,13 +184,40 @@ Hello, Kenji! Today&#39;s 2018-09-16.    ← ココが増えた！</code></pre>
 &gt; dir.create(&quot;Graphics&quot;)
 &gt; dir.create(&quot;Reports&quot;)</code></pre>
 <p>そして，フォルダの内容物に関する規則を決めてしまいましょう。例えば次のように決めます。</p>
-<ul>
-<li><code>R</code> フォルダには，プロジェクトのソースコード（コマンドを書いたファイル）</li>
-<li><code>Data</code> フォルダには，データを入れます（生データと前処理済の2次データ）</li>
-<li><code>Results</code> フォルダには，プロジェクトの出力（主にテキスト）</li>
-<li><code>Graphics</code> フォルダには，プロジェクトで作成したグラフ</li>
-<li><code>Reports</code> フォルダには，分析の詳細と解釈などを記載したレポート</li>
-</ul>
+<table style="width:83%;">
+<colgroup>
+<col width="22%" />
+<col width="61%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">フォルダ名</th>
+<th align="left">コンテンツ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">R</td>
+<td align="left">スクリプト（コマンドを書いたファイル）</td>
+</tr>
+<tr class="even">
+<td align="center">Data</td>
+<td align="left">データ（生データと前処理済の2次データ）</td>
+</tr>
+<tr class="odd">
+<td align="center">Results</td>
+<td align="left">プロジェクトの出力（主にテキスト形式のもの）</td>
+</tr>
+<tr class="even">
+<td align="center">Graphics</td>
+<td align="left">プロジェクトで作成したグラフなど</td>
+</tr>
+<tr class="odd">
+<td align="center">Reports</td>
+<td align="left">分析の詳細と解釈などを記載したレポート</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="scripts" class="section level1">
@@ -152,7 +235,7 @@ Hello, Kenji! Today&#39;s 2018-09-16.    ← ココが増えた！</code></pre>
 <h2>なぜコメントを書くのか？</h2>
 <p>次の2コマ漫画は ボズウェル・フォシェ・角征典訳（2012）『リーダブルコード』（<em>The Art of Readable Code</em>）オライリーからの引用です（訳書 p. ix）。</p>
 <div class="figure">
-<img src="/images/2018-lesson1-2-readable-code.png" alt="Fig: Readable Code" />
+<img src="/images/2018-1-2-9-readable-code.png" alt="Fig: Readable Code" />
 <p class="caption">Fig: Readable Code</p>
 </div>
 <p>「こんなことがあるはずない」と思うかもしれませんが，実際によくあることです。昔々の経験を思い出すとくすっと笑えるのですが，「2週間後の私」には面白くない冗談かもしれませんね。結局イチから書き直したり・・・・・</p>
