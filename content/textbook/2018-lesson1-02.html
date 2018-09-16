@@ -15,8 +15,11 @@ output:
 <div id="TOC">
 <ul>
 <li><a href="#pre">前のステップ</a></li>
+<li><a>このセッションの目標</a></li>
 <li><a href="#project">RStudio プロジェクト</a><ul>
 <li><a href="#r">Rプロジェクトを作る</a></li>
+<li><a href="#r-.rprofile">最初のRスクリプト .Rprofile</a></li>
+<li><a>プロジェクト・フォルダの構成</a></li>
 </ul></li>
 <li><a href="#scripts">スクリプト</a><ul>
 <li><a href="#write-script">スクリプトを書く</a></li>
@@ -42,15 +45,16 @@ output:
 <li>「関数」という言葉の範囲について</li>
 </ul>
 </div>
-<div id="project" class="section level1">
-<h1>RStudio プロジェクト</h1>
-<p><a href="({{% ref "2018-lesson1-01.html" %}})">前回</a>実行したような簡単な計算を1回だけ行うのにパソコンを立ち上げるは必要ないかもしれません。プログラミングが本領を発揮するのは</p>
+<div class="section level1">
+<h1>このセッションの目標</h1>
+<p><a href="({{% ref "2018-lesson1-01.html" %}})">前回</a>実行したような簡単な計算を1回だけ行うのにパソコンを立ち上げるは必要ないかもしれません。しかし，ほとんどの仕事はもっと複雑なもので，</p>
 <ul>
 <li>繰り返し処理</li>
-<li>条件分岐</li>
-<li>その他，複雑な計算</li>
+<li>条件分岐を含む計算</li>
+<li>あるいはそれらを組み合わせた複雑な処理</li>
 </ul>
-<p>をしなければならない場面です。このようなケースでは</p>
+<p>をしなければならない場面が現れます。このようなケースにはプログラミングが本領を発揮してくれます。</p>
+<p>当然のことながら，やらなければならない処理が複雑でなってくると</p>
 <ul>
 <li>コマンドが複雑になってコンソールでは手狭になる</li>
 </ul>
@@ -58,9 +62,79 @@ output:
 <ul>
 <li>ファイルが増えて管理が大変になる</li>
 </ul>
-<p>という状態が到来するのは目前です。ファイル地獄に陥る前に，系統だった管理の方法を確認しておきましょう。</p>
+<p>という状態が到来するのは目前です。重要なファイルとそうでないファイルがごちゃ混ぜになって散らかってしまう前に，系統だった管理の方法を確認しておきましょう。その後，ファイルにコマンドを書いて実行する方法を説明します。</p>
+</div>
+<div id="project" class="section level1">
+<h1>RStudio プロジェクト</h1>
+<p>RStudio にはプロジェクトを管理する機能があります。何か新しいことを始めようと思ったときには，まずプロジェクトを作成することをおすすめします。</p>
 <div id="r" class="section level2">
 <h2>Rプロジェクトを作る</h2>
+</div>
+<div id="r-.rprofile" class="section level2">
+<h2>最初のRスクリプト .Rprofile</h2>
+<p><code>.Rprofile</code> というファイル（ファイル名の最初がドット，R だけ大文字）は特別なファイルで，プロジェクト・フォルダの直下に置いておくと，プロジェクトを開くたびに最初に実行されます。</p>
+<p><strong>練習 1</strong></p>
+<p>コンソールで次のコマンドを実行して，<code>.Rprofile</code> を作成してください。</p>
+<pre class="r"><code>&gt; file.edit(&quot;.Rprofile&quot;)</code></pre>
+<p>内容は次のようにして保存します。ただし，“Kenji” のところはあなたの名前に変えてください。</p>
+<pre class="r"><code># .Rprofile
+message(&quot;Hello, Kenji! Today&#39;s &quot;, Sys.Date(), &quot;.&quot;)</code></pre>
+<p><strong>問題 1</strong></p>
+<p>プロジェクトを再読み込みしてください。起動直後に <code>.Rprofile</code> が何をしたか説明してください。</p>
+<p><details> <summary>答</summary></p>
+<pre><code>R version 3.5.1 (2018-07-02) -- &quot;Feather Spray&quot;
+Copyright (C) 2018 The R Foundation for Statistical Computing
+
+.....（中略） .....
+
+Type &#39;q()&#39; to quit R.
+
+Hello, Kenji! Today&#39;s 2018-09-16.    ← ココが増えた！</code></pre>
+<p></details></p>
+<div class="hint">
+<h2 id="rprofile-">.Rprofile の置き場所</h2>
+<p>ホームディレクトリ（<code>~</code>, <a href="{{% ref "/post/2018-10-03-about-paths.html" %}}">コラム参照</a>）に <code>.Rprofile</code> （以下，<code>~/.Rprofile</code>）を置くように推奨している教科書もたくさんありますが，初心者のうちはプロジェクトフォルダだけに <code>.Rprofile</code> を書くようにしましょう。ホームディレクトリの <code>~/.Rprofile</code> ファイルは遠くにある目に見えないファイルで「自分でさえ書いたことを忘れる」ことがよくあるからです。そんな，忘れがちなファイルであるにも関わらず，R はこれを毎回律儀に実行してしまうので，思いもよらぬ結果をもたらすことがあるのです。授業のレポートに R を使ってもらっていて，学生さんに「よく分からないエラーが出て困っている」と聞かれて調べてみると <code>~/.Rprofile</code> が悪さをしていた，ということもありました。</p>
+<p>このセクションで無害な <code>.Rprofile</code> を書いてもらった理由は，<code>~/.Rprofile</code> があっても無視されるからです。別の講座や自習のために <code>~/.Rprofile</code> を作った人がいても，そちらは読み込まれないようになっています。</p>
+<p>もちろん，1つ1つのコードが何をやっているのかが分かるようになってきたら，害のない範囲で <code>~/.Rprofile</code> を育てていくのはよい心がけでしょう。その場合でも，プロジェクトフォルダにも <code>.Rprofile</code> を作って，プロジェクトだけで必要なコードはプロジェクトの <code>.Rprofile</code> だけに書くようにします。最初の行を次のように書いておけば <code>~/.Rprofile</code> も読み込んでくれます。</p>
+<pre><code>if (file.exists(&#39;~/.Rprofile&#39;)) sys.source(&#39;~/.Rprofile&#39;, envir = environment())</code></pre>
+</div>
+</div>
+<div class="section level2">
+<h2>プロジェクト・フォルダの構成</h2>
+<p>標準的なデータ分析プロジェクトには，</p>
+<ul>
+<li>コマンドを記録したファイル（ソースコード）</li>
+<li>生データ</li>
+<li>生データを処理して出来上がった2次データ</li>
+<li>分析結果を保存したテキストファイル</li>
+<li>分析結果のグラフ</li>
+<li>ソースコードの使い方</li>
+<li>分析結果の解釈などを含めたレポート</li>
+</ul>
+<p>などなどが必要になります。以下のように，ファイルの種類に応じたフォルダを作って整理しましょう。もちろん，必要に応じて増やしたり減らしたりしても構いません。</p>
+<pre><code>RClub/           (プロジェクト・フォルダ)
+├── .Rprofile
+├── README.Rmd   (後述)
+├── Data/
+├── Graphics/
+├── R/
+├── RClub.Rproj
+├── Reports/
+└── Results/</code></pre>
+<p>R上でフォルダを作るにはコンソールで次のコマンドを実行します。5つの空のフォルダができあがります。</p>
+<pre><code>&gt; dir.create(&quot;R&quot;)
+&gt; dir.create(&quot;Data&quot;)
+&gt; dir.create(&quot;Results&quot;)
+&gt; dir.create(&quot;Graphics&quot;)
+&gt; dir.create(&quot;Reports&quot;)</code></pre>
+<p>そして，フォルダの内容物に関する規則を決めてしまいましょう。例えば次のように決めます。</p>
+<ul>
+<li><code>R</code> フォルダには，プロジェクトのソースコード（コマンドを書いたファイル）</li>
+<li><code>Data</code> フォルダには，データを入れます（生データと前処理済の2次データ）</li>
+<li><code>Results</code> フォルダには，プロジェクトの出力（主にテキスト）</li>
+<li><code>Graphics</code> フォルダには，プロジェクトで作成したグラフ</li>
+<li><code>Reports</code> フォルダには，分析の詳細と解釈などを記載したレポート</li>
+</ul>
 </div>
 </div>
 <div id="scripts" class="section level1">
