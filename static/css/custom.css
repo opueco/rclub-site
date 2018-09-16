@@ -1,4 +1,16 @@
+#future {
+  position: fixed;
+  color: red;
+  margin-top: -30px;
+  font-size: 85%;
+  background-color: pink;
+  width: 800px;
+  text-align: center;
+}
+
 #TOC {
+  font-size: 85%;
+  line-height: 130%;
   position: relative;
   padding: 30px 10px 10px;
   margin: 30px auto;
