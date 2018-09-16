@@ -1,13 +1,97 @@
 ---
 title: "Lesson 1-2: はじめてのRスクリプト"
-date: '2018-10-03'
+date: "2018-10-03"
 categories:
-  - text
+  - textbook
+tag:
+  - R
 slug: 2018-1-2
 output: 
   blogdown::html_page:
     toc: true
 ---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(showDetails = function(before, options, envir) {
+  if (before) {
+    return("<details><summary>答</summary>")
+  } else {
+    if (!options$doNotClose) return("</details>")
+  }
+})
+
+knitr::opts_hooks$set(showDetails = function(options) {
+  if(options$showDetails) {
+    options$echo = FALSE
+  }
+  return(options)
+})
+```
+
+# 前のステップ {#pre}
+
+[Lesson 1-1: R を使ってみよう！](`r blogdown::shortcode("ref", "2018-lesson1-01.html")`) では次のことを勉強しました。
+
+* R を取り巻く環境
+* コンソールでコマンド（四則演算と関数）を実行する方法
+    * R を電卓として使う
+    * R で対数関数・指数関数のグラフを描画する
+* 「関数」という言葉の範囲について
+
+# RStudio プロジェクト {#project}
+
+[前回]((`r blogdown::shortcode("ref", "2018-lesson1-01.html")`))実行したような簡単な計算を1回だけ行うのにパソコンを立ち上げるは必要ないかもしれません。プログラミングが本領を発揮するのは
+
+* 繰り返し処理
+* 条件分岐
+* その他，複雑な計算
+
+をしなければならない場面です。このようなケースでは
+
+* コマンドが複雑になってコンソールでは手狭になる  
+
+という問題が発生します。コマンドをファイルに記録する訳ですが，そうすると
+
+* ファイルが増えて管理が大変になる
+
+という状態が到来するのは目前です。ファイル地獄に陥る前に，系統だった管理の方法を確認しておきましょう。
+
+
+## Rプロジェクトを作る
+
+
+
+
+# スクリプト {#scripts}
+
+## スクリプトを書く {#write-script}
+
+
+## スクリプトを実行する {#exec-script}
+
+
+
+# コメント {#comments}
+
+## なぜコメントを書くのか？ {#why-write-comments}
+
+次の2コマ漫画は ボズウェル・フォシェ・角征典訳（2012）『リーダブルコード』（_The Art of Readable Code_）オライリーからの引用です（訳書 p. ix）。
+
+![Fig: Readable Code](/images/2018-lesson1-2-readable-code.png)
+
+「こんなことがあるはずない」と思うかもしれませんが，実際によくあることです。昔々の経験を思い出すとくすっと笑えるのですが，「2週間後の私」には面白くない冗談かもしれませんね。結局イチから書き直したり・・・・・
+
+要するにそういうことが起こらないように
+
+* コメントをしっかり書きましょう
+* 名前は適切に付けましょう（後述）
+
+ということです。
+
+
+
+## RStudio のセクショニング機能 {#rstudio-sectioning}
+
 
 
 

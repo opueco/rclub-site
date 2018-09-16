@@ -1,8 +1,10 @@
 ---
 title: "Lesson 1-2: はじめてのRスクリプト"
-date: '2018-10-03'
+date: "2018-10-03"
 categories:
-  - text
+  - textbook
+tag:
+  - R
 slug: 2018-1-2
 output: 
   blogdown::html_page:
@@ -10,5 +12,84 @@ output:
 ---
 
 
+<div id="TOC">
+<ul>
+<li><a href="#pre">前のステップ</a></li>
+<li><a href="#project">RStudio プロジェクト</a><ul>
+<li><a href="#r">Rプロジェクトを作る</a></li>
+</ul></li>
+<li><a href="#scripts">スクリプト</a><ul>
+<li><a href="#write-script">スクリプトを書く</a></li>
+<li><a href="#exec-script">スクリプトを実行する</a></li>
+</ul></li>
+<li><a href="#comments">コメント</a><ul>
+<li><a href="#why-write-comments">なぜコメントを書くのか？</a></li>
+<li><a href="#rstudio-sectioning">RStudio のセクショニング機能</a></li>
+</ul></li>
+</ul>
+</div>
 
-
+<div id="pre" class="section level1">
+<h1>前のステップ</h1>
+<p><a href="{{% ref "2018-lesson1-01.html" %}}">Lesson 1-1: R を使ってみよう！</a> では次のことを勉強しました。</p>
+<ul>
+<li>R を取り巻く環境</li>
+<li>コンソールでコマンド（四則演算と関数）を実行する方法
+<ul>
+<li>R を電卓として使う</li>
+<li>R で対数関数・指数関数のグラフを描画する</li>
+</ul></li>
+<li>「関数」という言葉の範囲について</li>
+</ul>
+</div>
+<div id="project" class="section level1">
+<h1>RStudio プロジェクト</h1>
+<p><a href="({{% ref "2018-lesson1-01.html" %}})">前回</a>実行したような簡単な計算を1回だけ行うのにパソコンを立ち上げるは必要ないかもしれません。プログラミングが本領を発揮するのは</p>
+<ul>
+<li>繰り返し処理</li>
+<li>条件分岐</li>
+<li>その他，複雑な計算</li>
+</ul>
+<p>をしなければならない場面です。このようなケースでは</p>
+<ul>
+<li>コマンドが複雑になってコンソールでは手狭になる</li>
+</ul>
+<p>という問題が発生します。コマンドをファイルに記録する訳ですが，そうすると</p>
+<ul>
+<li>ファイルが増えて管理が大変になる</li>
+</ul>
+<p>という状態が到来するのは目前です。ファイル地獄に陥る前に，系統だった管理の方法を確認しておきましょう。</p>
+<div id="r" class="section level2">
+<h2>Rプロジェクトを作る</h2>
+</div>
+</div>
+<div id="scripts" class="section level1">
+<h1>スクリプト</h1>
+<div id="write-script" class="section level2">
+<h2>スクリプトを書く</h2>
+</div>
+<div id="exec-script" class="section level2">
+<h2>スクリプトを実行する</h2>
+</div>
+</div>
+<div id="comments" class="section level1">
+<h1>コメント</h1>
+<div id="why-write-comments" class="section level2">
+<h2>なぜコメントを書くのか？</h2>
+<p>次の2コマ漫画は ボズウェル・フォシェ・角征典訳（2012）『リーダブルコード』（<em>The Art of Readable Code</em>）オライリーからの引用です（訳書 p. ix）。</p>
+<div class="figure">
+<img src="/images/2018-lesson1-2-readable-code.png" alt="Fig: Readable Code" />
+<p class="caption">Fig: Readable Code</p>
+</div>
+<p>「こんなことがあるはずない」と思うかもしれませんが，実際によくあることです。昔々の経験を思い出すとくすっと笑えるのですが，「2週間後の私」には面白くない冗談かもしれませんね。結局イチから書き直したり・・・・・</p>
+<p>要するにそういうことが起こらないように</p>
+<ul>
+<li>コメントをしっかり書きましょう</li>
+<li>名前は適切に付けましょう（後述）</li>
+</ul>
+<p>ということです。</p>
+</div>
+<div id="rstudio-sectioning" class="section level2">
+<h2>RStudio のセクショニング機能</h2>
+</div>
+</div>
