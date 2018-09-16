@@ -490,5 +490,5 @@ $\sqrt x$                    `sqrt(x)`
 
 # 次のステップ
 
-[1-2: はじめての R スクリプト](`r blogdown::shortcode("ref", "2018-lesson1-02.html")`)
-
+- [1-2: はじめての R スクリプト](`r blogdown::shortcode("ref", "2018-lesson1-02.html")`)
+- [コラム: パスのお話](`r blogdown::shortcode("ref", "/post/2018-10-03-about-paths.html")`)
