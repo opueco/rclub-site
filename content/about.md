@@ -2,7 +2,7 @@
 title: About R Club
 ---
 
-**R Club** は[マネジメント学類](http://www.mgt.osakafu-u.ac.jp)教員有志による [統計ソフト R](https://www.r-project.org) の勉強会です。ハンズオン形式のセミナーを通して，データサイエンスの入口を体験してもらいと思っています。
+**R Club** は[マネジメント学類](http://www.mgt.osakafu-u.ac.jp)教員有志による [統計ソフト R](https://www.r-project.org) の勉強会です。ハンズオン形式のセミナーを通して，データサイエンスの入口を体験してもらいたいと思っています。
 
 前提知識は不問！府大生であれば誰でも参加していただけます。例えば，
 
