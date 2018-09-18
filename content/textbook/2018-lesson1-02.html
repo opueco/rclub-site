@@ -1,8 +1,10 @@
 ---
 title: "Lesson 1-2: はじめてのRスクリプト"
-date: '2018-10-03'
+date: "2018-10-03"
 categories:
-  - text
+  - textbook
+tag:
+  - R
 slug: 2018-1-2
 output: 
   blogdown::html_page:
@@ -10,5 +12,457 @@ output:
 ---
 
 
+<div id="TOC">
+<ul>
+<li><a href="#pre">前のステップ</a></li>
+<li><a href="#goal">このセッションの目標</a></li>
+<li><a href="#project">RStudio プロジェクト</a><ul>
+<li><a href="#create-project">Rプロジェクトを作る手順</a></li>
+<li><a href="#project-config">プロジェクトの設定</a></li>
+<li><a href="#r-.rprofile">最初のRスクリプト .Rprofile</a></li>
+<li><a href="#project-structure">プロジェクト・フォルダの構成</a></li>
+</ul></li>
+<li><a href="#scripts">スクリプト</a><ul>
+<li><a href="#write-run-script">スクリプトを書いて実行する</a><ul>
+<li><a href="#-1">スクリプト 1</a></li>
+<li><a href="#-2">スクリプト例 2</a></li>
+<li><a href="#-3">スクリプト例 3</a></li>
+<li><a href="#why-write-scripts">なぜスクリプトを書くのか？</a></li>
+</ul></li>
+<li><a href="#comments">コメント</a><ul>
+<li><a href="#why-write-comments">なぜコメントを書くのか？</a></li>
+<li><a href="#rstudio-sectioning">RStudio のセクション機能</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#summary">まとめ</a></li>
+<li><a href="#next">次のステップ</a></li>
+</ul>
+</div>
 
+<div id="pre" class="section level1">
+<h1>前のステップ</h1>
+<p><a href="{{% ref "2018-lesson1-01.html" %}}">Lesson 1-1: R を使ってみよう！</a> では次のことを勉強しました。</p>
+<ul>
+<li>R を取り巻く環境</li>
+<li>コンソールでコマンド（四則演算と関数）を実行する方法
+<ul>
+<li>R を電卓として使う</li>
+<li>R で対数関数・指数関数のグラフを描画する</li>
+</ul></li>
+<li>「関数」という言葉の範囲について</li>
+</ul>
+</div>
+<div id="goal" class="section level1">
+<h1>このセッションの目標</h1>
+<p><a href="({{% ref "2018-lesson1-01.html" %}})">前回</a>実行したような簡単な計算を1回だけ行うのにパソコンを立ち上げるは必要ないかもしれません。しかし，ほとんどの仕事はもっと複雑なもので，</p>
+<ul>
+<li>繰り返し処理</li>
+<li>条件分岐を含む計算</li>
+<li>あるいはそれらを組み合わせた複雑な処理</li>
+</ul>
+<p>をしなければならない場面が現れます。このようなケースにはプログラミングが本領を発揮してくれます。</p>
+<p>当然のことながら，やらなければならない処理が複雑になってくると</p>
+<p><strong>コマンドが長くてコンソールでは手狭になる</strong></p>
+<p>という問題が発生します。コマンドをファイルに記録する訳ですが，そうすると</p>
+<p><strong>ファイルが増えて管理が大変になる</strong></p>
+<p>という状態が到来するのは目前です。重要なファイルとそうでないファイルがごちゃ混ぜになって散らかってしまう前に，系統だった管理の方法を確認しておきましょう。その後，ファイルにコマンドを書いて実行する方法を説明します。</p>
+</div>
+<div id="project" class="section level1">
+<h1>RStudio プロジェクト</h1>
+<p>RStudio にはプロジェクトを管理する機能があります。何か新しいことを始めようと思ったときには，まずプロジェクトを作成することをおすすめします。</p>
+<div id="create-project" class="section level2">
+<h2>Rプロジェクトを作る手順</h2>
+<p>RStudio のウインドウの右上角を見てください。下図のように “Project: (None)” となっているときは，どのプロジェクトも開いていない状態です。</p>
+<div class="figure">
+<img src="/images/2018-1-2-1-noproject.png" alt="Fig: プロジェクトを開いていない状態" />
+<p class="caption">Fig: プロジェクトを開いていない状態</p>
+</div>
+<p>“New Project…” をクリックして，プロジェクトを作りましょう。新しいプロジェクトをセットアップするためのウィザードが開始されます。</p>
+<div class="figure">
+<img src="/images/2018-1-2-2-newproject.png" alt="Fig: 新しいプロジェクト" />
+<p class="caption">Fig: 新しいプロジェクト</p>
+</div>
+<p>“New Directory” か “Existing Directory” のどちらかを選びます：</p>
+<ul>
+<li>New Directory - プロジェクトのフォルダがまだない場合</li>
+<li>Existing Directory - プロジェクトのフォルダをすでに作っている場合</li>
+</ul>
+<p>ここでは “New Directory” を選びます。</p>
+<div class="figure">
+<img src="/images/2018-1-2-3-projecttype.png" alt="Fig: プロジェクトタイプ" />
+<p class="caption">Fig: プロジェクトタイプ</p>
+</div>
+<p>次に “Project Type” を選ぶように促されますので，これは “New Project” を選んでください。</p>
+<p>使用環境に応じて異なる表示をするかもしれませんが，おおよそ次のように表示されます。プロジェクトに相応しい英語の名前をつけましょう。“Directory Name” がプロジェクトの名前になります。ここでは “RClub” とします。（スクリーンショットに表示されている <code>~</code> は「ホームディレクトリ」を意味する記号です。詳しくは <a href="{{% ref "/post/2018-10-03-about-paths.html" %}}">コラム</a>を参照してください）</p>
+<div class="figure">
+<img src="/images/2018-1-2-4-projname.png" alt="Fig: プロジェクト名" />
+<p class="caption">Fig: プロジェクト名</p>
+</div>
+<p>RStudio が新しく開くと，右上に “RClub” と表示されます。これでプロジェクトの作成は完了です。</p>
+<div class="figure">
+<img src="/images/2018-1-2-5-inproject.png" alt="Fig: プロジェクトに入っている状態" />
+<p class="caption">Fig: プロジェクトに入っている状態</p>
+</div>
+<p><strong>練習 1</strong><br />
+RStudio をすべて閉じてください。エクスプローラーで “RClub.Rproj” ファイルを探してダブルクリックします。RStudio が開いて，プロジェクトが開かれていることを確認してください。</p>
+</div>
+<div id="project-config" class="section level2">
+<h2>プロジェクトの設定</h2>
+<p>プロジェクトに対する設定を確認しておきましょう。Files の書かれた枠に “RClub.Rproj” というファイルが見えているはずです。これをクリックしてください。</p>
+<div class="figure">
+<img src="/images/2018-1-2-6-files.png" alt="Fig: Files ペインの RClub.Rproj" />
+<p class="caption">Fig: Files ペインの “RClub.Rproj”</p>
+</div>
+<p>すると，次のような設定画面が表示されます。プロジェクトごとに設定を変えることができますが，基本的には以下の通りに設定することをおすすめします。</p>
+<p><strong>General タブ</strong></p>
+<ul>
+<li>Restore .RData into workspace at startup: No</li>
+<li>Save workspace to .RData on exit: No</li>
+<li>Always save history (even if not saving .RData): Yes</li>
+</ul>
+<div class="figure">
+<img src="/images/2018-1-2-7-general.png" alt="Fig: データはコマンド履歴のみ保存する" />
+<p class="caption">Fig: データはコマンド履歴のみ保存する</p>
+</div>
+<p><strong>Code Editing タブ</strong></p>
+<p>Text encoding が UTF-8 になっていることを確認してください。</p>
+<div class="figure">
+<img src="/images/2018-1-2-8-utf.png" alt="Fig: Text encoding は UTF-8" />
+<p class="caption">Fig: Text encoding は UTF-8</p>
+</div>
+</div>
+<div id="r-.rprofile" class="section level2">
+<h2>最初のRスクリプト .Rprofile</h2>
+<p>後ほど詳しく説明しますが，「スクリプト」というのはコマンドを書いたテキストファイルのことです。</p>
+<p><code>.Rprofile</code> というファイル（ファイル名の最初がドット，R だけ大文字）は特別なスクリプトで，プロジェクト・フォルダの直下に置いておくと，プロジェクトを開くたびに最初に実行されます。</p>
+<p><strong>練習 2</strong><br />
+コンソールで次のコマンドを実行して，<code>.Rprofile</code> を作成してください。</p>
+<pre class="r"><code>&gt; file.edit(&quot;.Rprofile&quot;)</code></pre>
+<p>内容は次のようにして保存します。ただし，“Kenji” のところはあなたの名前に変えてください。</p>
+<pre class="r"><code># .Rprofile
+message(&quot;Hello, Kenji! Today&#39;s &quot;, Sys.Date(), &quot;.&quot;)</code></pre>
+<p><strong>問題 1</strong><br />
+プロジェクトを再読み込みしてください。起動直後に <code>.Rprofile</code> が何をしたか説明してください。</p>
+<p><details> <summary>答</summary></p>
+<pre><code>R version 3.5.1 (2018-07-02) -- &quot;Feather Spray&quot;
+Copyright (C) 2018 The R Foundation for Statistical Computing
 
+.....（中略） .....
+
+Type &#39;q()&#39; to quit R.
+
+Hello, Kenji! Today&#39;s 2018-09-16.    ← ココが増えた！</code></pre>
+<p></details></p>
+<div class="hint">
+<h2 id="rprofile-">.Rprofile の置き場所</h2>
+<p>ホームディレクトリ（<code>~</code>, <a href="{{% ref "/post/2018-10-03-about-paths.html" %}}">コラム参照</a>）に <code>.Rprofile</code> （以下，<code>~/.Rprofile</code>）を置くように推奨している教科書もたくさんありますが，初心者のうちはプロジェクトフォルダだけに <code>.Rprofile</code> を書くようにしましょう。ホームディレクトリの <code>~/.Rprofile</code> ファイルは遠くにある目に見えないファイルで「自分でさえ書いたことを忘れる」ことがよくあるからです。そんな，忘れがちなファイルであるにも関わらず，R はこれを毎回律儀に実行してしまうので，思いもよらぬ結果をもたらすことがあるのです。授業のレポートに R を使ってもらっていて，学生さんに「よく分からないエラーが出て困っている」と聞かれて調べてみると <code>~/.Rprofile</code> が悪さをしていた，ということもありました。</p>
+<p>このセクションで無害な <code>.Rprofile</code> を書いてもらったのには1つ重要な理由があります。これがあると，<code>~/.Rprofile</code> を無視するからです。別の講座や自習のために <code>~/.Rprofile</code> を作った人がいても，そちらは読み込まれないようになっています。</p>
+<p>もちろん，1つ1つのコードが何をやっているのかが分かるようになってきたら，害のない範囲で <code>~/.Rprofile</code> を育てていくのはよい心がけでしょう。その場合でも，プロジェクトフォルダにも <code>.Rprofile</code> を作って，プロジェクトだけで必要なコードはプロジェクトの <code>.Rprofile</code> だけに書くようにします。最初の行を次のように書いておけば <code>~/.Rprofile</code> も読み込んでくれます。</p>
+<pre><code>if (file.exists(&#39;~/.Rprofile&#39;)) sys.source(&#39;~/.Rprofile&#39;, envir = environment())</code></pre>
+</div>
+</div>
+<div id="project-structure" class="section level2">
+<h2>プロジェクト・フォルダの構成</h2>
+<p>標準的なデータ分析プロジェクトには，</p>
+<ul>
+<li>コマンドを記録したファイル（ソースコード）</li>
+<li>生データ</li>
+<li>生データを処理して出来上がった2次データ</li>
+<li>分析結果を保存したテキストファイル</li>
+<li>分析結果のグラフ</li>
+<li>ソースコードの使い方</li>
+<li>分析結果の解釈などを含めたレポート</li>
+</ul>
+<p>などなどが必要になります。以下のように，ファイルの種類に応じたフォルダを作って整理しましょう。もちろん，必要に応じて増やしたり減らしたりしても構いません。</p>
+<pre><code>RClub/           (プロジェクト・フォルダ)
+├── .Rprofile
+├── README.Rmd   (後述)
+├── Data/
+├── Graphics/
+├── R/
+├── RClub.Rproj
+├── Reports/
+└── Results/</code></pre>
+<p>R上でフォルダを作るにはコンソールで次のコマンドを実行します（Files ペインやエクスプローラーを使っても構いません）。5つの空のフォルダができあがります。</p>
+<pre><code>&gt; dir.create(&quot;R&quot;)
+&gt; dir.create(&quot;Data&quot;)
+&gt; dir.create(&quot;Results&quot;)
+&gt; dir.create(&quot;Graphics&quot;)
+&gt; dir.create(&quot;Reports&quot;)</code></pre>
+<p>そして，フォルダの内容物に関する規則を決めてしまいましょう。例えば次のように決めます。</p>
+<table style="width:83%;">
+<colgroup>
+<col width="22%" />
+<col width="61%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">フォルダ名</th>
+<th align="left">コンテンツ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">R</td>
+<td align="left">スクリプト（コマンドを書いたファイル）</td>
+</tr>
+<tr class="even">
+<td align="center">Data</td>
+<td align="left">データ（生データと前処理済の2次データ）</td>
+</tr>
+<tr class="odd">
+<td align="center">Results</td>
+<td align="left">プロジェクトの出力（主にテキスト形式のもの）</td>
+</tr>
+<tr class="even">
+<td align="center">Graphics</td>
+<td align="left">プロジェクトで作成したグラフなど</td>
+</tr>
+<tr class="odd">
+<td align="center">Reports</td>
+<td align="left">分析の詳細と解釈などを記載したレポート</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="scripts" class="section level1">
+<h1>スクリプト</h1>
+<p>スクリプトというのはコマンドを並べたテキストファイルのことで，<code>source()</code> という関数を使うと，R はファイルに書かれたコマンドを上から順に実行していきます。このファイルには <code>.R</code> という拡張子をつけることが推奨されています。</p>
+<p>スクリプトファイルは <code>R</code> フォルダに置きます。</p>
+<p>新しいスクリプトを作るには</p>
+<ul>
+<li>ナビゲーションメニューから “File → New File → R Script” とするか
+<ul>
+<li>名前は保存するときに決めます。</li>
+<li>先ほど作った <code>R</code> フォルダに保存してください</li>
+</ul></li>
+<li>コンソールで <code>file.edit(&quot;R/filename.R&quot;)</code> を実行してください。
+<ul>
+<li>先に名前を決めてしまいます</li>
+<li>“R/filename.R” という指定は <code>R</code> フォルダにある <code>filename.R</code> というファイルという意味です。 詳しくは，<a href="{{% ref "/post/2018-10-03-about-paths.html" %}}">パスについて</a> を参照ください。</li>
+</ul></li>
+</ul>
+<div id="write-run-script" class="section level2">
+<h2>スクリプトを書いて実行する</h2>
+<div id="-1" class="section level3">
+<h3>スクリプト 1</h3>
+<p>ひとまず簡単な計算をするスクリプトを書いてみましょう。</p>
+<pre class="r"><code>&gt; file.edit(&quot;R/calc.R&quot;)</code></pre>
+<p>テキストエディタが開きますので，そこにコマンドを打ち込んでいきます。 なんでもいいのですが，例えば次のようにしてみましょう。</p>
+<pre class="r"><code># calc.R
+
+5 + (8 + 9) * 12 - 30</code></pre>
+<p>最初の行の <code># calc.R</code> というのは入力してもしなくても構いません。<strong><code>#</code> から行の最後までは R は無視します。コードを説明するコメントを入力するときに使います</strong>。</p>
+<p>コード全体を実行するには少なくとも3つの方法がありますので，すべての方法を試してみてください。</p>
+<ol style="list-style-type: decimal">
+<li>RStudio の <code>Source</code> ボタンを使う</li>
+<li>キーボードショートカット Ctrl+Shift+Enter (Win) / Cmd+Shift+Return (mac) を使う</li>
+<li>キーボードショートカット Ctrl+Shift+S (Win) / Cmd+Shift+S (mac) を使う</li>
+<li><code>source()</code> 関数を使う。例：</li>
+</ol>
+<pre class="r"><code>&gt; source(&quot;R/calc.R&quot;)</code></pre>
+<p><strong>練習 3</strong><br />
+<code>calc.R</code> を上の3つの方法で実行してください。違いがあれば，説明してください。</p>
+<p><details> <summary>解説</summary> <code>source(&quot;R/calc.R&quot;)</code> を実行しても何も表示されずに困惑したかもしれません。<code>source()</code> 関数は「結果を画面に出力しない」というのがデフォルトになっているからです。Ctrl+Shit+S も同じように振る舞います。</p>
+<p>Ctrl+Shit+Enter は「『結果を画面に出力する』というオプションをオンにした <code>source()</code> 」です。<code>echo</code> というのがそのオプションの名前です。</p>
+<pre class="r"><code>&gt; source(&quot;R/calc.R&quot;, echo = TRUE)</code></pre>
+<p><code>echo = TRUE</code> とすると途中の計算もすべて表示されてしまうので，<code>source(&quot;calc.R&quot;)</code> を使って最終結果のみ表示したいというケースが多々あります。そういう場合には結果を明示的に画面に表示するようにスクリプトを書き変える必要があります。 <code>print()</code> という画面に出力するための関数を使います。</p>
+<pre class="r"><code># calc.R (edited)
+
+print(5 + (8 + 9) * 12 - 30)</code></pre>
+<p></details></p>
+</div>
+<div id="-2" class="section level3">
+<h3>スクリプト例 2</h3>
+<p><strong>問題</strong> 2<br />
+次の計算をしなさい。</p>
+<p><span class="math display">\[
+1 + \dfrac{1}{
+  1 + \dfrac{1}{
+    1 + \dfrac{1}{
+      1 + \dfrac{1}{
+        1 + \dfrac{1}{
+          1 + \dfrac{1}{
+            2
+          }
+        }
+      }
+    }
+  }
+}
+\]</span></p>
+<p><details> <summary>答</summary></p>
+<p>読みやすさを考慮して半角スペースや改行を適切に挿入します。</p>
+<pre class="r"><code>1 + 1 / (
+  1 + 1 / (
+    1 + 1 / (
+      1 + 1 / (
+        1 + 1 / (
+          1 + 1 / (
+            2
+          )
+        )
+      )
+    )
+  )
+)</code></pre>
+<pre><code>## [1] 1.619048</code></pre>
+<p>開いた括弧の後ろで改行していることに注意しましょう。中途半端な感じがするかもしれませんが，<strong>中途半端だからこそよいのです</strong>。例えば，</p>
+<pre><code>1 + 1
+/ (
+  1 + 1 / 2
+)</code></pre>
+<p>を実行しようとすると，</p>
+<pre><code>Error: unexpected &#39;/&#39;</code></pre>
+<p>というエラーで止まってしまいます。1行目が完結したコマンドになってしまっているので，R は全体を1つのコマンドとは認識せず， <code>/</code> から始まる2つ目のコマンドを実行しようとします。割り算の記号 <code>/</code> は <code>A / B</code> の形でしか使えないのでエラーになります。</p>
+<p></details></p>
+</div>
+<div id="-3" class="section level3">
+<h3>スクリプト例 3</h3>
+<p><strong>問題</strong> 3<br />
+次のスクリプトを実行したときに何が起こるかを予想してください。その後，実際に作成・実行して予想が正しかったかどうかを検証してください。</p>
+<pre class="r"><code># exponential.R
+
+png(&quot;Graphics/exponential.png&quot;, height = 1440, width = 1440, res = 216)
+plot(exp)
+dev.off()</code></pre>
+<p><details> <summary>解説</summary> <code>Graphics</code> フォルダに <code>exponential.png</code> という画像ファイルが生成されます。画像は前回学んだ指数関数のグラフです。</p>
+<p><code>png(&quot;保存フォルダ/ファイル名.png&quot;, 種々のオプション)</code> と <code>dev.off()</code> の間に実行された描画は，指定したファイルに保存されます。この機能を使えば，論文やレポートを作成するときに必要なグラフを R で作ることができますね。</p>
+<p>png 以外にも pdf などにも保存することができます。（オプションは保存形式によって異なります） </details></p>
+</div>
+<div id="why-write-scripts" class="section level3">
+<h3>なぜスクリプトを書くのか？</h3>
+<p>ここで紹介したような短い例では，スクリプトは役に立たないと思うかもしれません。しかし，そうとも限りません。 スクリプトはコンピュータにコマンドを命令するための指令書であると同時に，未来の自分（あるいは他人）が，分析手順の正しさを検証するために必要になります。</p>
+<p>グラフ1つとっても「どうやって描いたのか？」ということを問われるケースもあります。Excel でグラフを作るときに実行する複雑な手作業を記憶することは困難でしょう。しかし，R をはじめとしたプログラミング言語では，グラフの微調整を手作業ではなくコマンドを通して行うので，記録が簡単になるというところにあります。スクリプトを保存しておけばよいのですから。</p>
+<p>簡単な作業であっても，分析の記録という観点からスクリプトを活用することをおすすめします。</p>
+</div>
+</div>
+<div id="comments" class="section level2">
+<h2>コメント</h2>
+<div id="why-write-comments" class="section level3">
+<h3>なぜコメントを書くのか？</h3>
+<p>次の2コマ漫画は ボズウェル・フォシェ・角征典訳（2012）『リーダブルコード』（<em>The Art of Readable Code</em>）オライリーからの引用です（訳書 p. ix）。</p>
+<div class="figure">
+<img src="/images/2018-1-2-9-readable-code.png" alt="Fig: Readable Code" />
+<p class="caption">Fig: Readable Code</p>
+</div>
+<p>「こんなことがあるはずない」と思うかもしれませんが，実際によくあることです。昔々の経験を思い出すとくすっと笑えるのですが，「2週間後の私」には面白くない冗談かもしれませんね。結局イチから書き直したり・・・・・</p>
+<p>要するにそういうことが起こらないように</p>
+<ul>
+<li>コメントをしっかり書きましょう</li>
+<li>名前は適切に付けましょう（後述）</li>
+</ul>
+<p>ということです。本格的なコードを書き始めたときに重要になるので，覚えておいてください。</p>
+<p>R 言語で書かれたコードを実行するプログラム（インタプリタという）は半角のハッシュ（<code>#</code>）からその行の最後までを読み飛ばします。書かている内容が「コメント」です。コメントは人間が読むためのものなので，そこに書いた内容は実行結果には影響しません。</p>
+<p><strong>問題</strong> 4<br />
+次のコードの出力は何になるでしょうか？</p>
+<pre class="r"><code># ここはコメント
+# 複雑なコードを説明したり
+# スクリプトの目的などを書くとよいでしょう
+
+log(1)   # ここもコメント</code></pre>
+<p><details><summary>答</summary></p>
+<pre><code>## [1] 0</code></pre>
+<p></details></p>
+</div>
+<div id="rstudio-sectioning" class="section level3">
+<h3>RStudio のセクション機能</h3>
+<p>スクリプトを実行する際にはコメントは読み飛ばされますが，RStudio や一部のRパッケージはコメントを利用して便利な機能を提供しています。</p>
+<p>ここでは，<a href="https://support.rstudio.com/hc/en-us/articles/200484568-Code-Folding-and-Sections">RStudio のセクション機能</a> を簡単に紹介しておきましょう。</p>
+<p>RStudio は</p>
+<ul>
+<li><code>#</code> (ハッシュ)</li>
+<li>セクション名</li>
+<li>半角スペース</li>
+<li><code>-</code>, <code>=</code>, <code>#</code> のどれか1つを4つ以上続けて書く</li>
+</ul>
+<p>をこの順で並べるとセクションの始まりと認識します（実際のルールはもう少し緩やかなものです）。セクションの終わりは</p>
+<ul>
+<li>ファイルの終わりか，</li>
+<li>次のセクションが始まる直前です。</li>
+</ul>
+<p>なぜこのような機能がありがたいかを理解するために，次のようなスクリプトを書いてみましょう。</p>
+<pre class="r"><code>&gt; file.edit(&quot;R/sections.R&quot;)</code></pre>
+<pre><code># sections.R
+
+# Section 1 ####
+
+log(10)
+
+# Section 2 ====
+
+stop(&quot;Error&quot;)
+
+# Section 3 ----
+
+message(&quot;Hello&quot;)</code></pre>
+<p>これを <code>source()</code> すると…</p>
+<pre class="r"><code>&gt; source(&quot;R/sections.R&quot;, echo = TRUE)</code></pre>
+<p>次のような結果になります。</p>
+<pre><code>&gt; # sections.R
+&gt; 
+&gt; # Section 1 ####
+&gt; 
+&gt; log(10)
+[1] 2.302585
+
+&gt; # Section 2 ====
+&gt; 
+&gt; stop(&quot;Error&quot;)
+Error in eval(ei, envir) : Error</code></pre>
+<p>Section 2 の直後にエラーが出ているので，Section 3 の内容が実行されていないことが分かると思います。もし，コード全体の実行しかできなければ，次のような不便があります。</p>
+<ul>
+<li>Section 2 のエラーは後回しにして，Section 1 の作業をするときには，実行のたびに Section 2 が実行されてエラーが起きるので鬱陶しい。</li>
+<li>Section 2 のエラーは後回しにして，Section 3 の作業をするときには，Section 3 は実行されない。</li>
+<li>Section 2 のエラーを解決しようと思って作業するときにも，Section 1, 3 が実行されてしまうのでやっぱり鬱陶しい。</li>
+</ul>
+<p>したがって，セクションごとにコードを実行できる機能があると大変便利なわけです。</p>
+<p>RStudio のナビゲーションメニューから</p>
+<ul>
+<li>Code &gt; Run Region &gt; Run Code Section</li>
+</ul>
+<p>を探してみてください。Windows では Ctrl+Alt+T がショートカットキーとして割り当てられていることが分かりますので，これを覚えてしまいましょう。(mac では Command+Option+T)</p>
+<ul>
+<li>セクションを作るには, コメントだけからなる行を作って最後に <code>====</code>, <code>----</code>, または <code>####</code> をつける</li>
+<li>セクションのコードを実行するには，セクション内にカーソルがある状態で Ctrl+Alt+T (Command+Option+T) を押下する</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="summary" class="section level1">
+<h1>まとめ</h1>
+<ul>
+<li>プロジェクト（ひとまとまりの仕事）を始める前には「R プロジェクト」を作る
+<ul>
+<li>プロジェクトの作業を開始するときは，いつでも “projName.Rproj” をダブルクリックする</li>
+<li>作業開始とともに実行したいコードはプロジェクトフォルダ直下に <code>.Rprofile</code> を書く</li>
+<li>プロジェクト・フォルダの中身を整理整頓しよう</li>
+</ul></li>
+<li>スクリプトファイルに分析を記録しよう。
+<ul>
+<li><code>file.edit(&quot;R/filename.R)</code> でスクリプトを書き始める</li>
+<li>実行は <code>source(&quot;R/filename.R&quot;)</code> または <code>source(&quot;R/filename.R&quot;, echo = TRUE)</code> またはボタン・ショートカットキー</li>
+<li>コメント，セクションを適宜書く
+<ul>
+<li>セクション内のコードの実行は Ctrl+Alt+T (Win) / Command+Option+T (Mac)</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="next" class="section level1">
+<h1>次のステップ</h1>
+<p>以下のようなトピックを予定しています:</p>
+<ul>
+<li>データの扱い方
+<ul>
+<li>ベクトル</li>
+<li>データフレーム, tibble</li>
+</ul></li>
+<li>Excel/Stata との連携
+<ul>
+<li>Excel/Stata のデータを読んで分析する</li>
+<li>Excel/Stata で読める形に出力する</li>
+</ul></li>
+</ul>
+</div>

@@ -21,8 +21,7 @@ tags:
 </div>
 <div id="path" class="section level1">
 <h1>Path（パス）について</h1>
-<p>少し寄り道をしてファイルの位置を表すルールと関連する用語について確認しておきましょう。
-<strong>ここで扱う内容はRに関する解説ではありませんが，非常に大切なトピックなので目を通しておくことを強くおすすめします</strong>。</p>
+<p>少し寄り道をしてファイルの位置を表すルールと関連する用語について確認しておきましょう。 <strong>ここで扱う内容はRに関する解説ではありませんが，非常に大切なトピックなので目を通しておくことを強くおすすめします</strong>。</p>
 <p>みなさんが普段 Microsoft Windows をお使いなら，</p>
 <pre><code>C:￥Users￥username￥Documents</code></pre>
 <p>あるいは</p>
@@ -35,8 +34,7 @@ tags:
 <li><code>username</code> の中にさらに <code>Ducuments</code> というフォルダがある</li>
 <li>….</li>
 </ul>
-<p>というような意味だということはエクスプローラーを使っていれば想像ができると思います。
-このように，<strong>ファイルやフォルダがある位置を指定するテキスト表現のことを「パス」(Path) といいます</strong>。</p>
+<p>というような意味だということはエクスプローラーを使っていれば想像ができると思います。 このように，<strong>ファイルやフォルダがある位置を指定するテキスト表現のことを「パス」(Path) といいます</strong>。</p>
 <div class="hint">
 <p><strong>フォルダ</strong> という言葉を使う代わりに <strong>ディレクトリ</strong> という言葉を使うことがありますが，両者は同じことを表していますので違いについて深く考える必要はありません。</p>
 </div>
@@ -58,8 +56,7 @@ tags:
 <p><strong>練習 1</strong></p>
 <ol style="list-style-type: decimal">
 <li><code>getwd()</code> で表示されたフォルダにエクスプローラーを使って移動してみてください。</li>
-<li>そこに <code>list.files(all.files = TRUE)</code>
-で表示されたファイル・フォルダが実際にあることを確かめてください。</li>
+<li>そこに <code>list.files(all.files = TRUE)</code> で表示されたファイル・フォルダが実際にあることを確かめてください。</li>
 </ol>
 </div>
 <div id="absolute-relative" class="section level2">
@@ -124,26 +121,21 @@ tags:
 │   └── RClub.Rproj
 └── note.txt</code></pre>
 <ul>
-<li><code>HOME</code> ディレクトリには <code>Data</code> と <code>RClub</code> という2つのディレクトリと，
-<code>note.txt</code> というファイルが入っている</li>
+<li><code>HOME</code> ディレクトリには <code>Data</code> と <code>RClub</code> という2つのディレクトリと， <code>note.txt</code> というファイルが入っている</li>
 <li><code>Data</code> ディレクトリには <code>numbers.txt</code> というファイルが入っている。</li>
-<li><code>RClub</code> というディレクトリには <code>R</code> というディレクトリ
-（その中には <code>script.R</code> というファイル）と <code>RClub.Rproj</code> というファイルが入っている</li>
+<li><code>RClub</code> というディレクトリには <code>R</code> というディレクトリ （その中には <code>script.R</code> というファイル）と <code>RClub.Rproj</code> というファイルが入っている</li>
 </ul>
-<p>という状態です。ここで， <code>RClub</code> が作業ディレクトリであると考えてください。
-必要であれば同じ構造を再現してみてください。（<a href="/files/zip/HOME.zip">HOME.zip</a> をダウンロード→展開して，<code>HOME/RClub/RClub.Rproj</code> をダブルクリックして RStudio を起動すればOK）</p>
+<p>という状態です。ここで， <code>RClub</code> が作業ディレクトリであると考えてください。 必要であれば同じ構造を再現してみてください。（<a href="/files/zip/HOME.zip">HOME.zip</a> をダウンロード→展開して，<code>HOME/RClub/RClub.Rproj</code> をダブルクリックして RStudio を起動すればOK）</p>
 <p>作業ディレクトリの中にあるディレクトリ・ファイルを指定するには</p>
 <pre><code>&quot;R&quot;        &quot;R/script.R&quot;</code></pre>
 <p>という表現を用います。「作業ディレクトリ」（あるいは，特定のディレクトリ自身を表す）を表す特別な記号 <code>.</code> （ドット）を用いて，</p>
 <pre><code>&quot;./R&quot;      &quot;./R/script.R&quot;</code></pre>
 <p>を使うことができます。</p>
 <p>それでは，作業ディレクトリの下にないファイルやディレクトリを指定するにはどうすればよいでしょうか？さきほど <code>list.files(all.files = TRUE)</code> を実行したときに <code>.</code> や <code>..</code> という見慣れない（？）ものが出てきたことに気がついたでしょうか。<code>.</code> はすでに説明した「作業ディレクトリ」のことでしたね。</p>
-<p>もう1つドットを増やした <code>..</code> （ドットドット）は「親ディレクトリ」を表す特別な記号です。
-<code>RClub</code> に対する「親ディレクトリ」は「<code>HOME</code>」という名前のディレクトリです。この親ディレクトリを起点にすれば，<code>Data/</code> も <code>note.txt</code> も含まれていますから，</p>
+<p>もう1つドットを増やした <code>..</code> （ドットドット）は「親ディレクトリ」を表す特別な記号です。 <code>RClub</code> に対する「親ディレクトリ」は「<code>HOME</code>」という名前のディレクトリです。この親ディレクトリを起点にすれば，<code>Data/</code> も <code>note.txt</code> も含まれていますから，</p>
 <pre><code>&quot;../Data/numbers.txt&quot;     &quot;../note.txt&quot;</code></pre>
 <p>といった表現で，<strong>作業ディレクトリの隣にあるディレクトリの中のファイル</strong>を指定することができます。</p>
-<p>このように，作業ディレクトリを起点にして表示されたパスを「相対パス」と呼びます。
-相対パスは <code>normalizePath()</code> を使うと絶対パスに置換できます。</p>
+<p>このように，作業ディレクトリを起点にして表示されたパスを「相対パス」と呼びます。 相対パスは <code>normalizePath()</code> を使うと絶対パスに置換できます。</p>
 <pre class="r"><code>&gt; normalizePath(&quot;..&quot;)</code></pre>
 <div class="hint">
 <h3 id="setwd-"><code>setwd()</code> を避ける</h3>
@@ -152,10 +144,8 @@ tags:
 <p>この機能は極力使わないようにしましょう。私のおすすめは，次の約束にしたがうことです。</p>
 <ul>
 <li>プロジェクトごとにフォルダを作る</li>
-<li>「ワーキング・ディレクトリの変更」は最初の1回だけ，プロジェクトの作業を
-開始するときだけ実行する</li>
-<li>コードや共有可能なデータは作業ディレクトリを起点とした相対パスを
-利用して読み書きする</li>
+<li>「ワーキング・ディレクトリの変更」は最初の1回だけ，プロジェクトの作業を 開始するときだけ実行する</li>
+<li>コードや共有可能なデータは作業ディレクトリを起点とした相対パスを 利用して読み書きする</li>
 <li>共有不可能なデータは “~” （後述）を使った絶対パスを利用して読み込む</li>
 </ul>
 </div>
@@ -171,8 +161,7 @@ tags:
 <p>ユーザー名が変わるとホームディレクトリのパスが変わってしまうと，複数の人が参加しているプロジェクトでは大変面倒なことになります。あるいは，次のようなケースでも，いちいちコードの書き換えが必要になるかもしれません。</p>
 <ul>
 <li>プロジェクトのソースコード（プログラム）は個人のコンピュータで開発したいのだけど，</li>
-<li>プロジェクトのデータには社外秘の情報が含まれるので社内の特定のコンピュータから出しては
-いけない</li>
+<li>プロジェクトのデータには社外秘の情報が含まれるので社内の特定のコンピュータから出しては いけない</li>
 </ul>
 <p>環境を移してもコードがそのまま使えるようにするのが望ましいのです。そのためには，ユーザー名を含まないようにしなければなりません。</p>
 <p>解決のための1つの方法は，<code>Sys.getenv(&quot;HOME&quot;)</code> を使うということです。しかし，この問題は人類すべてにとって重要なので，ホームディレクトリには <code>~</code> という省略名が付けられています。こちらを使うのが普通です。</p>
@@ -194,7 +183,7 @@ tags:
 <h2>まとめ</h2>
 <table>
 <colgroup>
-<col width="29%" />
+<col width="30%" />
 <col width="31%" />
 <col width="38%" />
 </colgroup>
@@ -207,11 +196,9 @@ tags:
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">作業ディレクトリ<br>
-カレントディレクトリ</td>
+<td align="left">作業ディレクトリ<br> カレントディレクトリ</td>
 <td align="center"><code>.</code></td>
-<td align="center"><code>getwd()</code><br>
-<code>normalizePath(&quot;.&quot;)</code></td>
+<td align="center"><code>getwd()</code><br> <code>normalizePath(&quot;.&quot;)</code></td>
 </tr>
 <tr class="even">
 <td align="left">親ディレクトリ</td>
@@ -220,16 +207,13 @@ tags:
 </tr>
 <tr class="odd">
 <td align="left">ルートディレクトリ</td>
-<td align="center"><code>/</code><br>
-Winows の標準は<code>C:￥</code></td>
+<td align="center"><code>/</code><br> Winows の標準は<code>C:￥</code></td>
 <td align="center"><code>normalizePath(&quot;/&quot;)</code></td>
 </tr>
 <tr class="even">
 <td align="left">ホームディレクトリ</td>
 <td align="center"><code>~</code></td>
-<td align="center"><code>path.expand(&quot;~&quot;)</code><br>
-<code>normalizePath(&quot;~&quot;)</code><br>
-<code>Sys.getenv(&quot;HOME&quot;)</code></td>
+<td align="center"><code>path.expand(&quot;~&quot;)</code><br> <code>normalizePath(&quot;~&quot;)</code><br> <code>Sys.getenv(&quot;HOME&quot;)</code></td>
 </tr>
 </tbody>
 </table>
