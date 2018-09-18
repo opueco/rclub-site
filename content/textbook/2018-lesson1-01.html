@@ -2,7 +2,9 @@
 title: "Lesson 1-1: R を使ってみよう！"
 date: '2018-10-03'
 categories:
-  - text
+  - textbook
+tag:
+  - R
 slug: 2018-1-1
 output: 
   blogdown::html_page:
@@ -28,6 +30,7 @@ output:
 <li><a href="#exercise2">練習問題2</a></li>
 <li><a href="#about-functions">補遺：数学の関数とプログラムの「関数」</a></li>
 </ul></li>
+<li><a href="#error">エラーは怖くない!</a></li>
 <li><a href="#summary">まとめ</a></li>
 <li><a>次のステップ</a></li>
 </ul>
@@ -293,6 +296,43 @@ output:
 <p>これから，みなさんはたくさんの「関数」を作ることになります。それは数学的な関数に近い場合もあれば「複雑な仕事に名前をつける」という性質のものになるかもしれません。</p>
 </div>
 </div>
+<div id="error" class="section level1">
+<h1>エラーは怖くない!</h1>
+<p>プログラミング初学者にとってはエラーメッセージというのは少し怖いものかもしれません。エラーメッセージの出現とともに計算が止まってしまうので，「自分が何か悪いことをしたに違いない」と感じてしまうかもしれません。反射的にウインドウを消してしまいそうになったら，ここに書かれていることを思い出して，ぐっと堪えてください。</p>
+<p>エラーは人間から人間へのメッセージです。きちんと読めば原因が分かるようになっているはずです。あなたがプログラムを書くときにも，他の人が原因究明する助けになるようなエラーを組み込まなければなりません。</p>
+<p>試しに，コンソールで次のコマンドを実行してください。</p>
+<pre class="r"><code>&gt; stop(&quot;エラーですよ&quot;)</code></pre>
+<p><details> <summary>実行結果</summary></p>
+<pre><code>Error: エラーですよ</code></pre>
+<p></details></p>
+<p>ここで発生するエラーはあなたが作ったものですから，まったく怖くないでしょう？他の人が作ったエラーも怖くないのです。要するに，<strong>「これ以上先に進んでもうまくいかない」ということが確実な場合にエラーを仕込んでおくのです</strong>。そうしておくと，うまくいかないコードを延々と走らせる無駄を省くことができるからです。有り難いことです。</p>
+<p>さて，次のコードを実行して，どのようなエラーが出るかを見てみましょう。エラーメッセージに重要な情報が書かれていることを確かめてください。</p>
+<p><strong>例 1</strong></p>
+<pre><code>&gt; library(&quot;nosuchpackage&quot;)
+</code></pre>
+<p><details> <summary>解説</summary></p>
+<pre><code>Error in library(&quot;nosuchpackage&quot;) : 
+  there is no package called ‘nosuchpackage’</code></pre>
+<p><code>library()</code> はR の拡張機能（＝パッケージ）を読み込むための関数です。 “nosuchpackage” などというパッケージは存在しない，というエラーが出て止まります。入力間違いか，パッケージがインストールされていないことが予想されます。 </details></p>
+<p><strong>例 2</strong></p>
+<pre><code>&gt; 5 = 10
+</code></pre>
+<p><details> <summary>解説</summary></p>
+<pre><code>Error in 5 = 10 : invalid (do_set) left-hand side to assignment</code></pre>
+<p><code>=</code> は後に説明する「変数への代入（右から左）」です。左辺が「数字」では機能しません。両辺が同じであるかをチェックするには，等号を2つ並べた <code>==</code> を使います。</p>
+<pre class="r"><code>5 == 10</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<p>もちろん答えは「FALSE」(= 偽) ですね。これはエラーではありません。 </details></p>
+<p><strong>例 3</strong></p>
+<pre><code>&gt; exp(&quot;10&quot;)
+</code></pre>
+<p><details> <summary>解説</summary></p>
+<pre><code>Error in exp(&quot;10&quot;) : non-numeric argument to mathematical function</code></pre>
+<p>関数 <code>exp()</code> の括弧の中身は数字でなければなりません。引用符をつけた <code>&quot;10&quot;</code> は数字ではなく文字列（<code>&quot;1&quot;</code> と <code>&quot;0&quot;</code> が並んだもの）で，引用符なしの <code>10</code> が数字です。この区別は重要です。</p>
+<pre class="r"><code>exp(10)</code></pre>
+<pre><code>## [1] 22026.47</code></pre>
+<p></details></p>
+</div>
 <div id="summary" class="section level1">
 <h1>まとめ</h1>
 <p>今日学んだ数式と R コマンドの対応関係をまとめておきましょう。</p>
@@ -347,8 +387,12 @@ output:
 </tbody>
 </table>
 <p>これらのコマンドと括弧を組み合わせれば，それなりに複雑な計算をこなすこともできるでしょう。 しかし先を急がず， R/RStudio の機能をもう少し習得することにしましょう。何事もスマートにこなす方がいいですからね。</p>
+<p>コマンドを実行してエラーが出たときには，怖がらずにきちんとエラーメッセージを読むようにしてください。それはプログラマからあなたへのメッセージなのです。おいおい分かってくるとは思いますが，<strong>エラーは出ないけど計算結果が間違っているという方がよっぽど怖いことです・・・・・。</strong></p>
 </div>
 <div class="section level1">
 <h1>次のステップ</h1>
-<p><a href="{{% ref "2018-lesson1-02.html" %}}">1-2: はじめての R スクリプト</a></p>
+<ul>
+<li><a href="{{% ref "2018-lesson1-02.html" %}}">1-2: はじめての R スクリプト</a></li>
+<li><a href="{{% ref "/post/2018-10-03-about-paths.html" %}}">コラム: パスのお話</a></li>
+</ul>
 </div>
