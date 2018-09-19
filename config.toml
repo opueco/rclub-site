@@ -7,6 +7,8 @@ disqusShortname = ""
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 preserveTaxonomyNames = true
 footnotereturnlinkcontents = "↩"
+refLinksErrorLevel = "WARNING"
+refLinksNotFoundURL = "/_future_post"
 
 [permalinks]
     post = "/post/:year/:month/:day/:slug/"
