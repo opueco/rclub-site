@@ -49,7 +49,9 @@ R Club に参加している方は，困ったことがあれば直接主催者�
 
 しかし，ご安心ください。R には大きなユーザーコミュニティがあるので，英語で質問を書けばたいていすぐに回答が得られます。質問のタイプごとに質問すべき相手が変わってきますので，自分が直面している問題の本質を見極めた上で質問を書きましょう。質問の書き方についての相談も歓迎します。
 
-* R の使い方についての質問
+* R の使い方に関する一般的な質問
+    * [Google](https://www.google.com)
+    * [Rseek](https://rseek.org)
     * [stackoverflow](https://stackoverflow.com/questions/tagged/r)
     * [R-help](https://stat.ethz.ch/mailman/listinfo/r-help)
 * R のパッケージ開発に関する質問
