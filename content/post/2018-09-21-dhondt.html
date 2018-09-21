@@ -1,0 +1,468 @@
+---
+title: "コラム: ドント方式の議席配分"
+author: kenjisato
+date: "2018-09-21 07:07:27 +0900"
+slug: dhondt
+categories: ["column"]
+tags: ["R", "programming", "intermediate"]
+---
+
+
+
+<p>この記事は<a href="https://www.kenjisato.jp/files/pc/2016/pc16_dhondt.html">佐藤の個人ページに掲載していたもの</a> を加筆・修正したものです。</p>
+<div class="section level1">
+<h1>ドント方式</h1>
+<p>比例代表制には政党が獲得した得票数に近い比率で議席数を分配するようなルールが必要である。いくつかの方式が考案されているが，日本の比例区で用いられているのはドント方式と呼ばれる方法である。</p>
+<p>総定数5議席の比例代表選挙で，開票の結果次のような得票数になったとしよう。</p>
+<table style="width:49%;">
+<colgroup>
+<col width="13%" />
+<col width="11%" />
+<col width="11%" />
+<col width="12%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">政党A</th>
+<th align="center">政党B</th>
+<th align="center">政党C</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>得票数</td>
+<td align="center">700</td>
+<td align="center">400</td>
+<td align="center">240</td>
+</tr>
+</tbody>
+</table>
+<p>ドント方式では，得票数を1, 2, 3, …. で割ってできた数字（商）を大きい順に総定数の分だけ選ぶ。上の例で「÷ 4」まで計算したものが下の表である。太字が5位までの数字で，カッコ内が順位である。</p>
+<table style="width:81%;">
+<colgroup>
+<col width="13%" />
+<col width="22%" />
+<col width="22%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">得票数</th>
+<th align="center">政党A</th>
+<th align="center">政党B</th>
+<th align="center">政党C</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">÷ 1</td>
+<td align="center"><strong>700</strong> (1)</td>
+<td align="center"><strong>400</strong> (2)</td>
+<td align="center"><strong>240</strong> (4)</td>
+</tr>
+<tr class="even">
+<td align="center">÷ 2</td>
+<td align="center"><strong>350</strong> (3)</td>
+<td align="center">200</td>
+<td align="center">120</td>
+</tr>
+<tr class="odd">
+<td align="center">÷ 3</td>
+<td align="center"><strong>233</strong> (5)</td>
+<td align="center">133</td>
+<td align="center">80</td>
+</tr>
+<tr class="even">
+<td align="center">÷ 4</td>
+<td align="center">175</td>
+<td align="center">100</td>
+<td align="center">60</td>
+</tr>
+</tbody>
+</table>
+<p>この結果を元に，得票率と議席占有率の関係を計算すると以下の表のようになる。</p>
+<table style="width:89%;">
+<colgroup>
+<col width="13%" />
+<col width="26%" />
+<col width="26%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">―</th>
+<th align="center">政党A</th>
+<th align="center">政党B</th>
+<th align="center">政党C</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">得票数</td>
+<td align="center">700</td>
+<td align="center">400</td>
+<td align="center">240</td>
+</tr>
+<tr class="even">
+<td align="center">得票率</td>
+<td align="center">0.522</td>
+<td align="center">0.299</td>
+<td align="center">0.179</td>
+</tr>
+<tr class="odd">
+<td align="center">議席数</td>
+<td align="center">3</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">占有率</td>
+<td align="center">0.6</td>
+<td align="center">0.2</td>
+<td align="center">0.2</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level1">
+<h1>2016年参議院選挙・比例区</h1>
+<p>投票数をデータフレームに投入する。得票数のデータは次のサイトから入手できる。</p>
+<ul>
+<li>朝日新聞・ANN <a href="http://www.asahi.com/senkyo/senkyo2016/kaihyo/C01.html">www.asahi.com/senkyo/…</a></li>
+<li>総務省 <a href="http://www.soumu.go.jp/senkyo/senkyo_s/data/sangiin24/index.html">www.soumu.go.jp/senkyo/…</a></li>
+</ul>
+<p>オブジェクトを以下のように定義する。</p>
+<ul>
+<li><code>party</code> は政党名を並べたベクトル。</li>
+<li><code>nvote</code> は各政党の比例区の得票数である。</li>
+<li><code>votes</code> はこれらをまとめたデータフレーム</li>
+</ul>
+<pre class="r"><code>party &lt;- c(&quot;自民&quot;, &quot;民進&quot;, &quot;公明&quot;, &quot;共産&quot;, &quot;お維新&quot;, &quot;社民&quot;, &quot;生活&quot;,
+          &quot;こころ&quot;, &quot;改革&quot;, &quot;幸福&quot;)
+nvote &lt;- c(20114788, 11750965, 7572960, 6016195, 5153584, 1536238, 1067300,
+          734024, 580653, 366815)
+
+(votes &lt;- data.frame(party, nvote))</code></pre>
+<pre><code>##     party    nvote
+## 1    自民 20114788
+## 2    民進 11750965
+## 3    公明  7572960
+## 4    共産  6016195
+## 5  お維新  5153584
+## 6    社民  1536238
+## 7    生活  1067300
+## 8  こころ   734024
+## 9    改革   580653
+## 10   幸福   366815</code></pre>
+<p>改選議席数は 48 である。これにも名前を付けておこう。</p>
+<pre class="r"><code>nseat &lt;- 48</code></pre>
+<div class="section level2">
+<h2>考え方の確認</h2>
+<p>自然数で割って, その商を記録していくというのが基本的な考え方である。最終的には順位を決めることを考えると，割り算した結果はすべて同じ列に入っている方が都合がよい。したがって，データは次のような形になっていることが望ましい（数字は最初の例のもの）。</p>
+<table style="width:58%;">
+<colgroup>
+<col width="13%" />
+<col width="22%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">政党</th>
+<th align="center">除数</th>
+<th align="center">値</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">A</td>
+<td align="center">1</td>
+<td align="center">700</td>
+</tr>
+<tr class="even">
+<td align="center">B</td>
+<td align="center">1</td>
+<td align="center">400</td>
+</tr>
+<tr class="odd">
+<td align="center">C</td>
+<td align="center">1</td>
+<td align="center">240</td>
+</tr>
+<tr class="even">
+<td align="center">A</td>
+<td align="center">2</td>
+<td align="center">350</td>
+</tr>
+<tr class="odd">
+<td align="center">B</td>
+<td align="center">2</td>
+<td align="center">200</td>
+</tr>
+<tr class="even">
+<td align="center">C</td>
+<td align="center">2</td>
+<td align="center">120</td>
+</tr>
+<tr class="odd">
+<td align="center">A</td>
+<td align="center">3</td>
+<td align="center">233</td>
+</tr>
+<tr class="even">
+<td align="center">B</td>
+<td align="center">3</td>
+<td align="center">133</td>
+</tr>
+<tr class="odd">
+<td align="center">C</td>
+<td align="center">3</td>
+<td align="center">80</td>
+</tr>
+</tbody>
+</table>
+<p>なお，R では割り算の商は <code>%/%</code> を使う。</p>
+<pre class="r"><code>&gt; 8 %/% 3</code></pre>
+<pre><code>## [1] 2</code></pre>
+</div>
+<div class="section level2">
+<h2>準備</h2>
+<p>最終的には，繰り返し構文を用いて一気に解くのだが，仕組みを理解してもらうためにワンステップずつ進んでいこう。</p>
+<p>まず，最初のデータフレーム <code>votes</code> に <code>divisor</code> という列を追加してデータを拡張する。ステップ1という意味を込めて，名前を <code>dhondt1</code> としている。<code>value</code> の値は得票数そのものである。</p>
+<pre class="r"><code>(dhondt1 &lt;- data.frame(party, divisor = 1, value = nvote))</code></pre>
+<pre><code>##     party divisor    value
+## 1    自民       1 20114788
+## 2    民進       1 11750965
+## 3    公明       1  7572960
+## 4    共産       1  6016195
+## 5  お維新       1  5153584
+## 6    社民       1  1536238
+## 7    生活       1  1067300
+## 8  こころ       1   734024
+## 9    改革       1   580653
+## 10   幸福       1   366815</code></pre>
+<p>「÷2」のステップは次の様にする。</p>
+<pre class="r"><code>temp &lt;- dhondt1
+temp$divisor &lt;- 2
+temp$value &lt;- nvote %/% 2
+temp</code></pre>
+<pre><code>##     party divisor    value
+## 1    自民       2 10057394
+## 2    民進       2  5875482
+## 3    公明       2  3786480
+## 4    共産       2  3008097
+## 5  お維新       2  2576792
+## 6    社民       2   768119
+## 7    生活       2   533650
+## 8  こころ       2   367012
+## 9    改革       2   290326
+## 10   幸福       2   183407</code></pre>
+<p>次に，<code>dhondt1</code> と <code>temp</code> を行方向に結合する。これには <code>rbind()</code> という関数を使う。</p>
+<pre class="r"><code>(dhondt2 &lt;- rbind(dhondt1, temp))</code></pre>
+<pre><code>##     party divisor    value
+## 1    自民       1 20114788
+## 2    民進       1 11750965
+## 3    公明       1  7572960
+## 4    共産       1  6016195
+## 5  お維新       1  5153584
+## 6    社民       1  1536238
+## 7    生活       1  1067300
+## 8  こころ       1   734024
+## 9    改革       1   580653
+## 10   幸福       1   366815
+## 11   自民       2 10057394
+## 12   民進       2  5875482
+## 13   公明       2  3786480
+## 14   共産       2  3008097
+## 15 お維新       2  2576792
+## 16   社民       2   768119
+## 17   生活       2   533650
+## 18 こころ       2   367012
+## 19   改革       2   290326
+## 20   幸福       2   183407</code></pre>
+<p>これで望んだ形になった。÷3, ÷4 と続けていけばよい。</p>
+<div class="section level3">
+<h3>何ステップあるのか？</h3>
+<p>1ステップごとに行数を増やしていくやり方はおわかりいただけたと思う。しかし，この手続きをどこまで続ければ議席数を確定できるだろうか？</p>
+<p><strong>練習問題</strong>　議席数を確定できるまでに必要なステップ数（除数の大きさ）は議席数以下になることを説明しなさい。</p>
+<p><details> <summary>解説</summary> 「÷ n」の最大値は，「÷ (n+1)」のどの値よりも必ず大きくなる。したがって，1ステップ進むごとに1議席以上が確実に埋まっていく。ステップ数が最も大きくなるのは，すべての議席を単一の政党が獲得する場合であり，このときには，議席数と同じだけのステップ（除数）が必要になる。 </details></p>
+<p>したがって，議席数と同じだけ割り算をしてしまえば十分である。実際にはもっと計算量を節約することもできるだろうけど, この程度の無駄は許してしまおう。</p>
+</div>
+</div>
+<div class="section level2">
+<h2>実装</h2>
+<p>同じような計算を繰り返し実行するときには <code>for</code> を使う。</p>
+<pre class="r"><code>dhondt &lt;- data.frame()
+
+for (i in seq_len(nseat)){
+  temp &lt;- data.frame(party, divisor = i, value = nvote %/% i)
+  dhondt &lt;- rbind(dhondt, temp)
+}</code></pre>
+<p>最初の20行は次のようになる.</p>
+<pre class="r"><code>head(dhondt, 20)</code></pre>
+<pre><code>##     party divisor    value
+## 1    自民       1 20114788
+## 2    民進       1 11750965
+## 3    公明       1  7572960
+## 4    共産       1  6016195
+## 5  お維新       1  5153584
+## 6    社民       1  1536238
+## 7    生活       1  1067300
+## 8  こころ       1   734024
+## 9    改革       1   580653
+## 10   幸福       1   366815
+## 11   自民       2 10057394
+## 12   民進       2  5875482
+## 13   公明       2  3786480
+## 14   共産       2  3008097
+## 15 お維新       2  2576792
+## 16   社民       2   768119
+## 17   生活       2   533650
+## 18 こころ       2   367012
+## 19   改革       2   290326
+## 20   幸福       2   183407</code></pre>
+<p>最後の20行は次のようになっている.</p>
+<pre class="r"><code>tail(dhondt, 20)</code></pre>
+<pre><code>##      party divisor  value
+## 461   自民      47 427974
+## 462   民進      47 250020
+## 463   公明      47 161126
+## 464   共産      47 128004
+## 465 お維新      47 109650
+## 466   社民      47  32685
+## 467   生活      47  22708
+## 468 こころ      47  15617
+## 469   改革      47  12354
+## 470   幸福      47   7804
+## 471   自民      48 419058
+## 472   民進      48 244811
+## 473   公明      48 157770
+## 474   共産      48 125337
+## 475 お維新      48 107366
+## 476   社民      48  32004
+## 477   生活      48  22235
+## 478 こころ      48  15292
+## 479   改革      48  12096
+## 480   幸福      48   7641</code></pre>
+<p>この大きなデータフレームを <code>value</code> 列に関して大きい順に上位48を取り出せばよい.</p>
+<pre class="r"><code>dhondt$rank &lt;- rank(- dhondt$value)
+(win &lt;- subset(dhondt, rank &lt;= nseat))</code></pre>
+<pre><code>##      party divisor    value rank
+## 1     自民       1 20114788    1
+## 2     民進       1 11750965    2
+## 3     公明       1  7572960    4
+## 4     共産       1  6016195    6
+## 5   お維新       1  5153584    8
+## 6     社民       1  1536238   31
+## 7     生活       1  1067300   47
+## 11    自民       2 10057394    3
+## 12    民進       2  5875482    7
+## 13    公明       2  3786480   12
+## 14    共産       2  3008097   14
+## 15  お維新       2  2576792   17
+## 21    自民       3  6704929    5
+## 22    民進       3  3916988   11
+## 23    公明       3  2524320   18
+## 24    共産       3  2005398   23
+## 25  お維新       3  1717861   27
+## 31    自民       4  5028697    9
+## 32    民進       4  2937741   15
+## 33    公明       4  1893240   25
+## 34    共産       4  1504048   33
+## 35  お維新       4  1288396   38
+## 41    自民       5  4022957   10
+## 42    民進       5  2350193   20
+## 43    公明       5  1514592   32
+## 44    共産       5  1203239   41
+## 51    自民       6  3352464   13
+## 52    民進       6  1958494   24
+## 53    公明       6  1262160   39
+## 61    自民       7  2873541   16
+## 62    民進       7  1678709   28
+## 63    公明       7  1081851   45
+## 71    自民       8  2514348   19
+## 72    民進       8  1468870   34
+## 81    自民       9  2234976   21
+## 82    民進       9  1305662   37
+## 91    自民      10  2011478   22
+## 92    民進      10  1175096   43
+## 101   自民      11  1828617   26
+## 102   民進      11  1068269   46
+## 111   自民      12  1676232   29
+## 121   自民      13  1547291   30
+## 131   自民      14  1436770   35
+## 141   自民      15  1340985   36
+## 151   自民      16  1257174   40
+## 161   自民      17  1183222   42
+## 171   自民      18  1117488   44
+## 181   自民      19  1058673   48</code></pre>
+<p>獲得議席数をカウントするには次のようにすればよい。出現頻度を計算してくれる <code>table()</code> 関数を使う。結果を <code>as.data.frame()</code> でデータフレームにして，順序を並べ替えるために <code>order()</code> を使っている。このあたりは <strong>tidyr</strong> と <strong>dplyr</strong> を使った方がわかりやすいかもしれないが，他の人のコードを読むためには知っておく必要があるので，このやり方を知っておいて損はないだろう。</p>
+<pre class="r"><code>seats &lt;- as.data.frame(table(win$party))
+colnames(seats) &lt;- c(&quot;party&quot;, &quot;nseat&quot;)
+
+seats &lt;- seats[order(seats$nseat, decreasing = TRUE), ]  # コンマに注意！
+rownames(seats) &lt;- NULL
+
+seats</code></pre>
+<pre><code>##     party nseat
+## 1    自民    19
+## 2    民進    11
+## 3    公明     7
+## 4    共産     5
+## 5  お維新     4
+## 6    生活     1
+## 7    社民     1
+## 8  こころ     0
+## 9    幸福     0
+## 10   改革     0</code></pre>
+</div>
+<div class="section level2">
+<h2>得票率と占有率の関係</h2>
+<p>2つのデータフレームを結合するには <code>merge()</code> を使う。<strong>dplyr</strong> の <code>*_join()</code> を使うほうが便利だが，ここでも特別なパッケージを使わずにやってみよう。<code>merge()</code> は順序を変えてしまうので再びソートしている。</p>
+<pre class="r"><code>result &lt;- merge(votes, seats)
+result &lt;- result[order(result$nseat, decreasing = TRUE), ]
+rownames(result) &lt;- NULL
+
+result</code></pre>
+<pre><code>##     party    nvote nseat
+## 1    自民 20114788    19
+## 2    民進 11750965    11
+## 3    公明  7572960     7
+## 4    共産  6016195     5
+## 5  お維新  5153584     4
+## 6    生活  1067300     1
+## 7    社民  1536238     1
+## 8  こころ   734024     0
+## 9    幸福   366815     0
+## 10   改革   580653     0</code></pre>
+<p>得票率と占有率を計算する。</p>
+<pre class="r"><code>result$得票率 &lt;- result$nvote / sum(result$nvote)
+result$占有率 &lt;- result$nseat / sum(result$nseat)
+result</code></pre>
+<pre><code>##     party    nvote nseat     得票率     占有率
+## 1    自民 20114788    19 0.36643282 0.39583333
+## 2    民進 11750965    11 0.21406834 0.22916667
+## 3    公明  7572960     7 0.13795726 0.14583333
+## 4    共産  6016195     5 0.10959754 0.10416667
+## 5  お維新  5153584     4 0.09388328 0.08333333
+## 6    生活  1067300     1 0.01944310 0.02083333
+## 7    社民  1536238     1 0.02798578 0.02083333
+## 8  こころ   734024     0 0.01337178 0.00000000
+## 9    幸福   366815     0 0.00668230 0.00000000
+## 10   改革   580653     0 0.01057781 0.00000000</code></pre>
+</div>
+</div>
+<div class="section level1">
+<h1>まとめ</h1>
+<p>今回の結果は，自民・民進は得票率よりも占有率が大きく，小党には逆の傾向が見られる。1回の結果だけから一般化することは難しいが，ドント方式は<a href="https://ja.wikipedia.org/wiki/ドント方式#大政党への偏り">得票の大きな政党に有利に働く傾向がある</a>ことが知られている。関心のある人は得票数を変えてシミュレーションをしてみてほしい。</p>
+</div>
+<div class="section level1">
+<h1>発展課題</h1>
+<p>得票数のベクトルと，総定数を入力すると，ドント方式に基づく議席数を出力する関数 <code>dhondt()</code> を作りなさい。</p>
+<p>この関数は，</p>
+<pre><code>v &lt;- c(700, 400, 240) # 得票数
+n &lt;- 5 # 議席数
+dhondt(v, n)</code></pre>
+<p>のように使う。上の結果は，もちろん <code>c(3, 1, 1)</code> にならなければならない。</p>
+<pre><code>all(dhondt(v, n) == c(3, 1, 1))   #=&gt; TRUE </code></pre>
+</div>
