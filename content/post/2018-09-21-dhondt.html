@@ -280,7 +280,7 @@ temp</code></pre>
 ## 18 こころ       2   367012
 ## 19   改革       2   290326
 ## 20   幸福       2   183407</code></pre>
-<p>これで望んだ形になった。÷3, ÷4 と続けていけばよい。</p>
+<p>これで望んだ形になった。÷3, ÷4 と続けていけばよい。（注：規模が大きくなると <code>rbind()</code> は大変効率が悪いことが知られている <a href="http://www.burns-stat.com/pages/Tutor/R_inferno.pdf#page=13">R inferno</a>）</p>
 <div class="section level3">
 <h3>何ステップあるのか？</h3>
 <p>1ステップごとに行数を増やしていくやり方はおわかりいただけたと思う。しかし，この手続きをどこまで続ければ議席数を確定できるだろうか？</p>
@@ -291,7 +291,7 @@ temp</code></pre>
 </div>
 <div class="section level2">
 <h2>実装</h2>
-<p>同じような計算を繰り返し実行するときには <code>for</code> を使う。</p>
+<p>同じような計算を繰り返し実行するときには <code>for</code> を使う。<code>rbind()</code> の非効率性を回避するために予め必要な大きさのデータフレームを用意したほうがよいが，今回のように規模の小さな問題ではさほど違いは出ないだろう。改良は読者の練習問題とする。</p>
 <pre class="r"><code>dhondt &lt;- data.frame()
 
 for (i in seq_len(nseat)){
@@ -455,9 +455,12 @@ result</code></pre>
 <div class="section level1">
 <h1>まとめ</h1>
 <p>今回の結果は，自民・民進は得票率よりも占有率が大きく，小党には逆の傾向が見られる。1回の結果だけから一般化することは難しいが，ドント方式は<a href="https://ja.wikipedia.org/wiki/ドント方式#大政党への偏り">得票の大きな政党に有利に働く傾向がある</a>ことが知られている。関心のある人は得票数を変えてシミュレーションをしてみてほしい。</p>
+<div id="-1" class="section level3">
+<h3>発展課題 1</h3>
+<p>非効率な <code>rbind()</code> を使わずに実装しなさい。</p>
 </div>
-<div class="section level1">
-<h1>発展課題</h1>
+<div id="-2" class="section level3">
+<h3>発展課題 2</h3>
 <p>得票数のベクトルと，総定数を入力すると，ドント方式に基づく議席数を出力する関数 <code>dhondt()</code> を作りなさい。</p>
 <p>この関数は，</p>
 <pre><code>v &lt;- c(700, 400, 240) # 得票数
@@ -465,4 +468,5 @@ n &lt;- 5 # 議席数
 dhondt(v, n)</code></pre>
 <p>のように使う。上の結果は，もちろん <code>c(3, 1, 1)</code> にならなければならない。</p>
 <pre><code>all(dhondt(v, n) == c(3, 1, 1))   #=&gt; TRUE </code></pre>
+</div>
 </div>
