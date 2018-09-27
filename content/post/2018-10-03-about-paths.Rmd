@@ -1,7 +1,7 @@
 ---
 title: "コラム: パスのお話"
 author: "kenji sato"
-date: '2018-10-03'
+date: '2018-09-28 00:00:00 +0900'
 slug: about-paths
 categories:
   - column
