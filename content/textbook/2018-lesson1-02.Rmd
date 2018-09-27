@@ -1,6 +1,6 @@
 ---
 title: "Lesson 1-2: はじめてのRスクリプト"
-date: "2018-10-03"
+date: "2018-09-28 00:00:00 +0900"
 categories:
   - textbook
 tag:
