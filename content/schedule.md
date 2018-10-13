@@ -16,7 +16,7 @@ title: スケジュール
   - [1-1: Rを使ってみよう]({{< ref "2018-lesson1-01.html" >}})
   - [1-2: はじめての R スクリプト]({{< ref "2018-lesson1-02.html" >}})
 * 参考資料
-  - NA
+  - [コラム: パスのお話](`r blogdown::shortcode("ref", "/post/2018-10-03-about-paths.html")`)
 
 ### Lesson 2:  10/17, 10/24
 
