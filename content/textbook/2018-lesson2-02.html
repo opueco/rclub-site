@@ -1,0 +1,447 @@
+---
+title: "Lesson 2-2: データフレーム・tibble"
+date: "2018-10-15 00:00:00 +0900"
+categories:
+  - textbook
+tag:
+  - R
+slug: 2018-2-2
+output: 
+  blogdown::html_page:
+    toc: true
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#pre">前のステップ</a></li>
+<li><a href="#goal">このセッションの目標</a></li>
+<li><a href="#dataframe">データフレーム</a><ul>
+<li><a href="#df-generate">データフレームの生成</a></li>
+<li><a href="#df-slice">データフレームの切り出し</a><ul>
+<li><a href="#df-column">列の切り出し</a></li>
+<li><a href="#df-row">行の切り出し</a></li>
+<li><a href="#df-value">値の切り出し</a></li>
+</ul></li>
+<li><a href="#df-function">データフレームに対する演算</a></li>
+<li><a href="#add-col">列の追加</a><ul>
+<li><a href="#add-col-problem">問題</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#tibble">tibble</a><ul>
+<li><a href="#make-tibble">tibble の作成</a><ul>
+<li><a href="#make-tibble-with-tibble"><code>tibble()</code></a></li>
+<li><a href="#make-tibble-with-tribble"><code>tribble()</code></a></li>
+</ul></li>
+<li><a href="#make-tibble-problem">問題</a></li>
+</ul></li>
+<li><a href="#import-export">外部ファイルのインポート/エクスポート</a><ul>
+<li><a href="#readr-csv"><strong>readr</strong> による CSVファイルの読み込み</a></li>
+<li><a href="#readxl-excel"><strong>readxl</strong> による Excel ファイルの読み込み</a></li>
+<li><a href="#readxl-example">Excel ファイルの取り込みの実例</a><ul>
+<li><a href="#readxl-example-problem">問題</a></li>
+</ul></li>
+<li><a href="#write-csv">CSV ファイルに書き出す</a><ul>
+<li><a href="#normal-csv">基本</a></li>
+<li><a href="#excel-csv">MS Excel で読み込める CSV ファイルにする</a></li>
+<li><a href="#write-excel-csv">問題</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#next">次のステップ</a></li>
+</ul>
+</div>
+
+<div id="pre" class="section level1">
+<h1>前のステップ</h1>
+<p><a href="{{% ref "2018-lesson2-01.html" %}}">Lesson 2-1: R のベクトル</a> では次のことを勉強しました。</p>
+<ul>
+<li>R の名前とオブジェクトについて学ぶ</li>
+<li>R のベクトルの作り方，使い方を覚える</li>
+</ul>
+</div>
+<div id="goal" class="section level1">
+<h1>このセッションの目標</h1>
+<ul>
+<li>R のデータフレームの作り方，使い方を覚える</li>
+<li><strong>tidyverse</strong> の <strong>tibble</strong> について学ぶ</li>
+<li>Excel ファイルから <strong>tibble</strong> を作る</li>
+<li>R で加工したデータを CSV に書き出す</li>
+</ul>
+</div>
+<div id="dataframe" class="section level1">
+<h1>データフレーム</h1>
+<p>「データフレーム」というのは複数のベクトルを並べたものです。</p>
+<div class="figure"><span id="fig:unnamed-chunk-1"></span>
+<img src="/images/2018-2-2-1.jpeg" alt="データフレームのイメージ"  />
+<p class="caption">
+Figure 1: データフレームのイメージ
+</p>
+</div>
+<p>少し書き換えると，表のような形式を取っていることがわかります。データフレームは表形式データあるいは矩形データをRで実現する方法の1つです。</p>
+<table style="width:35%;">
+<colgroup>
+<col width="11%" />
+<col width="11%" />
+<col width="12%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Name</th>
+<th align="right">Econ</th>
+<th align="right">Math</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Alice</td>
+<td align="right">90</td>
+<td align="right">100</td>
+</tr>
+<tr class="even">
+<td align="left">Bob</td>
+<td align="right">80</td>
+<td align="right">90</td>
+</tr>
+<tr class="odd">
+<td align="left">Charlie</td>
+<td align="right">100</td>
+<td align="right">60</td>
+</tr>
+</tbody>
+</table>
+<div class="hint">
+<p>データフレームをイメージするときに，表のイメージから入るとどうしても上から下に読んでいく感じがしてしまいます。個票を上から下に並べたものに見えるからでしょう。しかし，縦方向に同じ形式（型）のデータが集まっているので，データの保存という観点から言えば，各変数を集めたベクトルを横に並べる方が自然です。</p>
+<p>上から下にデータを積み上げるという風に覚えてしまうと，データフレームに対するインデックスを使う際に失敗しやすくなりますので注意してください。</p>
+</div>
+<div id="df-generate" class="section level2">
+<h2>データフレームの生成</h2>
+<p>データフレームの生成には <code>data.frame()</code> を使います。</p>
+<pre class="r"><code>score &lt;- data.frame(
+  Name = c(&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;),
+  Econ = c(90,      80,    100),
+  Math = c(100,     90,    60)
+)</code></pre>
+<pre class="r"><code>&gt; score</code></pre>
+<pre><code>##      Name Econ Math
+## 1   Alice   90  100
+## 2     Bob   80   90
+## 3 Charlie  100   60</code></pre>
+<p>代入記号 <code>&lt;-</code> ではなく <code>=</code> を使っていることに注意してください。</p>
+<p>同じデータフレームは次のようにしても作ることができます。オブジェクト名が列名になっていることを確認してください。</p>
+<pre class="r"><code>Name &lt;- c(&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;)
+Econ &lt;- c(90,      80,    100)
+Math &lt;- c(100,     90,    60)
+score &lt;- data.frame(Name, Econ, Math)</code></pre>
+<pre class="r"><code>&gt; score</code></pre>
+<pre><code>##      Name Econ Math
+## 1   Alice   90  100
+## 2     Bob   80   90
+## 3 Charlie  100   60</code></pre>
+</div>
+<div id="df-slice" class="section level2">
+<h2>データフレームの切り出し</h2>
+<p>データフレームから値を切り出すにはベクトルと同様に <code>[]</code> を使うのが基本です。ただし，ベクトルと違って縦横2次元の広がりがあるという点に注意しましょう。</p>
+<div id="df-column" class="section level3">
+<h3>列の切り出し</h3>
+<p>列の番号を使うか，</p>
+<pre class="r"><code>&gt; score[3]</code></pre>
+<pre><code>##   Math
+## 1  100
+## 2   90
+## 3   60</code></pre>
+<p>列の名前を使って切り出します。結果はデータフレームになります。</p>
+<pre class="r"><code>&gt; score[&quot;Math&quot;]</code></pre>
+<pre><code>##   Math
+## 1  100
+## 2   90
+## 3   60</code></pre>
+<p>特別な演算子 <code>$</code> を使うこともできます。しかし，これは結果がベクトルになります。</p>
+<pre class="r"><code>&gt; score$Econ</code></pre>
+<pre><code>## [1]  90  80 100</code></pre>
+<p>次の方法でも切り出せます。<code>[行インデックス, 列インデックス]</code> と考えます。行インデックスが省略されて，前行の情報を取り出します。結果がベクトルになってしまうことに注意してください。</p>
+<pre class="r"><code>&gt; score[, 3]</code></pre>
+<pre><code>## [1] 100  90  60</code></pre>
+</div>
+<div id="df-row" class="section level3">
+<h3>行の切り出し</h3>
+<p>行全体を切り出すには次のような構文を使います。結果はデータフレームになります。</p>
+<pre class="r"><code>&gt; score[1, ]  # 1行目</code></pre>
+<pre><code>##    Name Econ Math
+## 1 Alice   90  100</code></pre>
+<pre class="r"><code>&gt; score[3, ]  # 3行目</code></pre>
+<pre><code>##      Name Econ Math
+## 3 Charlie  100   60</code></pre>
+<p>複数行を切り出すには次のようにします。</p>
+<pre class="r"><code>&gt; score[c(1, 2), ]</code></pre>
+<pre><code>##    Name Econ Math
+## 1 Alice   90  100
+## 2   Bob   80   90</code></pre>
+<p>条件付きで行を切り出すこともできます。例えば，Name が Alice である行を取り出したいという場合があります。 その場合は，次のようにします。</p>
+<pre class="r"><code>&gt; score[Name == &quot;Alice&quot;, ]</code></pre>
+<pre><code>##    Name Econ Math
+## 1 Alice   90  100</code></pre>
+</div>
+<div id="df-value" class="section level3">
+<h3>値の切り出し</h3>
+<p>Alice の Math のスコアを取り出したい場合にはどうすればよいでしょうか？もし，Alice が 1行目であることを知っていれば，次のいずれかの方法を使うことができます。</p>
+<pre class="r"><code>&gt; score[1, &quot;Math&quot;]</code></pre>
+<pre><code>## [1] 100</code></pre>
+<pre class="r"><code>&gt; score$Math[1]</code></pre>
+<pre><code>## [1] 100</code></pre>
+<p>また，Math が3列目であることもわかっていれば</p>
+<pre class="r"><code>&gt; score[1, 3]</code></pre>
+<pre><code>## [1] 100</code></pre>
+<p>とできます。</p>
+<p>“Alice” が 1行目であることを知らない場合には，Name が Alice である行を取り出す操作と，列名が Math の行を取り出す操作を組み合わせます。</p>
+<pre class="r"><code>&gt; score[Name == &quot;Alice&quot;, &quot;Math&quot;]</code></pre>
+<pre><code>## [1] 100</code></pre>
+</div>
+</div>
+<div id="df-function" class="section level2">
+<h2>データフレームに対する演算</h2>
+<p>データフレームの列はベクトルなので，ベクトル演算が自然に実行できます。</p>
+<pre class="r"><code>&gt; Math_mean &lt;- mean(score$Math)
+&gt; Math_mean</code></pre>
+<pre><code>## [1] 83.33333</code></pre>
+<p>複数の列の情報を元に新しい計算をすることもよくあるでしょう。例えば，学生ごとに経済学のスコアと数学のスコアの平均を計算するような場合です。</p>
+<pre class="r"><code>&gt; (avg_score &lt;- rowMeans(score[c(&quot;Econ&quot;, &quot;Math&quot;)]))</code></pre>
+<pre><code>## [1] 95 85 80</code></pre>
+</div>
+<div id="add-col" class="section level2">
+<h2>列の追加</h2>
+<p>次のコードによって平均点を保持する新しい列が追加されたことを確認してください。</p>
+<pre class="r"><code>&gt; score$Avg &lt;- avg_score
+&gt; score</code></pre>
+<pre><code>##      Name Econ Math Avg
+## 1   Alice   90  100  95
+## 2     Bob   80   90  85
+## 3 Charlie  100   60  80</code></pre>
+<div id="add-col-problem" class="section level3">
+<h3>問題</h3>
+<p><strong>問題</strong> 2.2.1: <code>rowSum()</code> という関数を使うと行方向の合計を計算することができます。<code>score</code> データフレームに経済学と数学の合計点を保持する <code>Total</code> 列を追加してください。</p>
+</div>
+</div>
+</div>
+<div id="tibble" class="section level1">
+<h1>tibble</h1>
+<p>tibble はデータフレームを改善するために提案されたデータ保持形式で，<strong>tibble</strong> というパッケージで定義されています。基本的にはR の基本のデータフレームと同様の使い方ができます。</p>
+<p>tibble を使うためには，パッケージ <strong>tibble</strong> を読み込むか，<strong>tidyverse</strong> というパッケージ群を読み込みます。 パッケージの読み込みには <code>library()</code> という関数を使います。</p>
+<div class="hint">
+<p>パッケージを読み込む前には，パッケージをインストールする必要があります。読み込みでエラーが表示され場合はコンソールで次のコマンドを実行してください。</p>
+<pre class="r"><code>&gt; install.packages(&quot;tidyverse&quot;)</code></pre>
+</div>
+<p>まず <strong>tidyverse</strong> を読み込みます。</p>
+<pre class="r"><code>&gt; library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.0.0     ✔ purrr   0.2.5
+## ✔ tibble  1.4.2     ✔ dplyr   0.7.6
+## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
+## ✔ readr   1.1.1     ✔ forcats 0.3.0</code></pre>
+<pre><code>## ── Conflicts ──────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<p><strong>tidyverse</strong> は複数のパッケージを読み込みます。<strong>tidyverse</strong> に含まれる関数・オブジェクトが既存の関数の名前（<code>filter</code>, <code>lag</code>）を奪ってしまうので，警告メッセージがでます。</p>
+<pre class="r"><code>&gt; score2 &lt;- as_tibble(score)
+&gt; score2</code></pre>
+<pre><code>## # A tibble: 3 x 4
+##   Name     Econ  Math   Avg
+##   &lt;fct&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Alice      90   100    95
+## 2 Bob        80    90    85
+## 3 Charlie   100    60    80</code></pre>
+<p>おおよそデータフレームと同じように使うことができますが，データフレームの場合と違って次のコードは tibble を返します。</p>
+<pre class="r"><code>&gt; score2[, 2]</code></pre>
+<pre><code>## # A tibble: 3 x 1
+##    Econ
+##   &lt;dbl&gt;
+## 1    90
+## 2    80
+## 3   100</code></pre>
+<div id="make-tibble" class="section level2">
+<h2>tibble の作成</h2>
+<p><code>data.frame()</code> を介さずに tibble を作成するには <code>tibble()</code> を使います。</p>
+<div id="make-tibble-with-tibble" class="section level3">
+<h3><code>tibble()</code></h3>
+<pre class="r"><code>tibble(
+  Name = c(&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;),
+  Econ = c(90,      80,    100),
+  Math = c(100,     90,    60)
+)</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   Name     Econ  Math
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;
+## 1 Alice      90   100
+## 2 Bob        80    90
+## 3 Charlie   100    60</code></pre>
+</div>
+<div id="make-tibble-with-tribble" class="section level3">
+<h3><code>tribble()</code></h3>
+<p>tibble を作成するために <code>tribble()</code>を使う方法があります（tribble = transposed tibble）。下のコードのように表形式を表現しやすいので，小さいデータを作る際にはこちらも便利です。</p>
+<pre class="r"><code>tribble(
+  ~Name,     ~Econ, ~Math,
+  &quot;Alice&quot;,      90,   100,
+  &quot;Bob&quot;,        80,    90,
+  &quot;Charlie&quot;,   100,    60
+)</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   Name     Econ  Math
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;
+## 1 Alice      90   100
+## 2 Bob        80    90
+## 3 Charlie   100    60</code></pre>
+<p>一行目は<code>Name</code>, <code>Econ</code>, <code>Math</code> ではなく，<code>~Name</code>, <code>~Econ</code>, <code>~Math</code> とチルダがついていることに注意してください。</p>
+</div>
+</div>
+<div id="make-tibble-problem" class="section level2">
+<h2>問題</h2>
+<p><strong>問題</strong> 2.2.2: <code>?tibble</code> で <code>tibble()</code> のヘルプを読みましょう。<code>tibble</code> が <code>data.frame</code> のどのような問題点を改善しているか，確認してください。（特に Example のセクションを見よ）</p>
+</div>
+</div>
+<div id="import-export" class="section level1">
+<h1>外部ファイルのインポート/エクスポート</h1>
+<p>次のコードはここまでに使った成績データをCSVファイル（コンマ区切りファイル）と Excel 形式で保存したものをダウンロードして “Data” フォルダに保存します。<strong>実行する前にプロジェクトフォルダに “Data” というサブフォルダがあることを確認してください！</strong></p>
+<pre class="r"><code>download.file(&quot;https://opur.club/files/18d2/score.csv&quot;, &quot;Data/score.csv&quot;)
+download.file(&quot;https://opur.club/files/18d2/score.xlsx&quot;, &quot;Data/score.xlsx&quot;)</code></pre>
+<div id="readr-csv" class="section level2">
+<h2><strong>readr</strong> による CSVファイルの読み込み</h2>
+<p><code>readr::read_csv()</code> を使うと CSV ファイルを読み込むことができます。</p>
+<pre class="r"><code>library(readr)
+(score &lt;- read_csv(&quot;Data/score.csv&quot;))</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   Name = col_character(),
+##   Econ = col_integer(),
+##   Math = col_integer()
+## )</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   Name     Econ  Math
+##   &lt;chr&gt;   &lt;int&gt; &lt;int&gt;
+## 1 Alice      90   100
+## 2 Bob        80    90
+## 3 Charlie   100    60</code></pre>
+<div class="hint">
+<p>R に組み込みの <code>read.csv()</code> という関数がありますが，<code>readr::read_csv()</code> の方が使いやすく改良されていて，高速に動作します。</p>
+</div>
+</div>
+<div id="readxl-excel" class="section level2">
+<h2><strong>readxl</strong> による Excel ファイルの読み込み</h2>
+<p>入力した “Data/score.xlsx” を MS Excel で開いてみてください。</p>
+<div class="figure"><span id="fig:unnamed-chunk-27"></span>
+<img src="/images/2018-2-2-3.png" alt="Data/score.xlsx"  />
+<p class="caption">
+Figure 2: Data/score.xlsx
+</p>
+</div>
+<p>これを R に読み込むには <strong>readxl</strong> の <code>read_xlsx()</code> または <code>read_xls()</code> または <code>read_excel()</code> 関数を使います。</p>
+<pre class="r"><code>&gt; (score &lt;- readxl::read_xlsx(&quot;Data/score.xlsx&quot;))</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   Name     Econ  Math
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;
+## 1 Alice      90   100
+## 2 Bob        80    90
+## 3 Charlie   100    60</code></pre>
+<div class="hint">
+<h3><code>::</code> オペレーターについて</h3>
+<pre class="r"><code>&gt; readxl::read_xlsx(&quot;Data/score.xlsx&quot;)</code></pre>
+<p>は</p>
+<pre class="r"><code>&gt; library(readxl)
+&gt; read_xlsx(&quot;Data/score.xlsx&quot;)</code></pre>
+<p>としても構いません。 <code>library()</code> はパッケージに含まれる関数をすべて読み込むときに使います。1つの関数を1回だけ使うときには，<code>::</code> を使った関数呼び出しを使うと便利です。</p>
+</div>
+<div class="hint">
+<h3>複数のソフトウェアを使いこなす</h3>
+<p>調査データを手作業で入力する場合などには，MS Excel などで作業するのが標準的だと思います。 R スクリプトにデータを直接入力するのは現実的ではありません。</p>
+<p>データが Excel にあるからといって，分析までExcel で行うという必要もありません。各ソフトウェアには得意な分野とそうでない分野がありますので，すべてを R で行うのも，すべてを Excel で行うのも，どちらも最適ではありません。</p>
+<p>複数のソフトウェア間でデータをやり取りする方法を学ぶことが重要です。これには R で読み込む方法（<strong>readxl</strong> の使い方など）に加えて，R に渡しやすいように Excel ファイルを整理する方法を学ぶといったことも含まれます。</p>
+</div>
+</div>
+<div id="readxl-example" class="section level2">
+<h2>Excel ファイルの取り込みの実例</h2>
+<p><a href="http://www.esri.cao.go.jp/jp/sna/data/data_list/kakuhou/files/h28/h28_kaku_top.html" class="uri">http://www.esri.cao.go.jp/jp/sna/data/data_list/kakuhou/files/h28/h28_kaku_top.html</a> から平成28年度のGDP統計を取得できます。Excel 形式のファイルを見ていただけるとわかると思いますが，このレッスンの最初に提示したデータフレームの形とはまったく異なっています。</p>
+<p>良くも悪くも Excel は自由度の高いソフトウェアなので，色々な形のファイルが存在しています。取り込みにくいファイルを取り込んで分析しようとすると，ひと手間かかります。こういう場合に少しのプログラミングが役に立ちます</p>
+<pre class="r"><code>&gt; sna_xls &lt;- readxl::read_excel(&quot;Data/28ffm1rn_jp.xls&quot;, sheet = 1, range = &quot;A7:X66&quot;)</code></pre>
+<pre class="r"><code>&gt; (rgdp_untidy &lt;- sna_xls[41, 2:length(sna_xls)])</code></pre>
+<pre><code>## # A tibble: 1 x 23
+##   `1994` `1995` `1996` `1997` `1998` `1999` `2000` `2001` `2002` `2003`
+##    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 4.27e5 4.41e5 4.54e5 4.54e5 4.50e5 4.53e5 4.64e5 4.62e5 4.66e5 4.75e5
+## # ... with 13 more variables: `2004` &lt;dbl&gt;, `2005` &lt;dbl&gt;, `2006` &lt;dbl&gt;,
+## #   `2007` &lt;dbl&gt;, `2008` &lt;dbl&gt;, `2009` &lt;dbl&gt;, `2010` &lt;dbl&gt;, `2011` &lt;dbl&gt;,
+## #   `2012` &lt;dbl&gt;, `2013` &lt;dbl&gt;, `2014` &lt;dbl&gt;, `2015` &lt;dbl&gt;, `2016` &lt;dbl&gt;</code></pre>
+<pre class="r"><code>&gt; (rgdp &lt;- tidyr::gather(rgdp_untidy, year, RGDP))</code></pre>
+<pre><code>## # A tibble: 23 x 2
+##    year     RGDP
+##    &lt;chr&gt;   &lt;dbl&gt;
+##  1 1994  426792.
+##  2 1995  441147.
+##  3 1996  453589.
+##  4 1997  453748.
+##  5 1998  449794.
+##  6 1999  452936.
+##  7 2000  464240.
+##  8 2001  461642.
+##  9 2002  465763.
+## 10 2003  475119.
+## # ... with 13 more rows</code></pre>
+<pre class="r"><code>&gt; plot(rgdp, type = &quot;l&quot;)</code></pre>
+<p><img src="/textbook/2018-lesson2-02_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+<p><strong>tidyr</strong> については次回勉強します。</p>
+<div id="readxl-example-problem" class="section level3">
+<h3>問題</h3>
+<p><strong>問題</strong> 2.2.3: 手元の環境で上のコードを再現してみてください。ファイルは次のコードでダウンロードできます。</p>
+<pre class="r"><code>&gt; download.file(&quot;http://www.esri.cao.go.jp/jp/sna/data/data_list/kakuhou/files/h28/tables/28ffm1rn_jp.xls&quot;, &quot;Data/28ffm1rn_jp.xls&quot;)</code></pre>
+</div>
+</div>
+</div>
+<div id="write-csv" class="section level2">
+<h2>CSV ファイルに書き出す</h2>
+<p>ひとまずここでは基本を押さえておきましょう。</p>
+<div id="normal-csv" class="section level3">
+<h3>基本</h3>
+<p>再び使い古した例を使います。</p>
+<pre class="r"><code>library(readr)
+score &lt;- readr::read_csv(&quot;Data/score.csv&quot;)</code></pre>
+<pre class="r"><code>&gt; score$Avg &lt;- rowMeans(score[c(&quot;Econ&quot;, &quot;Math&quot;)])
+&gt; score</code></pre>
+<pre><code>## # A tibble: 3 x 4
+##   Name     Econ  Math   Avg
+##   &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+## 1 Alice      90   100    95
+## 2 Bob        80    90    85
+## 3 Charlie   100    60    80</code></pre>
+<p><code>readr::write_csv()</code> で CSV に書き出します。出力先のフォルダが Data であるか Results であるかは，一考の余地があるでしょう。</p>
+<pre class="r"><code>&gt; write_csv(score, &quot;Results/score_avg.csv&quot;)</code></pre>
+</div>
+<div id="excel-csv" class="section level3">
+<h3>MS Excel で読み込める CSV ファイルにする</h3>
+<p>日本語混じりのファイルを書き出すときには <code>write_csv()</code> ではうまくいかないかもしれません。試してみましょう。</p>
+<pre class="r"><code>&gt; score$合計 &lt;- rowSums(score[c(&quot;Econ&quot;, &quot;Math&quot;)])
+&gt; score</code></pre>
+<pre><code>## # A tibble: 3 x 5
+##   Name     Econ  Math   Avg  合計
+##   &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Alice      90   100    95   190
+## 2 Bob        80    90    85   170
+## 3 Charlie   100    60    80   160</code></pre>
+<pre class="r"><code>&gt; write_csv(score, &quot;Results/score_sum.csv&quot;)      # 注意が必要!!</code></pre>
+<p>結果は次のようになります。「合計」が文字化けしてしまいます。</p>
+<div class="figure"><span id="fig:unnamed-chunk-41"></span>
+<img src="/images/2018-2-2-4.png" alt="write_csv() の結果を Excel で開く"  />
+<p class="caption">
+Figure 3: write_csv() の結果を Excel で開く
+</p>
+</div>
+<p>MS Excel で開くことを前提に CSV を作成する場合には， <code>write_excel_csv()</code> という関数を使う方が良い結果が得られます。試してみてください。</p>
+</div>
+<div id="write-excel-csv" class="section level3">
+<h3>問題</h3>
+<p><strong>問題</strong> 2.2.4: 「合計」列を含む <code>score</code> を <code>readr::write_excel_csv()</code> 関数で書き出してください。出力される CSV ファイルを Excel で開いて，文字化けが解消されているかを確認してください。</p>
+</div>
+</div>
+</div>
+<div id="next" class="section level1">
+<h1>次のステップ</h1>
+<ul>
+<li><strong>dplyr</strong> によるデータ処理</li>
+</ul>
+</div>

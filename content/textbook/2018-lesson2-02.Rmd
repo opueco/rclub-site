@@ -1,0 +1,469 @@
+---
+title: "Lesson 2-2: データフレーム・tibble"
+date: "2018-10-15 00:00:00 +0900"
+categories:
+  - textbook
+tag:
+  - R
+slug: 2018-2-2
+output: 
+  blogdown::html_page:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(prompt = TRUE)
+
+source("../../R/knitr-setup.R")
+source("../../R/util.R")
+
+cnt_exe <- counter()
+cnt_exa <- counter()
+cnt_prb <- counter()
+cnt_scr <- counter()
+```
+
+# 前のステップ {#pre}
+
+[Lesson 2-1: R のベクトル](`r blogdown::shortcode("ref", "2018-lesson2-01.html")`) では次のことを勉強しました。
+
+* R の名前とオブジェクトについて学ぶ
+* R のベクトルの作り方，使い方を覚える
+
+# このセッションの目標 {#goal}
+
+* R のデータフレームの作り方，使い方を覚える
+* **tidyverse** の **tibble** について学ぶ
+* Excel ファイルから **tibble** を作る
+* R で加工したデータを CSV に書き出す
+
+
+# データフレーム {#dataframe}
+
+「データフレーム」というのは複数のベクトルを並べたものです。
+
+```{r, echo=FALSE, fig.cap="データフレームのイメージ"}
+knitr::include_graphics("/images/2018-2-2-1.jpeg")
+```
+
+少し書き換えると，表のような形式を取っていることがわかります。データフレームは表形式データあるいは矩形データをRで実現する方法の1つです。
+
+-------------------------
+Name      Econ       Math    
+------- ------  ---------
+Alice     90       100
+
+Bob       80        90
+
+Charlie   100       60
+--------------------------
+
+
+<div class = "hint">
+
+データフレームをイメージするときに，表のイメージから入るとどうしても上から下に読んでいく感じがしてしまいます。個票を上から下に並べたものに見えるからでしょう。しかし，縦方向に同じ形式（型）のデータが集まっているので，データの保存という観点から言えば，各変数を集めたベクトルを横に並べる方が自然です。
+
+上から下にデータを積み上げるという風に覚えてしまうと，データフレームに対するインデックスを使う際に失敗しやすくなりますので注意してください。
+
+</div>
+
+
+## データフレームの生成 {#df-generate}
+
+データフレームの生成には `data.frame()` を使います。
+
+```{r, prompt=FALSE}
+score <- data.frame(
+  Name = c("Alice", "Bob", "Charlie"),
+  Econ = c(90,      80,    100),
+  Math = c(100,     90,    60)
+)
+```
+
+```{r}
+score
+```
+
+
+代入記号 `<-` ではなく `=` を使っていることに注意してください。
+
+同じデータフレームは次のようにしても作ることができます。オブジェクト名が列名になっていることを確認してください。
+
+```{r, prompt=FALSE}
+Name <- c("Alice", "Bob", "Charlie")
+Econ <- c(90,      80,    100)
+Math <- c(100,     90,    60)
+score <- data.frame(Name, Econ, Math)
+```
+
+```{r}
+score
+```
+
+
+## データフレームの切り出し {#df-slice}
+
+データフレームから値を切り出すにはベクトルと同様に `[]` を使うのが基本です。ただし，ベクトルと違って縦横2次元の広がりがあるという点に注意しましょう。
+
+### 列の切り出し {#df-column}
+
+列の番号を使うか，
+
+```{r}
+score[3]
+```
+
+列の名前を使って切り出します。結果はデータフレームになります。
+
+```{r}
+score["Math"]
+```
+
+特別な演算子 `$` を使うこともできます。しかし，これは結果がベクトルになります。
+
+```{r}
+score$Econ
+```
+
+次の方法でも切り出せます。`[行インデックス, 列インデックス]` と考えます。行インデックスが省略されて，前行の情報を取り出します。結果がベクトルになってしまうことに注意してください。
+
+```{r}
+score[, 3]
+```
+
+
+
+### 行の切り出し {#df-row}
+
+行全体を切り出すには次のような構文を使います。結果はデータフレームになります。
+
+```{r}
+score[1, ]  # 1行目
+score[3, ]  # 3行目
+```
+
+複数行を切り出すには次のようにします。
+
+```{r}
+score[c(1, 2), ]
+```
+
+条件付きで行を切り出すこともできます。例えば，Name が Alice である行を取り出したいという場合があります。
+その場合は，次のようにします。
+
+```{r}
+score[Name == "Alice", ]
+```
+
+
+
+### 値の切り出し {#df-value}
+
+Alice の Math のスコアを取り出したい場合にはどうすればよいでしょうか？もし，Alice が 1行目であることを知っていれば，次のいずれかの方法を使うことができます。
+
+```{r}
+score[1, "Math"]
+score$Math[1]
+```
+
+また，Math が3列目であることもわかっていれば
+
+```{r}
+score[1, 3]
+```
+
+とできます。
+
+"Alice" が 1行目であることを知らない場合には，Name が Alice である行を取り出す操作と，列名が Math の行を取り出す操作を組み合わせます。
+
+```{r}
+score[Name == "Alice", "Math"]
+```
+
+## データフレームに対する演算 {#df-function}
+
+データフレームの列はベクトルなので，ベクトル演算が自然に実行できます。
+
+```{r}
+Math_mean <- mean(score$Math)
+Math_mean
+```
+
+複数の列の情報を元に新しい計算をすることもよくあるでしょう。例えば，学生ごとに経済学のスコアと数学のスコアの平均を計算するような場合です。
+
+```{r}
+(avg_score <- rowMeans(score[c("Econ", "Math")]))
+```
+
+## 列の追加 {#add-col}
+
+次のコードによって平均点を保持する新しい列が追加されたことを確認してください。
+
+```{r}
+score$Avg <- avg_score
+score
+```
+
+### 問題 {#add-col-problem}
+
+**問題** 2.2.`r cnt_prb()`: `rowSum()` という関数を使うと行方向の合計を計算することができます。`score` データフレームに経済学と数学の合計点を保持する `Total` 列を追加してください。
+
+# tibble
+
+tibble はデータフレームを改善するために提案されたデータ保持形式で，**tibble** というパッケージで定義されています。基本的にはR の基本のデータフレームと同様の使い方ができます。
+
+tibble を使うためには，パッケージ **tibble** を読み込むか，**tidyverse** というパッケージ群を読み込みます。
+パッケージの読み込みには `library()` という関数を使います。
+
+<div class="hint">
+パッケージを読み込む前には，パッケージをインストールする必要があります。読み込みでエラーが表示され場合はコンソールで次のコマンドを実行してください。
+
+```{r, eval=FALSE}
+install.packages("tidyverse")
+```
+
+</div>
+
+まず **tidyverse** を読み込みます。
+
+```{r}
+library(tidyverse)
+```
+
+**tidyverse** は複数のパッケージを読み込みます。**tidyverse** に含まれる関数・オブジェクトが既存の関数の名前（`filter`, `lag`）を奪ってしまうので，警告メッセージがでます。
+
+```{r}
+score2 <- as_tibble(score)
+score2
+```
+
+おおよそデータフレームと同じように使うことができますが，データフレームの場合と違って次のコードは tibble を返します。
+
+```{r}
+score2[, 2]
+```
+
+
+## tibble の作成 {#make-tibble}
+
+`data.frame()` を介さずに tibble を作成するには `tibble()` を使います。
+
+### `tibble()` {#make-tibble-with-tibble}
+
+```{r, prompt=FALSE}
+tibble(
+  Name = c("Alice", "Bob", "Charlie"),
+  Econ = c(90,      80,    100),
+  Math = c(100,     90,    60)
+)
+```
+
+
+### `tribble()` {#make-tibble-with-tribble}
+
+tibble を作成するために `tribble()`を使う方法があります（tribble = transposed tibble）。下のコードのように表形式を表現しやすいので，小さいデータを作る際にはこちらも便利です。
+
+```{r, prompt=FALSE}
+tribble(
+  ~Name,     ~Econ, ~Math,
+  "Alice",      90,   100,
+  "Bob",        80,    90,
+  "Charlie",   100,    60
+)
+```
+
+一行目は`Name`, `Econ`, `Math` ではなく，`~Name`, `~Econ`, `~Math` とチルダがついていることに注意してください。
+
+
+## 問題 {#make-tibble-problem}
+
+**問題** 2.2.`r cnt_prb()`: `?tibble` で `tibble()` のヘルプを読みましょう。`tibble` が `data.frame` のどのような問題点を改善しているか，確認してください。（特に Example のセクションを見よ）
+
+# 外部ファイルのインポート/エクスポート {#import-export}
+
+次のコードはここまでに使った成績データをCSVファイル（コンマ区切りファイル）と Excel 形式で保存したものをダウンロードして "Data" フォルダに保存します。**実行する前にプロジェクトフォルダに "Data" というサブフォルダがあることを確認してください！**
+
+```{r, eval=FALSE, prompt=FALSE}
+download.file("https://opur.club/files/18d2/score.csv", "Data/score.csv")
+download.file("https://opur.club/files/18d2/score.xlsx", "Data/score.xlsx")
+```
+
+
+## **readr** による CSVファイルの読み込み {#readr-csv}
+
+`readr::read_csv()` を使うと CSV ファイルを読み込むことができます。
+
+
+```{r, prompt=FALSE, eval=FALSE}
+library(readr)
+(score <- read_csv("Data/score.csv"))
+```
+
+```
+## Parsed with column specification:
+## cols(
+##   Name = col_character(),
+##   Econ = col_integer(),
+##   Math = col_integer()
+## )
+```
+```
+## # A tibble: 3 x 3
+##   Name     Econ  Math
+##   <chr>   <int> <int>
+## 1 Alice      90   100
+## 2 Bob        80    90
+## 3 Charlie   100    60
+```
+
+<div class="hint">
+R に組み込みの `read.csv()` という関数がありますが，`readr::read_csv()` の方が使いやすく改良されていて，高速に動作します。
+</div>
+
+
+## **readxl** による Excel ファイルの読み込み {#readxl-excel}
+
+入力した "Data/score.xlsx" を MS Excel で開いてみてください。
+
+```{r, echo=FALSE, fig.cap="Data/score.xlsx"}
+knitr::include_graphics("/images/2018-2-2-3.png")
+```
+
+これを R に読み込むには **readxl** の `read_xlsx()` または `read_xls()` または `read_excel()` 関数を使います。
+
+```{r, eval=FALSE}
+(score <- readxl::read_xlsx("Data/score.xlsx"))
+```
+```
+## # A tibble: 3 x 3
+##   Name     Econ  Math
+##   <chr>   <dbl> <dbl>
+## 1 Alice      90   100
+## 2 Bob        80    90
+## 3 Charlie   100    60
+```
+
+<div class="hint">
+
+### `::` オペレーターについて 
+
+```{r, eval=FALSE}
+readxl::read_xlsx("Data/score.xlsx")
+```
+
+は
+
+```{r, eval=FALSE}
+library(readxl)
+read_xlsx("Data/score.xlsx")
+```
+
+としても構いません。 `library()` はパッケージに含まれる関数をすべて読み込むときに使います。1つの関数を1回だけ使うときには，`::` を使った関数呼び出しを使うと便利です。
+</div>
+
+
+<div class="hint">
+
+### 複数のソフトウェアを使いこなす
+
+調査データを手作業で入力する場合などには，MS Excel などで作業するのが標準的だと思います。
+R スクリプトにデータを直接入力するのは現実的ではありません。
+
+データが Excel にあるからといって，分析までExcel で行うという必要もありません。各ソフトウェアには得意な分野とそうでない分野がありますので，すべてを R で行うのも，すべてを Excel で行うのも，どちらも最適ではありません。
+
+複数のソフトウェア間でデータをやり取りする方法を学ぶことが重要です。これには R で読み込む方法（**readxl** の使い方など）に加えて，R に渡しやすいように Excel ファイルを整理する方法を学ぶといったことも含まれます。
+
+</div>
+
+## Excel ファイルの取り込みの実例 {#readxl-example}
+
+<http://www.esri.cao.go.jp/jp/sna/data/data_list/kakuhou/files/h28/h28_kaku_top.html> から平成28年度のGDP統計を取得できます。Excel 形式のファイルを見ていただけるとわかると思いますが，このレッスンの最初に提示したデータフレームの形とはまったく異なっています。
+
+良くも悪くも Excel は自由度の高いソフトウェアなので，色々な形のファイルが存在しています。取り込みにくいファイルを取り込んで分析しようとすると，ひと手間かかります。こういう場合に少しのプログラミングが役に立ちます
+
+```{r, eval=FALSE}
+sna_xls <- readxl::read_excel("Data/28ffm1rn_jp.xls", sheet = 1, range = "A7:X66")
+```
+
+```{r, include=FALSE}
+sna_xls <- readxl::read_excel("../../static/files/18d2/28ffm1rn_jp.xls", sheet = 1, range = "A7:X66")
+```
+
+```{r}
+(rgdp_untidy <- sna_xls[41, 2:length(sna_xls)])
+(rgdp <- tidyr::gather(rgdp_untidy, year, RGDP))
+plot(rgdp, type = "l")
+```
+
+**tidyr** については次回勉強します。
+
+### 問題 {#readxl-example-problem}
+
+**問題** 2.2.`r cnt_prb()`: 手元の環境で上のコードを再現してみてください。ファイルは次のコードでダウンロードできます。
+
+```{r, eval=FALSE}
+download.file("http://www.esri.cao.go.jp/jp/sna/data/data_list/kakuhou/files/h28/tables/28ffm1rn_jp.xls", "Data/28ffm1rn_jp.xls")
+```
+
+</div>
+
+
+## CSV ファイルに書き出す {#write-csv}
+
+ひとまずここでは基本を押さえておきましょう。
+
+### 基本 {#normal-csv}
+
+再び使い古した例を使います。
+
+```{r, eval=FALSE, prompt=FALSE}
+library(readr)
+score <- readr::read_csv("Data/score.csv")
+```
+
+```{r, include=FALSE}
+library(readr)
+score <- readr::read_csv("../../static/files/18d2/score.csv")
+```
+
+```{r}
+score$Avg <- rowMeans(score[c("Econ", "Math")])
+score
+```
+
+`readr::write_csv()` で CSV に書き出します。出力先のフォルダが Data であるか Results であるかは，一考の余地があるでしょう。
+
+```{r, eval=FALSE}
+write_csv(score, "Results/score_avg.csv")
+```
+
+
+### MS Excel で読み込める CSV ファイルにする {#excel-csv}
+
+日本語混じりのファイルを書き出すときには `write_csv()` ではうまくいかないかもしれません。試してみましょう。
+
+```{r}
+score$合計 <- rowSums(score[c("Econ", "Math")])
+score
+```
+
+```{r, eval=FALSE}
+write_csv(score, "Results/score_sum.csv")      # 注意が必要!!
+```
+
+結果は次のようになります。「合計」が文字化けしてしまいます。
+
+```{r, echo=FALSE, fig.cap="write_csv() の結果を Excel で開く"}
+knitr::include_graphics("/images/2018-2-2-4.png")
+```
+
+MS Excel で開くことを前提に CSV を作成する場合には， `write_excel_csv()` という関数を使う方が良い結果が得られます。試してみてください。
+
+### 問題 {#write-excel-csv}
+
+**問題** 2.2.`r cnt_prb()`: 「合計」列を含む `score` を `readr::write_excel_csv()` 関数で書き出してください。出力される CSV ファイルを Excel で開いて，文字化けが解消されているかを確認してください。
+
+# 次のステップ {#next}
+
+- **dplyr** によるデータ処理
+

@@ -1,0 +1,634 @@
+---
+title: "Lesson 2-1: R のベクトル"
+date: "2018-10-15 00:00:00 +0900"
+categories:
+  - textbook
+tag:
+  - R
+slug: 2018-2-1
+output: 
+  blogdown::html_page:
+    toc: true
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#pre">前のステップ</a></li>
+<li><a href="#goal">このセッションの目標</a></li>
+<li><a href="#object">オブジェクト</a></li>
+<li><a href="#names">名前</a><ul>
+<li><a href="#naming">名付け</a></li>
+<li><a href="#naming-rules">名前の規則</a></li>
+<li><a href="#non-syntactic">非構文的な名前</a></li>
+</ul></li>
+<li><a href="#vectorized">ベクトルに対する計算</a><ul>
+<li><a href="#arithmetic">四則演算</a></li>
+<li><a href="#functions">ベクトル化関数</a><ul>
+<li><a href="#numeric">数学的な関数</a></li>
+<li><a href="#comparison">比較</a></li>
+<li><a href="#strings">文字列関数</a></li>
+</ul></li>
+<li><a href="#summarize">集約</a><ul>
+<li><a>個数・割合</a></li>
+</ul></li>
+</ul></li>
+<li><a>ベクトルの要素の抽出</a><ul>
+<li><a href="#by-index">位置による抽出</a></li>
+<li><a href="#by-condition">条件による抽出</a><ul>
+<li><a href="#by-condition-basics">基本のルール</a></li>
+<li><a href="#by-condition-recycle">リサイクル</a></li>
+</ul></li>
+<li><a href="#by-name">名前による抽出</a></li>
+</ul></li>
+<li><a>オブジェクトの保存方法</a><ul>
+<li><a href="#saverds-"><code>saveRDS()</code> を使う</a></li>
+<li><a href="#dump-"><code>dump()</code> を使う</a></li>
+</ul></li>
+<li><a>箱ひげ図・ヒストグラム・散布図</a><ul>
+<li><a href="#summary">記述統計</a></li>
+<li><a href="#scatter">散布図</a></li>
+<li><a>箱ひげ図</a></li>
+<li><a>ヒストグラム</a></li>
+</ul></li>
+<li><a href="#next">次のステップ</a></li>
+</ul>
+</div>
+
+<div id="pre" class="section level1">
+<h1>前のステップ</h1>
+<p><a href="{{% ref "2018-lesson1-02.html" %}}">Lesson 1-2: はじめてのRスクリプト</a> では次のことを勉強しました。</p>
+<ul>
+<li>RStudio プロジェクトの作りかた</li>
+<li>スクリプトの書き方</li>
+<li>スクリプトの実行方法</li>
+</ul>
+</div>
+<div id="goal" class="section level1">
+<h1>このセッションの目標</h1>
+<ul>
+<li>R の名前とオブジェクトについて学ぶ</li>
+<li>R のベクトルの作り方，使い方を覚える</li>
+<li>データの可視化</li>
+</ul>
+</div>
+<div id="object" class="section level1">
+<h1>オブジェクト</h1>
+<p>オブジェクトというのは数字，ベクトルや構造化されたデータなどの対象（= object）を指します。最初は数や文字，あるいはそれらの集まり＝ベクトルから始めましょう。</p>
+<p>例えば，数字</p>
+<pre class="r"><code>&gt; 3</code></pre>
+<pre><code>## [1] 3</code></pre>
+<p><code>TRUE</code>, <code>FALSE</code></p>
+<pre class="r"><code>&gt; TRUE</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<p>あるいは数字の集まりとしての「ベクトル」（ここには少し嘘があります）</p>
+<pre class="r"><code>&gt; c(1, 3, 0.6)</code></pre>
+<pre><code>## [1] 1.0 3.0 0.6</code></pre>
+<p>文字列の集まりとしての「ベクトル」</p>
+<pre class="r"><code>&gt; c(&quot;Alpha&quot;, &quot;Bravo&quot;, &quot;Charlie&quot;)</code></pre>
+<pre><code>## [1] &quot;Alpha&quot;   &quot;Bravo&quot;   &quot;Charlie&quot;</code></pre>
+<p>などはオブジェクトの例です。オブジェクトを構成する要素には「型」という類別を示す属性が与えられています。</p>
+<pre class="r"><code>&gt; typeof(TRUE)</code></pre>
+<pre><code>## [1] &quot;logical&quot;</code></pre>
+<pre class="r"><code>&gt; typeof(&quot;Hello&quot;)</code></pre>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<pre class="r"><code>&gt; typeof(c(&quot;Alpha&quot;, &quot;Bravo&quot;, &quot;Charlie&quot;))</code></pre>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<pre class="r"><code>&gt; typeof(100)</code></pre>
+<pre><code>## [1] &quot;double&quot;</code></pre>
+<p><code>&quot;Hello&quot;</code> も <code>c(&quot;Alpha&quot;, &quot;Bravo&quot;, &quot;Charlie&quot;)</code> も同じ <code>character</code> 型ですね。 R では単一の数字もベクトル（アトミック・ベクトル）として扱いますので，整合性が取れています。</p>
+<p><code>typeof(100)</code> が <code>double</code> = 小数（みたいなもの。double は倍精度浮動小数点数 Double precision floating point number からきている）になるのは，意外かもしれません。整数を明示的に扱いたい場合は後ろに <code>L</code> を付けます。</p>
+<pre class="r"><code>&gt; typeof(100L)</code></pre>
+<pre><code>## [1] &quot;integer&quot;</code></pre>
+<p><strong>問題</strong> 2.1.1: 次のコードはどのような型のオブジェクトを生成するか予想してください。その後，実際に作成・実行して予想が正しかったかどうかを <code>typeof()</code> 関数を使って検証してください。</p>
+<pre class="r"><code>&gt; c(3L, 2L, 1L)
+&gt; c(1, 2 + 3i, 2 - 3i)
+&gt; exp
+&gt; c(3L, 2L, 1)</code></pre>
+<p><details> <summary>解説</summary></p>
+<pre class="r"><code>&gt; typeof(c(3L, 2L, 1L))</code></pre>
+<pre><code>## [1] &quot;integer&quot;</code></pre>
+<pre class="r"><code>&gt; typeof(c(1, 2 + 3i, 2 - 3i))</code></pre>
+<pre><code>## [1] &quot;complex&quot;</code></pre>
+<pre class="r"><code>&gt; typeof(c(3L, 2L, 1))  # 最後の1つだけ L がない</code></pre>
+<pre><code>## [1] &quot;double&quot;</code></pre>
+<p><code>3L</code>, <code>2L</code> といった表現は整数を表す表現です。<code>integer</code> 型のオブジェクトを生成します。</p>
+<p><code>2 + 3i</code> などの表現は複素数を表します。<code>complex</code> 型のオブジェクトになります。アトミックベクトルは単一の型の集まりなので，<code>1</code> は <code>1 + 0i</code> という複素数に変換されます。</p>
+<p>最後の例では，<code>1</code> が <code>1L</code> になることを期待するかもしれませんが，コンピュータに保存された小数には誤差がつきものなので，整数への変換を安全に行うことはできません。したがって，すべての数を <code>double</code> に変換します。</p>
+<p></details></p>
+<p><strong>問題</strong> 2.1.2: 次のコードはどのような型のオブジェクトを生成するか―あるいは生成できないか―を予想してください。その後，実際にコマンドを実行して予想が正しかったかどうかを検証してください。</p>
+<pre class="r"><code>&gt; c(&quot;Hello&quot;, 10)
+&gt; c(TRUE, FALSE, 2.3)
+&gt; c(TRUE, FALSE, 1L)
+&gt; c(TRUE, &quot;Hello&quot;)</code></pre>
+<p><details> <summary>解説</summary></p>
+<pre class="r"><code>&gt; c(&quot;Hello&quot;, 10)</code></pre>
+<pre><code>## [1] &quot;Hello&quot; &quot;10&quot;</code></pre>
+<pre class="r"><code>&gt; c(TRUE, FALSE, 2.3)</code></pre>
+<pre><code>## [1] 1.0 0.0 2.3</code></pre>
+<pre class="r"><code>&gt; c(TRUE, FALSE, 1L)</code></pre>
+<pre><code>## [1] 1 0 1</code></pre>
+<pre class="r"><code>&gt; c(TRUE, &quot;Hello&quot;)</code></pre>
+<pre><code>## [1] &quot;TRUE&quot;  &quot;Hello&quot;</code></pre>
+<p>アトミックベクトルは単一の型の集まりなので，異なる型を集めて <code>c()</code> で結合しようとすると，どれか1つの型に変換されます。</p>
+<ul>
+<li><code>integer</code> は <code>double</code> に変換されます</li>
+<li><code>TRUE</code>, <code>FALSE</code> が数値に変換される場合はそれぞれ <code>1</code> と <code>0</code>になります。</li>
+<li>困ったときは文字列 <code>character</code> にします。</li>
+</ul>
+<p>であることを覚えておくと便利な事が多いです。 </details></p>
+<p><strong>問題</strong> 2.1.3: 次のコードはそれぞれどのような型のオブジェクトを生成するかを予想してください。その後，実際にコマンドを実行して予想が正しかったかどうかを検証してください。</p>
+<pre class="r"><code>&gt; double(10)
+&gt; integer(5)
+&gt; character(2)
+&gt; logical(3)
+&gt; 1:10
+&gt; seq(-2, 2, by = 0.5)
+&gt; seq(-2, 2, length.out = 5)</code></pre>
+<p><details> <summary>解説</summary></p>
+<p><code>double()</code>, <code>integer()</code>, <code>logical()</code> などはゼロを要素としてもつベクトを生成します。<code>double()</code> の代わりに <code>numeric()</code> が使われることも多いですが，同じように振る舞います。</p>
+<p><code>character()</code> は空文字列を生成します。</p>
+<pre class="r"><code>&gt; double(10)</code></pre>
+<pre><code>##  [1] 0 0 0 0 0 0 0 0 0 0</code></pre>
+<pre class="r"><code>&gt; integer(5)</code></pre>
+<pre><code>## [1] 0 0 0 0 0</code></pre>
+<pre class="r"><code>&gt; character(2)</code></pre>
+<pre><code>## [1] &quot;&quot; &quot;&quot;</code></pre>
+<pre class="r"><code>&gt; logical(3)</code></pre>
+<pre><code>## [1] FALSE FALSE FALSE</code></pre>
+<p>次のコマンドはよく利用されます。数字を変えて実験してみましょう。</p>
+<pre class="r"><code>&gt; 1:10</code></pre>
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
+<pre class="r"><code>&gt; seq(-2, 2, by = 0.5)</code></pre>
+<pre><code>## [1] -2.0 -1.5 -1.0 -0.5  0.0  0.5  1.0  1.5  2.0</code></pre>
+<pre class="r"><code>&gt; seq(-2, 2, length.out = 5)</code></pre>
+<pre><code>## [1] -2 -1  0  1  2</code></pre>
+<p></details></p>
+</div>
+<div id="names" class="section level1">
+<h1>名前</h1>
+<div id="naming" class="section level2">
+<h2>名付け</h2>
+<p>オブジェクトには「名前」をつけることができます。</p>
+<pre class="r"><code>&gt; x &lt;- 1:10</code></pre>
+<p><code>1:10</code> で生成されるオブジェクトに <code>x</code> という名前をつける（assign）というコマンドです。<code>&lt;-</code> は「代入」と呼ぶことが多いです。<code>x</code> はオブジェクトと呼んだり，変数と呼んだりします。</p>
+<p>オブジェクトの内容を表示するには名前を打ち込みます。</p>
+<pre class="r"><code>&gt; x</code></pre>
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
+<p>名前を付けるのと同時に表示をしたい場合は丸括弧でくくります。</p>
+<pre class="r"><code>&gt; (x &lt;- 1:10)</code></pre>
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
+<div class="hint">
+<h2>コンソールの機能</h2>
+<p>コンソールで</p>
+<pre class="r"><code>&gt; x</code></pre>
+<p>とすると，内容が表示されますが，スクリプト内にオブジェクト名だけを書いて <code>source()</code> してもオブジェクトの内容は表示されません。（<code>echo = TRUE</code> とすると表示される。）</p>
+<p>これは，コンソールに名前を打ち込んで実行すると，<code>print()</code> 関数が（暗黙的に）呼び出されるからです。</p>
+<pre class="r"><code>&gt; x</code></pre>
+<p>というのは，実は</p>
+<pre class="r"><code>&gt; print(x)</code></pre>
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
+<p>と同じことをしているのです。<code>print()</code> はオブジェクトの内容を画面に表示する関数です。（プリントは Generic 関数なのでオブジェクトごとに振る舞いが変わります。<a href="http://s.opur.club/18d1">前回のスライド</a> を参照。）</p>
+<p>スクリプトから変数の内容を表示したい場合には，<code>print()</code> を明示的に呼び出してください。</p>
+</div>
+</div>
+<div id="naming-rules" class="section level2">
+<h2>名前の規則</h2>
+<p>原則的に，名前は次の規則を守る必要があります。</p>
+<ul>
+<li>文字と数字と <code>.</code>, <code>_</code> のみで構成されていること</li>
+<li>最初の文字は数字や <code>_</code> であってはならない</li>
+<li><code>TRUE</code>/<code>FALSE</code>, <code>NULL</code>, <code>NA</code>, <code>if</code>, <code>function</code> などの予約語でないこと</li>
+</ul>
+<p><strong>問題</strong> 2.1.4: 次のコードはどのようなエラーを表示するだろうか？（そもそもエラーになるだろうか？）</p>
+<pre><code>&gt; . &lt;- 100
+&gt; _x &lt;- 100
+&gt; 2b &lt;- 1:10
+&gt; TRUE &lt;- FALSE
+&gt; 大学 &lt;- &quot;大阪府立大学&quot;</code></pre>
+<p><details> <summary>解説</summary></p>
+<pre class="r"><code>&gt; . &lt;- 100</code></pre>
+<p>これは問題ありません。</p>
+<pre><code>&gt; _x &lt;- 100</code></pre>
+<pre><code>Error: unexpected input in &quot;_&quot;</code></pre>
+<p><code>_</code> から始まる名前を付けることはできません。</p>
+<pre><code>&gt; 2b &lt;- 1:10</code></pre>
+<pre><code>Error: unexpected symbol in &quot;2b&quot;</code></pre>
+<p>数字から始まる名前は使用できません。</p>
+<pre><code>&gt; TRUE &lt;- FALSE</code></pre>
+<pre><code>Error in TRUE &lt;- FALSE : invalid (do_set) left-hand side to assignment</code></pre>
+<p>は予約語＝上書きできない名前です。予約語のリストを調べるには <code>?Reserved</code> を実行してください。</p>
+<p>名前は漢字（非ASCII文字）であっても問題ありません。（使用を推奨するものではありません）</p>
+<pre class="r"><code>&gt; (大学 &lt;- &quot;大阪府立大学&quot;)</code></pre>
+<pre><code>## [1] &quot;大阪府立大学&quot;</code></pre>
+<p></details></p>
+<div class="hint">
+<p><code>TRUE</code>, <code>FALSE</code> の省略形として <code>T</code>, <code>F</code> が使われることがありますが，<code>T</code>, <code>F</code> の使用は推奨されません。これらは予約語ではなく，上書きができてしまうからです。</p>
+</div>
+</div>
+<div id="non-syntactic" class="section level2">
+<h2>非構文的な名前</h2>
+<p>Excel ファイルのヘッダーが数字だけからなるようなケースがあります。データフレームを扱うときに明らかになりますが，このような場合には数字だけからなる名前を作る必要があります。</p>
+<p>R ではバックティック（<code></code>`）で囲むことでこのような名前を作ることができます。</p>
+<pre class="r"><code>&gt; `2010` &lt;- c(1093, 1402)
+&gt; `2011` &lt;- c(892, 1045)
+&gt; `TRUE` &lt;- c(2010, 2011)</code></pre>
+</div>
+</div>
+<div id="vectorized" class="section level1">
+<h1>ベクトルに対する計算</h1>
+<div id="arithmetic" class="section level2">
+<h2>四則演算</h2>
+<p>ベクトルの四則演算は成分ごとに実行されます。</p>
+<pre class="r"><code>&gt; x &lt;- 0:10
+&gt; y &lt;- seq(0, 1, by = 0.1)</code></pre>
+<pre class="r"><code>&gt; x + y # 加</code></pre>
+<pre><code>##  [1]  0.0  1.1  2.2  3.3  4.4  5.5  6.6  7.7  8.8  9.9 11.0</code></pre>
+<pre class="r"><code>&gt; x - y # 減
+&gt; x * y # 乗
+&gt; x / y # 除</code></pre>
+<p>2項演算で一方の数が足りない場合には，リサイクル規則が適用されます。</p>
+<pre class="r"><code>&gt; x * 10</code></pre>
+<pre><code>##  [1]   0  10  20  30  40  50  60  70  80  90 100</code></pre>
+<p>これは，振る舞いだけ見れば <code>rep()</code> を使った次のコードと同じです。</p>
+<pre class="r"><code>&gt; x * rep(10, length.out = length(x))</code></pre>
+<pre><code>##  [1]   0  10  20  30  40  50  60  70  80  90 100</code></pre>
+<p><strong>問題</strong> 2.1.5: 次のコードがどのような結果を返すかを予想しなさい。実行して結果を確認してください。また，表示される警告メッセージを解釈してください。</p>
+<pre class="r"><code>&gt; 1:10 + 1:3</code></pre>
+<p><strong>問題</strong> 2.1.6: <code>rep()</code> の使用方法について調べなさい。</p>
+</div>
+<div id="functions" class="section level2">
+<h2>ベクトル化関数</h2>
+<div id="numeric" class="section level3">
+<h3>数学的な関数</h3>
+<p>R の多くの関数はベクトルの入力を受け取って，ベクトルを出力するように作られています。</p>
+<pre class="r"><code>&gt; x</code></pre>
+<pre><code>##  [1]  0  1  2  3  4  5  6  7  8  9 10</code></pre>
+<pre class="r"><code>&gt; y</code></pre>
+<pre><code>##  [1] 0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0</code></pre>
+<pre class="r"><code>&gt; exp(x)</code></pre>
+<pre><code>##  [1]     1.000000     2.718282     7.389056    20.085537    54.598150
+##  [6]   148.413159   403.428793  1096.633158  2980.957987  8103.083928
+## [11] 22026.465795</code></pre>
+<pre class="r"><code>&gt; log(x)</code></pre>
+<pre><code>##  [1]      -Inf 0.0000000 0.6931472 1.0986123 1.3862944 1.6094379 1.7917595
+##  [8] 1.9459101 2.0794415 2.1972246 2.3025851</code></pre>
+<p>リサイクル規則と組み合わせると，次のような式が実行できます。（<code>y</code> を平均とする正規分布の密度関数を <code>x</code> の各点で評価したもの）</p>
+<pre class="r"><code>&gt; exp(- (x - y) ^ 2 / 2) / sqrt(2 * pi)</code></pre>
+<pre><code>##  [1] 3.989423e-01 2.660852e-01 7.895016e-02 1.042093e-02 6.119019e-04
+##  [6] 1.598374e-05 1.857362e-07 9.601433e-10 2.207990e-12 2.258809e-15
+## [11] 1.027977e-18</code></pre>
+</div>
+<div id="comparison" class="section level3">
+<h3>比較</h3>
+<p>等号，不等号の比較もベクトル化されています。結果は真偽値からなるベクトルです。</p>
+<pre class="r"><code>&gt; x &lt; 5</code></pre>
+<pre><code>##  [1]  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE</code></pre>
+<p>AND/OR で複数の条件を結合する場合は <code>&amp;</code>/<code>|</code> を使います。</p>
+<pre class="r"><code>&gt; x &lt; 3 | x &gt; 6</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>##  [1]  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE</code></pre>
+<p></details></p>
+<pre class="r"><code>&gt; x &lt; 3 &amp; x &gt; 6</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</code></pre>
+<p></details></p>
+</div>
+<div id="strings" class="section level3">
+<h3>文字列関数</h3>
+<p>文字列のベクトルも同様にベクトル化されます。</p>
+<p><strong>例</strong> 2-1:</p>
+<ul>
+<li><code>paste0()</code> は文字列を連結する関数。</li>
+<li><code>LETTERS</code> はアルファベットの大文字からなる定義済みのベクトル。</li>
+</ul>
+<p>これらを使えば</p>
+<pre class="r"><code>&gt; paste0(&quot;Group-&quot;, LETTERS)</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>##  [1] &quot;Group-A&quot; &quot;Group-B&quot; &quot;Group-C&quot; &quot;Group-D&quot; &quot;Group-E&quot; &quot;Group-F&quot; &quot;Group-G&quot;
+##  [8] &quot;Group-H&quot; &quot;Group-I&quot; &quot;Group-J&quot; &quot;Group-K&quot; &quot;Group-L&quot; &quot;Group-M&quot; &quot;Group-N&quot;
+## [15] &quot;Group-O&quot; &quot;Group-P&quot; &quot;Group-Q&quot; &quot;Group-R&quot; &quot;Group-S&quot; &quot;Group-T&quot; &quot;Group-U&quot;
+## [22] &quot;Group-V&quot; &quot;Group-W&quot; &quot;Group-X&quot; &quot;Group-Y&quot; &quot;Group-Z&quot;</code></pre>
+<p></details></p>
+<p><strong>例</strong> 2-2: <code>stringr::fruit</code> はフルーツの名前を集めたベクトルで，パッケージ<strong>stringr</strong>に含まれます。</p>
+<pre class="r"><code>&gt; (fruit &lt;- stringr::fruit)</code></pre>
+<pre><code>##  [1] &quot;apple&quot;             &quot;apricot&quot;           &quot;avocado&quot;          
+##  [4] &quot;banana&quot;            &quot;bell pepper&quot;       &quot;bilberry&quot;         
+##  [7] &quot;blackberry&quot;        &quot;blackcurrant&quot;      &quot;blood orange&quot;     
+## [10] &quot;blueberry&quot;         &quot;boysenberry&quot;       &quot;breadfruit&quot;       
+## [13] &quot;canary melon&quot;      &quot;cantaloupe&quot;        &quot;cherimoya&quot;        
+## [16] &quot;cherry&quot;            &quot;chili pepper&quot;      &quot;clementine&quot;       
+## [19] &quot;cloudberry&quot;        &quot;coconut&quot;           &quot;cranberry&quot;        
+## [22] &quot;cucumber&quot;          &quot;currant&quot;           &quot;damson&quot;           
+## [25] &quot;date&quot;              &quot;dragonfruit&quot;       &quot;durian&quot;           
+## [28] &quot;eggplant&quot;          &quot;elderberry&quot;        &quot;feijoa&quot;           
+## [31] &quot;fig&quot;               &quot;goji berry&quot;        &quot;gooseberry&quot;       
+## [34] &quot;grape&quot;             &quot;grapefruit&quot;        &quot;guava&quot;            
+## [37] &quot;honeydew&quot;          &quot;huckleberry&quot;       &quot;jackfruit&quot;        
+## [40] &quot;jambul&quot;            &quot;jujube&quot;            &quot;kiwi fruit&quot;       
+## [43] &quot;kumquat&quot;           &quot;lemon&quot;             &quot;lime&quot;             
+## [46] &quot;loquat&quot;            &quot;lychee&quot;            &quot;mandarine&quot;        
+## [49] &quot;mango&quot;             &quot;mulberry&quot;          &quot;nectarine&quot;        
+## [52] &quot;nut&quot;               &quot;olive&quot;             &quot;orange&quot;           
+## [55] &quot;pamelo&quot;            &quot;papaya&quot;            &quot;passionfruit&quot;     
+## [58] &quot;peach&quot;             &quot;pear&quot;              &quot;persimmon&quot;        
+## [61] &quot;physalis&quot;          &quot;pineapple&quot;         &quot;plum&quot;             
+## [64] &quot;pomegranate&quot;       &quot;pomelo&quot;            &quot;purple mangosteen&quot;
+## [67] &quot;quince&quot;            &quot;raisin&quot;            &quot;rambutan&quot;         
+## [70] &quot;raspberry&quot;         &quot;redcurrant&quot;        &quot;rock melon&quot;       
+## [73] &quot;salal berry&quot;       &quot;satsuma&quot;           &quot;star fruit&quot;       
+## [76] &quot;strawberry&quot;        &quot;tamarillo&quot;         &quot;tangerine&quot;        
+## [79] &quot;ugli fruit&quot;        &quot;watermelon&quot;</code></pre>
+<p>ベリー類を探すには次のようにします。</p>
+<pre class="r"><code>&gt; (is_berry &lt;- endsWith(fruit, &quot;berry&quot;))</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>##  [1] FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE  TRUE  TRUE
+## [12] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE  TRUE FALSE
+## [23] FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE  TRUE  TRUE
+## [34] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE
+## [45] FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE
+## [56] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [67] FALSE FALSE FALSE  TRUE FALSE FALSE  TRUE FALSE FALSE  TRUE FALSE
+## [78] FALSE FALSE FALSE</code></pre>
+<p></details></p>
+<p>おっと，これではどれが正解かが分かりませんね。次のようにして名前を表示できます。</p>
+<pre class="r"><code>&gt; fruit[is_berry]</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>##  [1] &quot;bilberry&quot;    &quot;blackberry&quot;  &quot;blueberry&quot;   &quot;boysenberry&quot; &quot;cloudberry&quot; 
+##  [6] &quot;cranberry&quot;   &quot;elderberry&quot;  &quot;goji berry&quot;  &quot;gooseberry&quot;  &quot;huckleberry&quot;
+## [11] &quot;mulberry&quot;    &quot;raspberry&quot;   &quot;salal berry&quot; &quot;strawberry&quot;</code></pre>
+<p></details></p>
+<p>このコードが何をしているかは<a href="#by-condition">条件による抽出</a>で説明します。</p>
+</div>
+</div>
+<div id="summarize" class="section level2">
+<h2>集約</h2>
+<p>ベクトルの情報から単一の情報を抽出したいケースが頻繁にあります。例えば次のようなケースです。</p>
+<pre class="r"><code>&gt; sum(x)      # 合計</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>## [1] 55</code></pre>
+<p></details></p>
+<pre class="r"><code>&gt; mean(x)     # 平均</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>## [1] 5</code></pre>
+<p></details></p>
+<pre class="r"><code>&gt; median(x)   # 中央値</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>## [1] 5</code></pre>
+<p></details></p>
+<pre class="r"><code>&gt; var(x)      # 不偏分散</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>## [1] 11</code></pre>
+<p></details></p>
+<pre class="r"><code>&gt; sd(x)       # 不偏標準偏差</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>## [1] 3.316625</code></pre>
+<p></details></p>
+<div class="section level3">
+<h3>個数・割合</h3>
+<p><code>TRUE</code>/<code>FALSE</code> が数値的には 1 / 0 であることを思い出すと，</p>
+<ul>
+<li><code>sum()</code> を使って条件に当てはまる要素の個数，</li>
+<li><code>mean()</code> を使って条件に当てはまる要素の割合</li>
+</ul>
+<p>を計算することができます。</p>
+<pre class="r"><code>&gt; sum(is_berry)</code></pre>
+<pre><code>## [1] 14</code></pre>
+<pre class="r"><code>&gt; mean(is_berry)</code></pre>
+<pre><code>## [1] 0.175</code></pre>
+</div>
+</div>
+</div>
+<div class="section level1">
+<h1>ベクトルの要素の抽出</h1>
+<div id="by-index" class="section level2">
+<h2>位置による抽出</h2>
+<p>ベクトルの各要素は 1 から順に整数のインデックスがついています。 このインデックスを使って要素を抽出することができます。</p>
+<pre class="r"><code>&gt; x &lt;- c(9.1, 0.2, 2.3, 6.4, 8.5)</code></pre>
+<pre class="r"><code>&gt; x[1]</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>## [1] 9.1</code></pre>
+<p></details></p>
+<pre class="r"><code>&gt; x[3]</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>## [1] 2.3</code></pre>
+<p></details></p>
+<p>ベクトルから特定の要素を除いたベクトルを作るにはマイナスの演算子を使って実現できます。</p>
+<pre class="r"><code>&gt; x[-1]  # 1番目の要素を除く</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>## [1] 0.2 2.3 6.4 8.5</code></pre>
+<p></details></p>
+<p><strong>問題</strong> 2.1.7: 次のコードが何を表示するかを予想してください。その後，実行して予想が正しかったかどうかを確認してください。</p>
+<pre class="r"><code>&gt; x[-c(2, 3)]     # x &lt;- c(9.1, 0.2, 2.3, 6.4, 8.5)</code></pre>
+<p><details> <summary>結果</summary></p>
+<pre><code>## [1] 9.1 6.4 8.5</code></pre>
+<p></details></p>
+<p><strong>問題</strong> 2.1.8: ベクトルの最後の要素を抽出したい場合があります。どのようにすればよいでしょうか？</p>
+<p><details> <summary>解説</summary> <code>length()</code> と組み合わせれば実現できます。</p>
+<pre class="r"><code>&gt; x[length(x)]</code></pre>
+<pre><code>## [1] 8.5</code></pre>
+<p></details></p>
+</div>
+<div id="by-condition" class="section level2">
+<h2>条件による抽出</h2>
+<div id="by-condition-basics" class="section level3">
+<h3>基本のルール</h3>
+<p>まずは，小さいベクトルから始めましょう。小数第1位がインデックスになっていることに注意してください。</p>
+<pre class="r"><code>&gt; x &lt;- c(0.1, 3.2, 5.3, 8.4, 9.5)</code></pre>
+<p>ベクトルと同じ長さの真偽値からなるベクトルを作ります。</p>
+<pre class="r"><code>&gt; extract &lt;- c(TRUE, FALSE, TRUE, TRUE, FALSE)</code></pre>
+<p><code>TRUE</code> である要素は 1番目，3番目，4番目です。これを <code>x[]</code> の <code>[]</code> の中に入れます。</p>
+<pre class="r"><code>&gt; x[extract]</code></pre>
+<pre><code>## [1] 0.1 5.3 8.4</code></pre>
+<p><code>extract が</code>TRUE<code>である位置にある</code>x` の要素が抽出されていることを確認してください。 これと一緒に不等式などの条件付けを使うことで，「4以上の要素をすべて抽出する」といった操作ができるようになります。</p>
+<p><strong>問題</strong> 2.1.9: <code>x</code> から 4以上の要素をすべて抽出してください。</p>
+<p><details> <summary>解説</summary></p>
+<p>以上は <code>&gt;=</code> を使って判定します。</p>
+<pre class="r"><code>&gt; x[x &gt;= 4]</code></pre>
+<pre><code>## [1] 5.3 8.4 9.5</code></pre>
+<p></details></p>
+</div>
+<div id="by-condition-recycle" class="section level3">
+<h3>リサイクル</h3>
+<p>抽出元のベクトル（上の例では <code>x</code>）が，抽出位置を表す真偽値ベクトル（上の例では <code>extract</code>）より長い場合は，真偽値ベクトルはリサイクルされます。次の例を確認してください。</p>
+<pre class="r"><code>&gt; x[c(TRUE, FALSE)]</code></pre>
+<pre><code>## [1] 0.1 5.3 9.5</code></pre>
+<p><strong>問題</strong> 2.1.10: 真偽値ベクトルの方が長い場合はどうなるか？</p>
+<p><details> <summary>解説</summary></p>
+<p><code>TRUE</code> に対応する位置にデータがない場合には「<code>NA</code>」= 欠損値が出力されます。<code>FALSE</code> の部分は出力に影響しません。</p>
+<pre class="r"><code>&gt; y &lt;- 3
+&gt; y[c(TRUE, TRUE, FALSE)]</code></pre>
+<pre><code>## [1]  3 NA</code></pre>
+<p></details></p>
+</div>
+</div>
+<div id="by-name" class="section level2">
+<h2>名前による抽出</h2>
+<p>ベクトルの要素には名前を付けることができます。</p>
+<pre class="r"><code>&gt; students &lt;- c(&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;)
+&gt; math_scores &lt;- c(100, 90, 60)
+&gt; names(math_scores) &lt;- students
+&gt; math_scores</code></pre>
+<pre><code>##   Alice     Bob Charlie 
+##     100      90      60</code></pre>
+<p><code>names() &lt;-</code> は各要素に名前を付けるためのコマンドです。このように名前付きのベクトルは，名前でもインデックスでも要素抽出できます。</p>
+<pre class="r"><code>&gt; math_scores[c(&quot;Alice&quot;, &quot;Bob&quot;)]</code></pre>
+<pre><code>## Alice   Bob 
+##   100    90</code></pre>
+<pre class="r"><code>&gt; math_scores[c(1, 2)] * 0.1</code></pre>
+<pre><code>## Alice   Bob 
+##    10     9</code></pre>
+</div>
+</div>
+<div class="section level1">
+<h1>オブジェクトの保存方法</h1>
+<p>前回，設定で「.RData」の保存をしないようにすることをオススメしました。これには，</p>
+<ul>
+<li>データを生成したコードが保存されていればデータ自身は必要ない</li>
+<li>もし本当にデータを保存する必要があるなら，明示的に行うべき</li>
+</ul>
+<p>という2つの意味が込められています。</p>
+<p>オブジェクトを明示的に保存する方法を確認しておきましょう。</p>
+<div id="saverds-" class="section level2">
+<h2><code>saveRDS()</code> を使う</h2>
+<p>オブジェクト <code>x</code> をバイナリ形式のファイル <code>x.rds</code> に保存する関数は <code>saveRDS()</code> です。</p>
+<pre class="r"><code>&gt; saveRDS(x, file = &quot;Data/x.rds&quot;)</code></pre>
+<p>読み込むときは次のようにします。オブジェクト名は同じ名前であっても異なる名前であってもかまいません。</p>
+<pre class="r"><code>&gt; x &lt;- readRDS(&quot;Data/x.rds&quot;)</code></pre>
+<p><strong>問題</strong> 2.1.11: <code>save()</code> という関数もあります。使い方を調べてみましょう。</p>
+</div>
+<div id="dump-" class="section level2">
+<h2><code>dump()</code> を使う</h2>
+<p>テキスト形式で保存することもできます。<code>dump()</code> は実行可能なRスクリプトを生成するので， <code>source()</code> を用いて読み込むことができます。</p>
+<pre class="r"><code>&gt; dump(&quot;x&quot;, 
++      file = &quot;Data/dumpdata.R&quot;,
++      control = c(&quot;all&quot;, &quot;hexNumeric&quot;))</code></pre>
+<pre class="r"><code>&gt; source(&quot;Data/dumpdata.R&quot;)</code></pre>
+</div>
+</div>
+<div class="section level1">
+<h1>箱ひげ図・ヒストグラム・散布図</h1>
+<p>ベクトルの作り方と使い方がわかったところでデータの可視化の方法を学びましょう。</p>
+<pre class="r"><code>&gt; set.seed(940)             # 乱数の種。テスト用に固定しておく
+&gt; 
+&gt; N &lt;- 100                  # ベクトルのサイズ
+&gt; xdta &lt;- runif(N, -1, 1)   # 一様分布に従うランダムなベクトル
+&gt; ydta &lt;- 1 + 3 * xdta + rnorm(N)   # xdta の1次式 + 正規分布する誤差項</code></pre>
+<div id="summary" class="section level2">
+<h2>記述統計</h2>
+<p>記述統計量を表示するための基本関数は <code>summary()</code> という関数です。</p>
+<pre class="r"><code>&gt; summary(xdta)</code></pre>
+<pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+## -0.97526 -0.42584  0.03486  0.02180  0.50708  0.99345</code></pre>
+<pre class="r"><code>&gt; summary(ydta)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+## -4.3788 -0.6059  0.9370  1.0022  2.5890  5.2566</code></pre>
+<p>データ数が含まれていませんので，確認しておきましょう。</p>
+<pre class="r"><code>&gt; length(xdta)</code></pre>
+<pre><code>## [1] 100</code></pre>
+<pre class="r"><code>&gt; length(ydta)</code></pre>
+<pre><code>## [1] 100</code></pre>
+<p>分散は次のように計算できます。</p>
+<pre class="r"><code>&gt; var(xdta)</code></pre>
+<pre><code>## [1] 0.3131923</code></pre>
+<pre class="r"><code>&gt; var(ydta)</code></pre>
+<pre><code>## [1] 4.125499</code></pre>
+<div class="hint">
+<h3>基本的な統計量の確認</h3>
+<p>ベクトル <span class="math display">\[
+x = (x_1, x_2, \dots, x_n)
+\]</span> に対して次の基本統計量がよく使われる。</p>
+<table>
+<colgroup>
+<col width="14%" />
+<col width="56%" />
+<col width="29%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">名称</th>
+<th align="center">定義</th>
+<th align="center">R コード</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">平均</td>
+<td align="center"><span class="math display">\[\bar{x} = \frac{1}{n}\sum_{k = 1}^{n} x_k\]</span></td>
+<td align="center"><code>mean(x)</code></td>
+</tr>
+<tr class="even">
+<td align="center">分散</td>
+<td align="center"><span class="math display">\[\sigma^2 = \sum_{k = 1}^{n} (x_N - \bar{x})^2\]</span></td>
+<td align="center"><code>var(x) * (n - 1) / n</code></td>
+</tr>
+<tr class="odd">
+<td align="center">標準偏差</td>
+<td align="center"><span class="math display">\[\sqrt{\sigma^2}\]</span></td>
+<td align="center"><code>sd(x) * sqrt((n - 1) / n)</code></td>
+</tr>
+<tr class="even">
+<td align="center">不偏分散</td>
+<td align="center"><span class="math display">\[s^2 = \frac{1}{n-1}\sum_{k = 1}^{n} (x_N - \bar{x})^2\]</span></td>
+<td align="center"><code>var(x)</code></td>
+</tr>
+<tr class="odd">
+<td align="center">不偏標準偏差</td>
+<td align="center"><span class="math display">\[\sqrt{s^2}\]</span></td>
+<td align="center"><code>sd(x)</code></td>
+</tr>
+<tr class="even">
+<td align="center">最大値</td>
+<td align="center"></td>
+<td align="center"><code>max(x)</code></td>
+</tr>
+<tr class="odd">
+<td align="center">最小値</td>
+<td align="center"></td>
+<td align="center"><code>min(x)</code></td>
+</tr>
+<tr class="even">
+<td align="center">中央値</td>
+<td align="center">小さい順（大きい順）に並べて中央。 <span class="math inline">\(n\)</span> が偶数の場合は中央2つの平均を取る</td>
+<td align="center"><code>meadian(x)</code></td>
+</tr>
+<tr class="odd">
+<td align="center">四分位数</td>
+<td align="center">下から 0%, 25%, 50%, 75%, 100% の点</td>
+<td align="center"><code>quantile(x)</code></td>
+</tr>
+</tbody>
+</table>
+<p>複数のベクトルに対する共分散は <code>cov()</code>, 相関係数は <code>cor()</code> で計算できる。こちらはまた改めて紹介することにしよう。</p>
+</div>
+</div>
+<div id="scatter" class="section level2">
+<h2>散布図</h2>
+<p>2つの変数の関係を見るための基本的な道具は散布図です。これは次のように簡単に作ることができます。</p>
+<pre class="r"><code>&gt; plot(xdta, ydta)</code></pre>
+<p><img src="/textbook/2018-lesson2-01_files/figure-html/unnamed-chunk-58-1.png" width="672" /></p>
+</div>
+<div class="section level2">
+<h2>箱ひげ図</h2>
+<p>単一のデータに対する分布を見るために箱ひげ図が役にたちます。描く方法を覚えていますか？R では次のようにします。</p>
+<pre class="r"><code>&gt; boxplot(xdta, ydta)</code></pre>
+<p><img src="/textbook/2018-lesson2-01_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
+</div>
+<div class="section level2">
+<h2>ヒストグラム</h2>
+<p>分布の形状を見る他の方法はヒストグラムを描くことです。<code>hist()</code> は横軸を適当な区間に分割してその区間に入る数字の数を示す棒グラフを描きます。</p>
+<pre class="r"><code>&gt; hist(ydta)</code></pre>
+<p><img src="/textbook/2018-lesson2-01_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
+<p>あるいは確率分布を計算するならば，<code>freq = FALSE</code> を渡します。同じ形で高さだけが違うことがわかります。</p>
+<pre class="r"><code>&gt; hist(ydta, freq = FALSE)</code></pre>
+<p><img src="/textbook/2018-lesson2-01_files/figure-html/unnamed-chunk-61-1.png" width="672" /></p>
+</div>
+</div>
+<div id="next" class="section level1">
+<h1>次のステップ</h1>
+<ul>
+<li>R のデータフレームの作り方，使い方を覚える</li>
+<li><strong>tidyverse</strong> の <strong>tibble</strong> について学ぶ</li>
+<li>Excel/STATA のファイル から <strong>tibble</strong> を作る</li>
+</ul>
+</div>
