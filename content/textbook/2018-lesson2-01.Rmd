@@ -201,7 +201,7 @@ x
 
 <div class = "hint">
 
-## コンソールの機能
+## コンソールの機能 {#console-print}
 
 コンソールで 
 
@@ -442,7 +442,7 @@ var(x)      # 不偏分散
 sd(x)       # 不偏標準偏差
 ```
 
-### 個数・割合
+### 個数・割合 {#count-ratio}
 
 `TRUE`/`FALSE` が数値的には 1 / 0 であることを思い出すと，
 
@@ -457,7 +457,7 @@ mean(is_berry)
 ```
 
 
-# ベクトルの要素の抽出
+# ベクトルの要素の抽出 {#extract-elements}
 
 ## 位置による抽出 {#by-index}
 
@@ -585,7 +585,7 @@ math_scores[c("Alice", "Bob")]
 math_scores[c(1, 2)] * 0.1
 ```
 
-# オブジェクトの保存方法
+# オブジェクトの保存方法 {#save-objects}
 
 前回，設定で「.RData」の保存をしないようにすることをオススメしました。これには，
 
@@ -627,7 +627,7 @@ dump("x",
 source("Data/dumpdata.R")
 ```
 
-# 箱ひげ図・ヒストグラム・散布図
+# 統計量と可視化 {#visualization}
 
 ベクトルの作り方と使い方がわかったところでデータの可視化の方法を学びましょう。
 
@@ -666,7 +666,7 @@ var(ydta)
 
 <div class = "hint">
 
-### 基本的な統計量の確認
+### 基本的な統計量の確認 {#statistics}
 
 ベクトル
 $$
@@ -714,7 +714,7 @@ plot(xdta, ydta)
 ```
 
 
-## 箱ひげ図
+## 箱ひげ図 {#boxplot}
 
 単一のデータに対する分布を見るために箱ひげ図が役にたちます。描く方法を覚えていますか？R では次のようにします。
 
@@ -741,6 +741,7 @@ hist(ydta, freq = FALSE)
 
 # 次のステップ {#next}
 
-* R のデータフレームの作り方，使い方を覚える
-* **tidyverse** の **tibble** について学ぶ
-* Excel/STATA のファイル から **tibble** を作る
+- [Lesson 2-2: データフレーム・tibble](`r blogdown::shortcode("ref", "2018-lesson2-02.html")`)
+    * R のデータフレームの作り方，使い方を覚える
+    * **tidyverse** の **tibble** について学ぶ
+    * Excel/STATA のファイル から **tibble** を作る

@@ -177,7 +177,7 @@ score &lt;- data.frame(Name, Econ, Math)</code></pre>
 ## 1 Alice   90  100
 ## 2   Bob   80   90</code></pre>
 <p>条件付きで行を切り出すこともできます。例えば，Name が Alice である行を取り出したいという場合があります。 その場合は，次のようにします。</p>
-<pre class="r"><code>&gt; score[Name == &quot;Alice&quot;, ]</code></pre>
+<pre class="r"><code>&gt; score[score$Name == &quot;Alice&quot;, ]</code></pre>
 <pre><code>##    Name Econ Math
 ## 1 Alice   90  100</code></pre>
 </div>
@@ -193,7 +193,7 @@ score &lt;- data.frame(Name, Econ, Math)</code></pre>
 <pre><code>## [1] 100</code></pre>
 <p>とできます。</p>
 <p>“Alice” が 1行目であることを知らない場合には，Name が Alice である行を取り出す操作と，列名が Math の行を取り出す操作を組み合わせます。</p>
-<pre class="r"><code>&gt; score[Name == &quot;Alice&quot;, &quot;Math&quot;]</code></pre>
+<pre class="r"><code>&gt; score[score$Name == &quot;Alice&quot;, &quot;Math&quot;]</code></pre>
 <pre><code>## [1] 100</code></pre>
 </div>
 </div>

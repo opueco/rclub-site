@@ -152,7 +152,7 @@ score[c(1, 2), ]
 その場合は，次のようにします。
 
 ```{r}
-score[Name == "Alice", ]
+score[score$Name == "Alice", ]
 ```
 
 
@@ -177,7 +177,7 @@ score[1, 3]
 "Alice" が 1行目であることを知らない場合には，Name が Alice である行を取り出す操作と，列名が Math の行を取り出す操作を組み合わせます。
 
 ```{r}
-score[Name == "Alice", "Math"]
+score[score$Name == "Alice", "Math"]
 ```
 
 ## データフレームに対する演算 {#df-function}

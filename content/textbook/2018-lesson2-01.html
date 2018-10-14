@@ -30,10 +30,10 @@ output:
 <li><a href="#strings">文字列関数</a></li>
 </ul></li>
 <li><a href="#summarize">集約</a><ul>
-<li><a>個数・割合</a></li>
+<li><a href="#count-ratio">個数・割合</a></li>
 </ul></li>
 </ul></li>
-<li><a>ベクトルの要素の抽出</a><ul>
+<li><a href="#extract-elements">ベクトルの要素の抽出</a><ul>
 <li><a href="#by-index">位置による抽出</a></li>
 <li><a href="#by-condition">条件による抽出</a><ul>
 <li><a href="#by-condition-basics">基本のルール</a></li>
@@ -41,14 +41,14 @@ output:
 </ul></li>
 <li><a href="#by-name">名前による抽出</a></li>
 </ul></li>
-<li><a>オブジェクトの保存方法</a><ul>
+<li><a href="#save-objects">オブジェクトの保存方法</a><ul>
 <li><a href="#saverds-"><code>saveRDS()</code> を使う</a></li>
 <li><a href="#dump-"><code>dump()</code> を使う</a></li>
 </ul></li>
-<li><a>箱ひげ図・ヒストグラム・散布図</a><ul>
+<li><a href="#visualization">統計量と可視化</a><ul>
 <li><a href="#summary">記述統計</a></li>
 <li><a href="#scatter">散布図</a></li>
-<li><a>箱ひげ図</a></li>
+<li><a href="#boxplot">箱ひげ図</a></li>
 <li><a>ヒストグラム</a></li>
 </ul></li>
 <li><a href="#next">次のステップ</a></li>
@@ -179,7 +179,7 @@ output:
 <pre class="r"><code>&gt; (x &lt;- 1:10)</code></pre>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <div class="hint">
-<h2>コンソールの機能</h2>
+<h2 id="console-print">コンソールの機能</h2>
 <p>コンソールで</p>
 <pre class="r"><code>&gt; x</code></pre>
 <p>とすると，内容が表示されますが，スクリプト内にオブジェクト名だけを書いて <code>source()</code> してもオブジェクトの内容は表示されません。（<code>echo = TRUE</code> とすると表示される。）</p>
@@ -384,7 +384,7 @@ output:
 <p><details> <summary>結果</summary></p>
 <pre><code>## [1] 3.316625</code></pre>
 <p></details></p>
-<div class="section level3">
+<div id="count-ratio" class="section level3">
 <h3>個数・割合</h3>
 <p><code>TRUE</code>/<code>FALSE</code> が数値的には 1 / 0 であることを思い出すと，</p>
 <ul>
@@ -399,7 +399,7 @@ output:
 </div>
 </div>
 </div>
-<div class="section level1">
+<div id="extract-elements" class="section level1">
 <h1>ベクトルの要素の抽出</h1>
 <div id="by-index" class="section level2">
 <h2>位置による抽出</h2>
@@ -480,7 +480,7 @@ output:
 ##    10     9</code></pre>
 </div>
 </div>
-<div class="section level1">
+<div id="save-objects" class="section level1">
 <h1>オブジェクトの保存方法</h1>
 <p>前回，設定で「.RData」の保存をしないようにすることをオススメしました。これには，</p>
 <ul>
@@ -506,8 +506,8 @@ output:
 <pre class="r"><code>&gt; source(&quot;Data/dumpdata.R&quot;)</code></pre>
 </div>
 </div>
-<div class="section level1">
-<h1>箱ひげ図・ヒストグラム・散布図</h1>
+<div id="visualization" class="section level1">
+<h1>統計量と可視化</h1>
 <p>ベクトルの作り方と使い方がわかったところでデータの可視化の方法を学びましょう。</p>
 <pre class="r"><code>&gt; set.seed(940)             # 乱数の種。テスト用に固定しておく
 &gt; 
@@ -534,7 +534,7 @@ output:
 <pre class="r"><code>&gt; var(ydta)</code></pre>
 <pre><code>## [1] 4.125499</code></pre>
 <div class="hint">
-<h3>基本的な統計量の確認</h3>
+<h3 id="statistics">基本的な統計量の確認</h3>
 <p>ベクトル <span class="math display">\[
 x = (x_1, x_2, \dots, x_n)
 \]</span> に対して次の基本統計量がよく使われる。</p>
@@ -608,7 +608,7 @@ x = (x_1, x_2, \dots, x_n)
 <pre class="r"><code>&gt; plot(xdta, ydta)</code></pre>
 <p><img src="/textbook/2018-lesson2-01_files/figure-html/unnamed-chunk-58-1.png" width="672" /></p>
 </div>
-<div class="section level2">
+<div id="boxplot" class="section level2">
 <h2>箱ひげ図</h2>
 <p>単一のデータに対する分布を見るために箱ひげ図が役にたちます。描く方法を覚えていますか？R では次のようにします。</p>
 <pre class="r"><code>&gt; boxplot(xdta, ydta)</code></pre>
@@ -627,8 +627,11 @@ x = (x_1, x_2, \dots, x_n)
 <div id="next" class="section level1">
 <h1>次のステップ</h1>
 <ul>
+<li><a href="{{% ref "2018-lesson2-02.html" %}}">Lesson 2-2: データフレーム・tibble</a>
+<ul>
 <li>R のデータフレームの作り方，使い方を覚える</li>
 <li><strong>tidyverse</strong> の <strong>tibble</strong> について学ぶ</li>
 <li>Excel/STATA のファイル から <strong>tibble</strong> を作る</li>
+</ul></li>
 </ul>
 </div>
