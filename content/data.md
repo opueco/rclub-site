@@ -31,6 +31,7 @@ title: 主要な経済データの紹介
 - [Maddison Historical Statistics](https://www.rug.nl/ggdc/historicaldevelopment/maddison/)
 - [IMF Data](https://www.imf.org/en/Data)
 - [World Bank Open Data](https://data.worldbank.org)
+- [U.S. Bureau of Labor Statistics](https://www.bls.gov/data/)
 
 ## 世界のミクロデータ
 
