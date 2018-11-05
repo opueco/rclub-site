@@ -1,0 +1,508 @@
+---
+title: "Lesson 3-1: dplyr入門"
+date: "2018-11-04 00:00:00 +0900"
+categories:
+  - textbook
+tag:
+  - R
+slug: 2018-3-1
+output: 
+  blogdown::html_page:
+    toc: true
+monofont: Ricty Discord
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(prompt = FALSE)
+View <- knitr::kable
+pwt90 <- haven::read_dta("~/Data/pwt90.dta")
+
+source("../../R/knitr-setup.R")
+source("../../R/util.R")
+
+cnt_exe <- counter()
+cnt_exa <- counter()
+cnt_prb <- counter()
+cnt_scr <- counter()
+```
+
+# 前のステップ {#pre}
+
+[Lesson 2-2: データフレーム・tibble](`r blogdown::shortcode("ref", "2018-lesson2-02.html")`) では次のことを勉強しました。
+
+* 表形式データの扱い方
+* 入出力
+
+# このセッションの目標 {#goal}
+
+* dplyr/tidyr を使って表形式データを自在に操る
+* ggplot2 の基本
+
+# Tidyverse
+
+このセッションでは，**tidyverse** というパッケージ群を使います。
+
+```{r}
+library(tidyverse)
+```
+
+メッセージを一度読んでおきましょう。`library(tidyverse)` というコマンドは（今後増減するかもしれませんが）現在 8個のパッケージを読み込みます。
+
+- **ggplot2** 可視化
+- **tibble** データフレーム拡張
+- **tidyr** ワイド・ロングの変換など
+- **readr** ファイルの読み書き
+- **purrr** 関数型プログラミング
+- **dplyr** データ処理
+- **stringr** 文字列処理
+- **forcats**  カテゴリカル変数
+
+本日のメインは **dplyr** （ディープライアーと読む）です。
+
+"Conflicts" という少し不穏なメッセージも出ていますが，これはすでに読み込まれている関数が上書きされたことに対する警告です。
+
+`dplyr::filter()` が `stats::filter()` を上書きしたので，パッケージ名を付けずに `filter()` を呼び出すと `dplyr::filter()` が
+呼ばれます。もし，`stats::filter()` を使いたい場合には `stats::` を付けます。`lag()` についても同様です。
+
+
+# Penn World Table {#pwt}
+
+本日は，Penn World Table という主要なマクロ指標を国際比較できるデータベースを使います。1950〜2014年，182カ国のデータが掲載されています。
+データの詳細については以下の論文を参照してください。
+
+Feenstra, Robert C., Robert Inklaar and Marcel P. Timmer (2015), "[The Next Generation of the Penn World Table](https://www.aeaweb.org/articles?id=10.1257/aer.20130954)" _American Economic Review_, 105(10), 3150-3182, available for download at <http://www.ggdc.net/pwt>
+
+## ダウンロード {#pwt-dl}
+
+まずは本日使うデータをダウンロードしましょう。いつも通り，
+
+- RClub 用のプロジェクトを開いている状態で，
+- その中に `Data` フォルダがあること
+
+を想定しています。
+
+次のコマンドをコンソールで実行してください。（コピー＆ペーストしてください）
+
+```{r, eval = FALSE, prompt = FALSE}
+download.file(url = "http://www.rug.nl/ggdc/docs/pwt90.dta", 
+              destfile = "Data/pwt90.dta", mode = "wb") 
+```
+
+これは Penn World Table version 9.0 の Stata 形式のデータをダウンロードします。
+
+## 読み込み {#pwt-load}
+
+読み込むときは
+
+```{r, eval = FALSE}
+pwt90 <- haven::read_dta("Data/pwt90.dta")
+```
+
+とします。**haven** というSTATA や SPSS のデータ形式を読み込むためのパッケージを使っています。読み込んだデータに `pwt90` という名前を付けたので，コンソールに `pwt90` と打ち込むと最初の方にある行と列が表示されます。
+
+```{r}
+pwt90
+```
+
+11,830行，47列あることも分かります。列は変数に対応しています。
+
+## STATA のラベル {#pwt-label}
+
+`pwt90.dta` はもともとSTATAのデータなので，変数には説明用のラベルがついています。`haven::read_dta()` はラベル情報も同時にインポートします。単独の変数（列）についたラベルを知りたい場合は，次のコマンドを実行してみてください。
+
+```{r}
+attr(pwt90$rgdpo, "label")
+```
+
+すべての変数とラベルの関係を一覧するコードブックを作っておくと便利かもしれません。例えば，次のようにします。（`map_chr()` は **purrr** の関数で，同じ操作をベクトルの各要素やデータフレームの各列に繰り返すときに使います。何をやっているかを今すぐ理解できなくても構いません。）
+
+```{r, prompt = FALSE}
+labs <- map_chr(colnames(pwt90), ~ attr(pwt90[[.x]], "label"))  # ラベルの取得
+(codebook <- tibble(variable = colnames(pwt90), label = labs))  # tibble に変換
+```
+
+全体を見るためには `View()` が使えます。
+
+```{r}
+View(codebook)
+```
+
+
+このセッションでは，主に以下の3つの変数を使います。
+
+```{r}
+codebook[codebook$variable %in% c("country", "year", "rgdpo"), ]
+```
+
+なお，`%in%` は左辺の要素が右辺のベクトルに含まれているかをチェックします。（$a \in V$ の判定）
+
+```{r}
+"A" %in% letters
+"a" %in% letters
+```
+
+
+<div class = "hint">
+
+### **purrr** の `map_*()`
+
+
+
+</div>
+
+# パイプ {#pipe}
+
+PWT のようなデータがあったとき，（順番は前後するかもしれませんが）次のような操作がよくあるパターンです。
+
+1. 不要な列を落とす（例えば，消費のデータは今はいらない，といった理由で）
+1. 不要な行を落とす（例えば，1960年より前のデータはいらない，といった理由で）
+1. 既存の列から計算された新しい情報を追加する
+1. グループごとに集計する
+1. 集計結果に応じて並び替える
+
+このような処理は1つのコマンドで実行するのは難しいので，複数のステップに分けるのですが，各ステップのつながりが分かりやすいようにしておくと後々の管理が楽になります。
+
+**tidyverse** ではパイプ `%>%` を使って複数ステップの接続を行います。
+
+```{r, eval = FALSE, prompt = FALSE}
+オブジェクト %>% 
+  関数1() %>% 
+  関数2()
+```
+
+という形が基本のパターンで，これは
+
+```{r, eval = FALSE, prompt = FALSE}
+関数2(関数1(オブジェクト))
+```
+
+と同じ意味です。最終出力は関数で変換されたオブジェクトです。
+
+関数はパラメータ付きで
+
+```{r, eval = FALSE, prompt = FALSE}
+オブジェクト %>% 
+  関数1(p = foo) %>% 
+  関数2(q = bar)
+```
+
+のようにすることもできます。これは，
+
+```{r, eval = FALSE, prompt = FALSE}
+関数2(関数1(オブジェクト, p = foo), q = bar)
+```
+
+と同じ意味です。コードが非常に読みやすくなりますね。最初に挙げた基本ワークフローは
+
+```{r, eval = FALSE, prompt = FALSE}
+データ %>% 
+  列を選ぶ(必要な列1, 必要な列2) %>% 
+  行を取り出す(条件1, 条件2) %>% 
+  列を追加する(新しい列名 = 計算式) %>% 
+  グループ化する(グループ化のルール) %>% 
+  集計する(集計値の名称 = 集計ルール) %>% 
+  並び替える(並び替えルール)
+```
+
+といった形で書かれることになります。**データから出発して変換操作を次々と繋いでいくイメージ**です。石油やガスがパイプラインを通って運ばれていく様子に似ているので，このような操作を **パイプ処理** と呼びます。
+
+**tidyverse** の主要な関数は
+
+- 第1引数はデータを受け取る
+- データとして tibble を入れると，必ず tibble が出てくる
+
+ように設計されています。パイプを使った処理がしやすいように工夫されているのです。
+
+
+## 簡単な例 {#toy}
+
+パイプ自体は**magrittr** という独立したパッケーじで定義されているので，tibble でなくても使うことができます。試しに簡単な例を見てみましょう。
+
+次のコマンドは `sum(1:10)` と同じ意味です。
+
+```{r}
+1:10 %>% sum()
+```
+
+`1:10` の和をとってから，平方根を取る，という操作は順序どおりに関数を並べれば出来上がりです。
+
+```{r}
+1:10 %>% sum() %>% sqrt()     # sqrt(sum(1:10)) と同じ 
+```
+
+最初の引数を `%>%` の左側のオブジェクトは関数の第1引数になります。2つ目以降の引数を指定することができます。
+
+```{r plot-pipe}
+runif(50) %>% round(digits = 1) %>% plot(type = "l")
+```
+
+2つ目以降の引数に左辺のオブジェクトを渡したい場合にはドット（`.`）を使います。
+
+```{r}
+sample(letters, 10) %>% paste0("group-", .)
+```
+
+
+これでパイプを使う準備ができました。
+
+
+# **dplyr** の動詞
+
+1つの tibble を変形して何らかの結果を得るためにはデータ操作に使う関数を知っておく必要があります。中でも一番基本的なのは，`select()`, `filter()`, `mutate()`, `group_by()`, `summarize()`, `arrange()` です。
+
+## select
+
+列を選択するのは `select()` です。必要な列のみを取り出すために使います。
+例えば，実質GDP の時系列をプロットしたいだけなら，PWTで必要なのは
+
+- country
+- year
+- rgdpo
+
+だけです。この場合は，`select()` を使って他の変数を落としてしまいます。
+
+```{r}
+pwt90 %>% 
+  select(country, year, rgdpo)
+```
+
+もし，選ぶのではなく除外したいという場合には，列名にマイナス符号を付けます。
+
+```{r}
+pwt90 %>% 
+  select(country, year, rgdpo) %>%   # ここまでは上と同じ3列の tibble
+  select(-year)                      # year を除外する
+```
+
+## filter
+
+列を選ぶのは `select()` です。では行を選ぶには？`filter()` を使います。
+例えば，日本のデータだけを取ってきたいとしましょう。次のようにします。
+
+```{r}
+pwt90 %>% 
+  filter(country == "Japan")
+```
+
+日本とアメリカだけなら？プロンプトの出力では少し分かりにくいので `View()` と組み合わせます。アメリカのデータが残っているのが分かるでしょうか。
+
+
+```{r, eval=FALSE}
+pwt90 %>% 
+  filter(country %in% c("Japan", "United States")) %>% 
+  View()
+```
+
+
+複数条件を組み合わせることもできます。AND条件はコンマで区切るだけです。(`&` も使えます)
+
+```{r}
+pwt90 %>% 
+  filter(country %in% c("Japan", "United States"), year > 2011)
+```
+
+
+OR 条件は `|` を使います。次のフィルターは「『日本かアメリカまたは人口が10億人以上』かつ『2013年以降』」のデータを抽出しています。
+
+```{r}
+pwt90 %>% 
+  filter(country %in% c("Japan", "United States") | pop > 1000, year > 2012)
+```
+
+最後に `select()` との組み合わせです。
+
+```{r}
+pwt90 %>% 
+  filter(year > 1960, country %in% c("Japan", "United States", "Republic of Korea")) %>% 
+  select(country, year, rgdpo, pop)
+```
+
+
+<div class = "hint">
+
+### Non-Standard Evaluation (NSE)
+
+```{r}
+pwt90 %>% 
+  filter(year > 2012, country == "Japan") %>% 
+  select(country, year, rgdpo, pop)
+```
+
+このコマンドでは，列名をあたかもオブジェクト名のように扱っています。`year` や `country` や `rgdpo` という名前はどこにも定義されていませんので，「object not found」と怒られそうなものですが，上のコマンドはうまく動きます。
+
+実際，次のコマンドは失敗します。
+
+```{r, error = TRUE}
+year > 2012
+```
+
+R の関数に渡される引数は
+
+- 式を評価した値だけを使う
+- 式そのものも使う
+
+という2つのパターンがあります。「式そのもの」を使うというのは，例えば，次のコマンドの結果は，X軸，Y軸のラベルは特に指定しない限り引数として設定した式になります。もちろん，プロットする点を決めるためには「式の値」が使われています。
+
+```{r plot-lazyeval}
+xval <- 1:10
+random <- rnorm(10)
+plot(xval, xval + random)
+```
+
+要するに，`plot()` 関数は**引数を式ごと受け取って必要になったら値を調べる**ということをやっています。このような振る舞いは，Non-Standard Evaluation (NSE) と呼ばれ，対話的な統計環境としてのRの利便性を高めています。
+
+**dplyr** の関数の多くも NSE を使っています。
+
+- 呼び出したときに名前が定義されていなくてもいったん式を受け取る
+- 関数が実行されているときに，tibble の中にその名前を探す
+
+
+```{r, error = TRUE}
+pwt90 %>% 
+  select(nonexistent)
+```
+
+</div>
+
+## mutate / transmute
+
+列を新たに追加するのは `mutate()` を使います。
+
+例えば，次のコマンド, 最後の行は1人あたり実質GDPを追加します。
+
+```{r}
+pwt90 %>% 
+  filter(year > 1960, country %in% c("Japan", "United States", "Republic of Korea")) %>% 
+  select(country, year, rgdpo, pop) %>% 
+  mutate(rgdpo_pc = rgdpo / pop)
+```
+
+ほしいデータが `rgdpo_pc` だけで，`rgdpo`, `pop` が必要なくなるようなケースも考えられます。その場合，`transmute()` を使うことができます。これは，`select()` と `mutate()` を同時に実行してくれます。
+
+```{r}
+pwt90 %>% 
+  filter(year > 1960, country %in% c("Japan", "United States", "Republic of Korea")) %>% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop)
+```
+
+## 脱線: ggplot2
+
+ここまで来るとグラフを描いてみたくなります。すこし脱線して ggplot2 を紹介しましょう。
+
+まずは，コードを見てみましょう。3行目までは前のコードと同じです。4行目からが可視化のためのコードです。
+
+```{r plot-pwt}
+pwt90 %>% 
+  filter(year > 1960, country %in% c("Japan", "United States", "Republic of Korea")) %>% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop) %>%    # ここまでは前と同じ
+  ggplot(aes(x = year, y = rgdpo_pc, color = country)) +
+    geom_line() + 
+    xlab("Year") + 
+    ylab("Real GDP per capita")
+```
+
+
+`ggplot()` という関数は「**ggplot2** の可視化を始めますよ」というコマンドです。第1引数としてデータを取るので，パイプを使って上手くデータを渡すことができます。
+
+`ggplot()` で描画エリアを初期化した後は，`+` の記号（パイプ`%>%`ではなく！）を使って，グラフのレイヤー（層）を重ねていきます。`aes()` というのはデータを外観上の特徴に対応付けるための関数です。この例では
+
+- `year` はグラフの横軸の値を定める
+- `rgdpo_pc` はグラフの縦軸の値を定める
+- `country` はグラフの色を定める（"Japan" なら赤，など）
+
+ということを設定しています。`geom_line()` というのは，折れ線グラフのレイヤーを作成するための関数です。引数が空の場合は，`ggplot()` に渡された データと外観特性を使って描写します。
+
+`xlab()`, `ylab()` は軸のラベルのレイヤーを作ります。
+
+
+## group_by
+
+上のような図を見ると「各国の平均成長率はどれぐらいだったのか？」といった疑問が湧いてきます。このような計算をするためには，`group_by()` と `summarize()` を使います。まずは，`group_by()` です。
+
+```{r}
+pwt90 %>% 
+  filter(year > 1960, country %in% c("Japan", "United States", "Republic of Korea")) %>% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop) %>% 
+  group_by(country)
+```
+
+見た目上なんの違いもないように見えますが，`summarize()` を使うと違いがはっきりと分かります。
+
+## summarize
+
+`summarize()` は複数行にまたがる情報を集約して1つの結果を得るためのものです。例えば，何行あるかとか，平均はいくらかといった計算をするときに使います。通常の `mean()` や行数を数える `n()` という関数が使えます。
+
+
+```{r}
+pwt90 %>% 
+  filter(year > 1960, country %in% c("Japan", "United States", "Republic of Korea")) %>% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop) %>% 
+  summarize(mean = mean(rgdpo_pc), n = n())
+```
+
+おっと，国ごとの結果にならなかったですね。これは `group_by()` を忘れたからです。
+
+
+```{r}
+pwt90 %>% 
+  filter(year > 1960, country %in% c("Japan", "United States", "Republic of Korea")) %>% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop) %>% 
+　group_by(country) %>% 
+  summarize(mean = mean(rgdpo_pc), n = n())
+```
+
+
+さて，問題の平均成長率ですが，これを計算するには
+
+$$
+Y \text{の成長率}(t\to t+1)
+=
+\log Y_{t+1} - \log Y_t
+$$
+すなわち
+
+$$
+Y \text{の平均成長率}(1 \to T)
+=
+\sum_{t=1}^{T-1} \frac{\log Y_{t+1} - \log Y_t}{T - 1}
+=
+\frac{\log Y_T - \log Y_1}{T - 1}
+$$
+という公式を使います。
+
+
+```{r}
+pwt90 %>% 
+  filter(year > 1960, country %in% c("Japan", "United States", "Republic of Korea")) %>% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop, ln_rgdpo_pc = log(rgdpo_pc)) %>% 
+　group_by(country) %>% 
+  summarize(avg_growth = mean(ln_rgdpo_pc - lag(ln_rgdpo_pc), na.rm = TRUE))
+```
+
+`lag()` はデータを1期ずらす関数です。
+
+## arrange
+
+上の例では行が3つだけなので大きな問題にはなりませんが，「平均成長率が最も高い国はどこか」ということを知りたい場合には，データが整列している方が何かと都合がよいです。そのために使うのが `arrange()` です。
+
+```{r}
+pwt90 %>% 
+  filter(year > 1960, country %in% c("Japan", "United States", "Republic of Korea")) %>% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop, ln_rgdpo_pc = log(rgdpo_pc)) %>% 
+　group_by(country) %>% 
+  summarize(avg_growth = mean(ln_rgdpo_pc - lag(ln_rgdpo_pc), na.rm = TRUE)) %>% # ココまでは上と同じ
+  arrange(avg_growth)
+```
+
+`arrange()` のデフォルトは小さい順です。大きい順にするには `desc()` を噛ませます。
+
+
+```{r}
+pwt90 %>% 
+  filter(year > 1960, country %in% c("Japan", "United States", "Republic of Korea")) %>% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop, ln_rgdpo_pc = log(rgdpo_pc)) %>% 
+　group_by(country) %>% 
+  summarize(avg_growth = mean(ln_rgdpo_pc - lag(ln_rgdpo_pc), na.rm = TRUE)) %>% # ココまでは上と同じ
+  arrange(desc(avg_growth))
+```
+
