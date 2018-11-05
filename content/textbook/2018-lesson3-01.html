@@ -1,0 +1,768 @@
+---
+title: "Lesson 3-1: dplyr入門"
+date: "2018-11-04 00:00:00 +0900"
+categories:
+  - textbook
+tag:
+  - R
+slug: 2018-3-1
+output: 
+  blogdown::html_page:
+    toc: true
+monofont: Ricty Discord
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#pre">前のステップ</a></li>
+<li><a href="#goal">このセッションの目標</a></li>
+<li><a href="#tidyverse">Tidyverse</a></li>
+<li><a href="#pwt">Penn World Table</a><ul>
+<li><a href="#pwt-dl">ダウンロード</a></li>
+<li><a href="#pwt-load">読み込み</a></li>
+<li><a href="#pwt-label">STATA のラベル</a></li>
+</ul></li>
+<li><a href="#pipe">パイプ</a><ul>
+<li><a href="#toy">簡単な例</a></li>
+</ul></li>
+<li><a href="#dplyr-"><strong>dplyr</strong> の動詞</a><ul>
+<li><a href="#select">select</a></li>
+<li><a href="#filter">filter</a></li>
+<li><a href="#mutate-transmute">mutate / transmute</a></li>
+<li><a href="#-ggplot2">脱線: ggplot2</a></li>
+<li><a href="#group_by">group_by</a></li>
+<li><a href="#summarize">summarize</a></li>
+<li><a href="#arrange">arrange</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="pre" class="section level1">
+<h1>前のステップ</h1>
+<p><a href="{{% ref "2018-lesson2-02.html" %}}">Lesson 2-2: データフレーム・tibble</a> では次のことを勉強しました。</p>
+<ul>
+<li>表形式データの扱い方</li>
+<li>入出力</li>
+</ul>
+</div>
+<div id="goal" class="section level1">
+<h1>このセッションの目標</h1>
+<ul>
+<li>dplyr/tidyr を使って表形式データを自在に操る</li>
+<li>ggplot2 の基本</li>
+</ul>
+</div>
+<div id="tidyverse" class="section level1">
+<h1>Tidyverse</h1>
+<p>このセッションでは，<strong>tidyverse</strong> というパッケージ群を使います。</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.0.0     ✔ purrr   0.2.5
+## ✔ tibble  1.4.2     ✔ dplyr   0.7.6
+## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
+## ✔ readr   1.1.1     ✔ forcats 0.3.0</code></pre>
+<pre><code>## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<p>メッセージを一度読んでおきましょう。<code>library(tidyverse)</code> というコマンドは（今後増減するかもしれませんが）現在 8個のパッケージを読み込みます。</p>
+<ul>
+<li><strong>ggplot2</strong> 可視化</li>
+<li><strong>tibble</strong> データフレーム拡張</li>
+<li><strong>tidyr</strong> ワイド・ロングの変換など</li>
+<li><strong>readr</strong> ファイルの読み書き</li>
+<li><strong>purrr</strong> 関数型プログラミング</li>
+<li><strong>dplyr</strong> データ処理</li>
+<li><strong>stringr</strong> 文字列処理</li>
+<li><strong>forcats</strong> カテゴリカル変数</li>
+</ul>
+<p>本日のメインは <strong>dplyr</strong> （ディープライアーと読む）です。</p>
+<p>“Conflicts” という少し不穏なメッセージも出ていますが，これはすでに読み込まれている関数が上書きされたことに対する警告です。</p>
+<p><code>dplyr::filter()</code> が <code>stats::filter()</code> を上書きしたので，パッケージ名を付けずに <code>filter()</code> を呼び出すと <code>dplyr::filter()</code> が 呼ばれます。もし，<code>stats::filter()</code> を使いたい場合には <code>stats::</code> を付けます。<code>lag()</code> についても同様です。</p>
+</div>
+<div id="pwt" class="section level1">
+<h1>Penn World Table</h1>
+<p>本日は，Penn World Table という主要なマクロ指標を国際比較できるデータベースを使います。1950〜2014年，182カ国のデータが掲載されています。 データの詳細については以下の論文を参照してください。</p>
+<p>Feenstra, Robert C., Robert Inklaar and Marcel P. Timmer (2015), “<a href="https://www.aeaweb.org/articles?id=10.1257/aer.20130954">The Next Generation of the Penn World Table</a>” <em>American Economic Review</em>, 105(10), 3150-3182, available for download at <a href="http://www.ggdc.net/pwt" class="uri">http://www.ggdc.net/pwt</a></p>
+<div id="pwt-dl" class="section level2">
+<h2>ダウンロード</h2>
+<p>まずは本日使うデータをダウンロードしましょう。いつも通り，</p>
+<ul>
+<li>RClub 用のプロジェクトを開いている状態で，</li>
+<li>その中に <code>Data</code> フォルダがあること</li>
+</ul>
+<p>を想定しています。</p>
+<p>次のコマンドをコンソールで実行してください。（コピー＆ペーストしてください）</p>
+<pre class="r"><code>download.file(url = &quot;http://www.rug.nl/ggdc/docs/pwt90.dta&quot;, 
+              destfile = &quot;Data/pwt90.dta&quot;, mode = &quot;wb&quot;) </code></pre>
+<p>これは Penn World Table version 9.0 の Stata 形式のデータをダウンロードします。</p>
+</div>
+<div id="pwt-load" class="section level2">
+<h2>読み込み</h2>
+<p>読み込むときは</p>
+<pre class="r"><code>pwt90 &lt;- haven::read_dta(&quot;Data/pwt90.dta&quot;)</code></pre>
+<p>とします。<strong>haven</strong> というSTATA や SPSS のデータ形式を読み込むためのパッケージを使っています。読み込んだデータに <code>pwt90</code> という名前を付けたので，コンソールに <code>pwt90</code> と打ち込むと最初の方にある行と列が表示されます。</p>
+<pre class="r"><code>pwt90</code></pre>
+<pre><code>## # A tibble: 11,830 x 47
+##    countrycode country currency_unit  year rgdpe rgdpo   pop   emp   avh
+##    &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 ABW         Aruba   Aruban Guild…  1950    NA    NA    NA    NA    NA
+##  2 ABW         Aruba   Aruban Guild…  1951    NA    NA    NA    NA    NA
+##  3 ABW         Aruba   Aruban Guild…  1952    NA    NA    NA    NA    NA
+##  4 ABW         Aruba   Aruban Guild…  1953    NA    NA    NA    NA    NA
+##  5 ABW         Aruba   Aruban Guild…  1954    NA    NA    NA    NA    NA
+##  6 ABW         Aruba   Aruban Guild…  1955    NA    NA    NA    NA    NA
+##  7 ABW         Aruba   Aruban Guild…  1956    NA    NA    NA    NA    NA
+##  8 ABW         Aruba   Aruban Guild…  1957    NA    NA    NA    NA    NA
+##  9 ABW         Aruba   Aruban Guild…  1958    NA    NA    NA    NA    NA
+## 10 ABW         Aruba   Aruban Guild…  1959    NA    NA    NA    NA    NA
+## # ... with 11,820 more rows, and 38 more variables: hc &lt;dbl&gt;, ccon &lt;dbl&gt;,
+## #   cda &lt;dbl&gt;, cgdpe &lt;dbl&gt;, cgdpo &lt;dbl&gt;, ck &lt;dbl&gt;, ctfp &lt;dbl&gt;,
+## #   cwtfp &lt;dbl&gt;, rgdpna &lt;dbl&gt;, rconna &lt;dbl&gt;, rdana &lt;dbl&gt;, rkna &lt;dbl&gt;,
+## #   rtfpna &lt;dbl&gt;, rwtfpna &lt;dbl&gt;, labsh &lt;dbl&gt;, delta &lt;dbl&gt;, xr &lt;dbl&gt;,
+## #   pl_con &lt;dbl&gt;, pl_da &lt;dbl&gt;, pl_gdpo &lt;dbl&gt;, i_cig &lt;dbl+lbl&gt;,
+## #   i_xm &lt;dbl+lbl&gt;, i_xr &lt;dbl+lbl&gt;, i_outlier &lt;dbl+lbl&gt;, cor_exp &lt;dbl&gt;,
+## #   statcap &lt;dbl&gt;, csh_c &lt;dbl&gt;, csh_i &lt;dbl&gt;, csh_g &lt;dbl&gt;, csh_x &lt;dbl&gt;,
+## #   csh_m &lt;dbl&gt;, csh_r &lt;dbl&gt;, pl_c &lt;dbl&gt;, pl_i &lt;dbl&gt;, pl_g &lt;dbl&gt;,
+## #   pl_x &lt;dbl&gt;, pl_m &lt;dbl&gt;, pl_k &lt;dbl&gt;</code></pre>
+<p>11,830行，47列あることも分かります。列は変数に対応しています。</p>
+</div>
+<div id="pwt-label" class="section level2">
+<h2>STATA のラベル</h2>
+<p><code>pwt90.dta</code> はもともとSTATAのデータなので，変数には説明用のラベルがついています。<code>haven::read_dta()</code> はラベル情報も同時にインポートします。単独の変数（列）についたラベルを知りたい場合は，次のコマンドを実行してみてください。</p>
+<pre class="r"><code>attr(pwt90$rgdpo, &quot;label&quot;)</code></pre>
+<pre><code>## [1] &quot;Output-side real GDP at chained PPPs (in mil. 2011US$)&quot;</code></pre>
+<p>すべての変数とラベルの関係を一覧するコードブックを作っておくと便利かもしれません。例えば，次のようにします。（<code>map_chr()</code> は <strong>purrr</strong> の関数で，同じ操作をベクトルの各要素やデータフレームの各列に繰り返すときに使います。何をやっているかを今すぐ理解できなくても構いません。）</p>
+<pre class="r"><code>labs &lt;- map_chr(colnames(pwt90), ~ attr(pwt90[[.x]], &quot;label&quot;))  # ラベルの取得
+(codebook &lt;- tibble(variable = colnames(pwt90), label = labs))  # tibble に変換</code></pre>
+<pre><code>## # A tibble: 47 x 2
+##    variable     label                                                     
+##    &lt;chr&gt;        &lt;chr&gt;                                                     
+##  1 countrycode  3-letter ISO country code                                 
+##  2 country      Country name                                              
+##  3 currency_un… Currency unit                                             
+##  4 year         Year                                                      
+##  5 rgdpe        Expenditure-side real GDP at chained PPPs (in mil. 2011US…
+##  6 rgdpo        Output-side real GDP at chained PPPs (in mil. 2011US$)    
+##  7 pop          Population (in millions)                                  
+##  8 emp          Number of persons engaged (in millions)                   
+##  9 avh          Average annual hours worked by persons engaged (source: T…
+## 10 hc           Human capital index, see note hc                          
+## # ... with 37 more rows</code></pre>
+<p>全体を見るためには <code>View()</code> が使えます。</p>
+<pre class="r"><code>View(codebook)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">variable</th>
+<th align="left">label</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">countrycode</td>
+<td align="left">3-letter ISO country code</td>
+</tr>
+<tr class="even">
+<td align="left">country</td>
+<td align="left">Country name</td>
+</tr>
+<tr class="odd">
+<td align="left">currency_unit</td>
+<td align="left">Currency unit</td>
+</tr>
+<tr class="even">
+<td align="left">year</td>
+<td align="left">Year</td>
+</tr>
+<tr class="odd">
+<td align="left">rgdpe</td>
+<td align="left">Expenditure-side real GDP at chained PPPs (in mil. 2011US$)</td>
+</tr>
+<tr class="even">
+<td align="left">rgdpo</td>
+<td align="left">Output-side real GDP at chained PPPs (in mil. 2011US$)</td>
+</tr>
+<tr class="odd">
+<td align="left">pop</td>
+<td align="left">Population (in millions)</td>
+</tr>
+<tr class="even">
+<td align="left">emp</td>
+<td align="left">Number of persons engaged (in millions)</td>
+</tr>
+<tr class="odd">
+<td align="left">avh</td>
+<td align="left">Average annual hours worked by persons engaged (source: The Conference Board)</td>
+</tr>
+<tr class="even">
+<td align="left">hc</td>
+<td align="left">Human capital index, see note hc</td>
+</tr>
+<tr class="odd">
+<td align="left">ccon</td>
+<td align="left">Real consumption of households and government, at current PPPs (in mil. 2011US$)</td>
+</tr>
+<tr class="even">
+<td align="left">cda</td>
+<td align="left">Real domestic absorption, see note cda</td>
+</tr>
+<tr class="odd">
+<td align="left">cgdpe</td>
+<td align="left">Expenditure-side real GDP at current PPPs (in mil. 2011US$)</td>
+</tr>
+<tr class="even">
+<td align="left">cgdpo</td>
+<td align="left">Output-side real GDP at current PPPs (in mil. 2011US$)</td>
+</tr>
+<tr class="odd">
+<td align="left">ck</td>
+<td align="left">Capital stock at current PPPs (in mil. 2011US$)</td>
+</tr>
+<tr class="even">
+<td align="left">ctfp</td>
+<td align="left">TFP level at current PPPs (USA=1)</td>
+</tr>
+<tr class="odd">
+<td align="left">cwtfp</td>
+<td align="left">Welfare-relevant TFP levels at current PPPs (USA=1)</td>
+</tr>
+<tr class="even">
+<td align="left">rgdpna</td>
+<td align="left">Real GDP at constant 2011 national prices (in mil. 2011US$)</td>
+</tr>
+<tr class="odd">
+<td align="left">rconna</td>
+<td align="left">Real consumption at constant 2011 national prices (in mil. 2011US$)</td>
+</tr>
+<tr class="even">
+<td align="left">rdana</td>
+<td align="left">Real domestic absorption at constant 2011 national prices (in mil. 2011US$)</td>
+</tr>
+<tr class="odd">
+<td align="left">rkna</td>
+<td align="left">Capital stock at constant 2011 national prices (in mil. 2011US$)</td>
+</tr>
+<tr class="even">
+<td align="left">rtfpna</td>
+<td align="left">TFP at constant national prices (2011=1)</td>
+</tr>
+<tr class="odd">
+<td align="left">rwtfpna</td>
+<td align="left">Welfare-relevant TFP at constant national prices (2011=1)</td>
+</tr>
+<tr class="even">
+<td align="left">labsh</td>
+<td align="left">Share of labour compensation in GDP at current national prices</td>
+</tr>
+<tr class="odd">
+<td align="left">delta</td>
+<td align="left">Average depreciation rate of the capital stock</td>
+</tr>
+<tr class="even">
+<td align="left">xr</td>
+<td align="left">Exchange rate, national currency/USD (market+estimated)</td>
+</tr>
+<tr class="odd">
+<td align="left">pl_con</td>
+<td align="left">Price level of CCON (PPP/XR), price level of USA GDPo in 2011=1</td>
+</tr>
+<tr class="even">
+<td align="left">pl_da</td>
+<td align="left">Price level of CDA (PPP/XR), price level of USA GDPo in 2011=1</td>
+</tr>
+<tr class="odd">
+<td align="left">pl_gdpo</td>
+<td align="left">Price level of CGDPo (PPP/XR), price level of USA GDPo in 2011=1</td>
+</tr>
+<tr class="even">
+<td align="left">i_cig</td>
+<td align="left">0/1/2, see note i_cig</td>
+</tr>
+<tr class="odd">
+<td align="left">i_xm</td>
+<td align="left">0/1/2, see note i_xm</td>
+</tr>
+<tr class="even">
+<td align="left">i_xr</td>
+<td align="left">0/1: the exchange rate is market-based (0) or estimated (1)</td>
+</tr>
+<tr class="odd">
+<td align="left">i_outlier</td>
+<td align="left">0/1, see note i_outlier</td>
+</tr>
+<tr class="even">
+<td align="left">cor_exp</td>
+<td align="left">Correlation between expenditure shares, see note cor_exp</td>
+</tr>
+<tr class="odd">
+<td align="left">statcap</td>
+<td align="left">Statistical capacity indicator (source: World Bank, developing countries only)</td>
+</tr>
+<tr class="even">
+<td align="left">csh_c</td>
+<td align="left">Share of household consumption at current PPPs</td>
+</tr>
+<tr class="odd">
+<td align="left">csh_i</td>
+<td align="left">Share of gross capital formation at current PPPs</td>
+</tr>
+<tr class="even">
+<td align="left">csh_g</td>
+<td align="left">Share of government consumption at current PPPs</td>
+</tr>
+<tr class="odd">
+<td align="left">csh_x</td>
+<td align="left">Share of merchandise exports at current PPPs</td>
+</tr>
+<tr class="even">
+<td align="left">csh_m</td>
+<td align="left">Share of merchandise imports at current PPPs</td>
+</tr>
+<tr class="odd">
+<td align="left">csh_r</td>
+<td align="left">Share of residual trade and GDP statistical discrepancy at current PPPs</td>
+</tr>
+<tr class="even">
+<td align="left">pl_c</td>
+<td align="left">Price level of household consumption, price level of USA GDPo in 2011=1</td>
+</tr>
+<tr class="odd">
+<td align="left">pl_i</td>
+<td align="left">Price level of capital formation, price level of USA GDPo in 2011=1</td>
+</tr>
+<tr class="even">
+<td align="left">pl_g</td>
+<td align="left">Price level of government consumption, price level of USA GDPo in 2011=1</td>
+</tr>
+<tr class="odd">
+<td align="left">pl_x</td>
+<td align="left">Price level of exports, price level of USA GDPo in 2011=1</td>
+</tr>
+<tr class="even">
+<td align="left">pl_m</td>
+<td align="left">Price level of imports, price level of USA GDPo in 2011=1</td>
+</tr>
+<tr class="odd">
+<td align="left">pl_k</td>
+<td align="left">Price level of the capital stock, price level of USA 2011=1</td>
+</tr>
+</tbody>
+</table>
+<p>このセッションでは，主に以下の3つの変数を使います。</p>
+<pre class="r"><code>codebook[codebook$variable %in% c(&quot;country&quot;, &quot;year&quot;, &quot;rgdpo&quot;), ]</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   variable label                                                 
+##   &lt;chr&gt;    &lt;chr&gt;                                                 
+## 1 country  Country name                                          
+## 2 year     Year                                                  
+## 3 rgdpo    Output-side real GDP at chained PPPs (in mil. 2011US$)</code></pre>
+<p>なお，<code>%in%</code> は左辺の要素が右辺のベクトルに含まれているかをチェックします。（<span class="math inline">\(a \in V\)</span> の判定）</p>
+<pre class="r"><code>&quot;A&quot; %in% letters</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code>&quot;a&quot; %in% letters</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<div class="hint">
+<h3 id="purrr--map_"><strong>purrr</strong> の <code>map_*()</code></h3>
+</div>
+</div>
+</div>
+<div id="pipe" class="section level1">
+<h1>パイプ</h1>
+<p>PWT のようなデータがあったとき，（順番は前後するかもしれませんが）次のような操作がよくあるパターンです。</p>
+<ol style="list-style-type: decimal">
+<li>不要な列を落とす（例えば，消費のデータは今はいらない，といった理由で）</li>
+<li>不要な行を落とす（例えば，1960年より前のデータはいらない，といった理由で）</li>
+<li>既存の列から計算された新しい情報を追加する</li>
+<li>グループごとに集計する</li>
+<li>集計結果に応じて並び替える</li>
+</ol>
+<p>このような処理は1つのコマンドで実行するのは難しいので，複数のステップに分けるのですが，各ステップのつながりが分かりやすいようにしておくと後々の管理が楽になります。</p>
+<p><strong>tidyverse</strong> ではパイプ <code>%&gt;%</code> を使って複数ステップの接続を行います。</p>
+<pre class="r"><code>オブジェクト %&gt;% 
+  関数1() %&gt;% 
+  関数2()</code></pre>
+<p>という形が基本のパターンで，これは</p>
+<pre class="r"><code>関数2(関数1(オブジェクト))</code></pre>
+<p>と同じ意味です。最終出力は関数で変換されたオブジェクトです。</p>
+<p>関数はパラメータ付きで</p>
+<pre class="r"><code>オブジェクト %&gt;% 
+  関数1(p = foo) %&gt;% 
+  関数2(q = bar)</code></pre>
+<p>のようにすることもできます。これは，</p>
+<pre class="r"><code>関数2(関数1(オブジェクト, p = foo), q = bar)</code></pre>
+<p>と同じ意味です。コードが非常に読みやすくなりますね。最初に挙げた基本ワークフローは</p>
+<pre class="r"><code>データ %&gt;% 
+  列を選ぶ(必要な列1, 必要な列2) %&gt;% 
+  行を取り出す(条件1, 条件2) %&gt;% 
+  列を追加する(新しい列名 = 計算式) %&gt;% 
+  グループ化する(グループ化のルール) %&gt;% 
+  集計する(集計値の名称 = 集計ルール) %&gt;% 
+  並び替える(並び替えルール)</code></pre>
+<p>といった形で書かれることになります。<strong>データから出発して変換操作を次々と繋いでいくイメージ</strong>です。石油やガスがパイプラインを通って運ばれていく様子に似ているので，このような操作を <strong>パイプ処理</strong> と呼びます。</p>
+<p><strong>tidyverse</strong> の主要な関数は</p>
+<ul>
+<li>第1引数はデータを受け取る</li>
+<li>データとして tibble を入れると，必ず tibble が出てくる</li>
+</ul>
+<p>ように設計されています。パイプを使った処理がしやすいように工夫されているのです。</p>
+<div id="toy" class="section level2">
+<h2>簡単な例</h2>
+<p>パイプ自体は<strong>magrittr</strong> という独立したパッケーじで定義されているので，tibble でなくても使うことができます。試しに簡単な例を見てみましょう。</p>
+<p>次のコマンドは <code>sum(1:10)</code> と同じ意味です。</p>
+<pre class="r"><code>1:10 %&gt;% sum()</code></pre>
+<pre><code>## [1] 55</code></pre>
+<p><code>1:10</code> の和をとってから，平方根を取る，という操作は順序どおりに関数を並べれば出来上がりです。</p>
+<pre class="r"><code>1:10 %&gt;% sum() %&gt;% sqrt()     # sqrt(sum(1:10)) と同じ </code></pre>
+<pre><code>## [1] 7.416198</code></pre>
+<p>最初の引数を <code>%&gt;%</code> の左側のオブジェクトは関数の第1引数になります。2つ目以降の引数を指定することができます。</p>
+<pre class="r"><code>runif(50) %&gt;% round(digits = 1) %&gt;% plot(type = &quot;l&quot;)</code></pre>
+<p><img src="/textbook/2018-lesson3-01_files/figure-html/plot-pipe-1.png" width="672" /></p>
+<p>2つ目以降の引数に左辺のオブジェクトを渡したい場合にはドット（<code>.</code>）を使います。</p>
+<pre class="r"><code>sample(letters, 10) %&gt;% paste0(&quot;group-&quot;, .)</code></pre>
+<pre><code>##  [1] &quot;group-h&quot; &quot;group-y&quot; &quot;group-e&quot; &quot;group-k&quot; &quot;group-q&quot; &quot;group-j&quot; &quot;group-l&quot;
+##  [8] &quot;group-b&quot; &quot;group-c&quot; &quot;group-m&quot;</code></pre>
+<p>これでパイプを使う準備ができました。</p>
+</div>
+</div>
+<div id="dplyr-" class="section level1">
+<h1><strong>dplyr</strong> の動詞</h1>
+<p>1つの tibble を変形して何らかの結果を得るためにはデータ操作に使う関数を知っておく必要があります。中でも一番基本的なのは，<code>select()</code>, <code>filter()</code>, <code>mutate()</code>, <code>group_by()</code>, <code>summarize()</code>, <code>arrange()</code> です。</p>
+<div id="select" class="section level2">
+<h2>select</h2>
+<p>列を選択するのは <code>select()</code> です。必要な列のみを取り出すために使います。 例えば，実質GDP の時系列をプロットしたいだけなら，PWTで必要なのは</p>
+<ul>
+<li>country</li>
+<li>year</li>
+<li>rgdpo</li>
+</ul>
+<p>だけです。この場合は，<code>select()</code> を使って他の変数を落としてしまいます。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  select(country, year, rgdpo)</code></pre>
+<pre><code>## # A tibble: 11,830 x 3
+##    country  year rgdpo
+##    &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;
+##  1 Aruba    1950    NA
+##  2 Aruba    1951    NA
+##  3 Aruba    1952    NA
+##  4 Aruba    1953    NA
+##  5 Aruba    1954    NA
+##  6 Aruba    1955    NA
+##  7 Aruba    1956    NA
+##  8 Aruba    1957    NA
+##  9 Aruba    1958    NA
+## 10 Aruba    1959    NA
+## # ... with 11,820 more rows</code></pre>
+<p>もし，選ぶのではなく除外したいという場合には，列名にマイナス符号を付けます。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  select(country, year, rgdpo) %&gt;%   # ここまでは上と同じ3列の tibble
+  select(-year)                      # year を除外する</code></pre>
+<pre><code>## # A tibble: 11,830 x 2
+##    country rgdpo
+##    &lt;chr&gt;   &lt;dbl&gt;
+##  1 Aruba      NA
+##  2 Aruba      NA
+##  3 Aruba      NA
+##  4 Aruba      NA
+##  5 Aruba      NA
+##  6 Aruba      NA
+##  7 Aruba      NA
+##  8 Aruba      NA
+##  9 Aruba      NA
+## 10 Aruba      NA
+## # ... with 11,820 more rows</code></pre>
+</div>
+<div id="filter" class="section level2">
+<h2>filter</h2>
+<p>列を選ぶのは <code>select()</code> です。では行を選ぶには？<code>filter()</code> を使います。 例えば，日本のデータだけを取ってきたいとしましょう。次のようにします。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(country == &quot;Japan&quot;)</code></pre>
+<pre><code>## # A tibble: 65 x 47
+##    countrycode country currency_unit  year  rgdpe  rgdpo   pop   emp   avh
+##    &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 JPN         Japan   Yen            1950 2.18e5 2.10e5  83.3  38.2 2131.
+##  2 JPN         Japan   Yen            1951 2.44e5 2.33e5  84.6  39.3 2113.
+##  3 JPN         Japan   Yen            1952 2.66e5 2.57e5  85.9  40.5 2094.
+##  4 JPN         Japan   Yen            1953 2.79e5 2.68e5  87.1  41.8 2077.
+##  5 JPN         Japan   Yen            1954 2.96e5 2.82e5  88.2  42.3 2108.
+##  6 JPN         Japan   Yen            1955 3.22e5 3.05e5  89.3  43.7 2135.
+##  7 JPN         Japan   Yen            1956 3.44e5 3.27e5  90.2  44.5 2188.
+##  8 JPN         Japan   Yen            1957 3.68e5 3.51e5  91.0  45.7 2212.
+##  9 JPN         Japan   Yen            1958 4.00e5 3.75e5  91.8  45.9 2239.
+## 10 JPN         Japan   Yen            1959 4.40e5 4.11e5  92.7  46.3 2263.
+## # ... with 55 more rows, and 38 more variables: hc &lt;dbl&gt;, ccon &lt;dbl&gt;,
+## #   cda &lt;dbl&gt;, cgdpe &lt;dbl&gt;, cgdpo &lt;dbl&gt;, ck &lt;dbl&gt;, ctfp &lt;dbl&gt;,
+## #   cwtfp &lt;dbl&gt;, rgdpna &lt;dbl&gt;, rconna &lt;dbl&gt;, rdana &lt;dbl&gt;, rkna &lt;dbl&gt;,
+## #   rtfpna &lt;dbl&gt;, rwtfpna &lt;dbl&gt;, labsh &lt;dbl&gt;, delta &lt;dbl&gt;, xr &lt;dbl&gt;,
+## #   pl_con &lt;dbl&gt;, pl_da &lt;dbl&gt;, pl_gdpo &lt;dbl&gt;, i_cig &lt;dbl+lbl&gt;,
+## #   i_xm &lt;dbl+lbl&gt;, i_xr &lt;dbl+lbl&gt;, i_outlier &lt;dbl+lbl&gt;, cor_exp &lt;dbl&gt;,
+## #   statcap &lt;dbl&gt;, csh_c &lt;dbl&gt;, csh_i &lt;dbl&gt;, csh_g &lt;dbl&gt;, csh_x &lt;dbl&gt;,
+## #   csh_m &lt;dbl&gt;, csh_r &lt;dbl&gt;, pl_c &lt;dbl&gt;, pl_i &lt;dbl&gt;, pl_g &lt;dbl&gt;,
+## #   pl_x &lt;dbl&gt;, pl_m &lt;dbl&gt;, pl_k &lt;dbl&gt;</code></pre>
+<p>日本とアメリカだけなら？プロンプトの出力では少し分かりにくいので <code>View()</code> と組み合わせます。アメリカのデータが残っているのが分かるでしょうか。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(country %in% c(&quot;Japan&quot;, &quot;United States&quot;)) %&gt;% 
+  View()</code></pre>
+<p>複数条件を組み合わせることもできます。AND条件はコンマで区切るだけです。(<code>&amp;</code> も使えます)</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(country %in% c(&quot;Japan&quot;, &quot;United States&quot;), year &gt; 2011)</code></pre>
+<pre><code>## # A tibble: 6 x 47
+##   countrycode country currency_unit  year  rgdpe  rgdpo   pop   emp   avh
+##   &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 JPN         Japan   Yen            2012 4.45e6 4.47e6  127.  64.3 1745 
+## 2 JPN         Japan   Yen            2013 4.50e6 4.50e6  127.  64.6 1734 
+## 3 JPN         Japan   Yen            2014 4.48e6 4.51e6  127.  65.0 1729 
+## 4 USA         United… US Dollar      2012 1.60e7 1.59e7  315. 145.  1754.
+## 5 USA         United… US Dollar      2013 1.63e7 1.62e7  317. 146.  1759.
+## 6 USA         United… US Dollar      2014 1.67e7 1.66e7  319. 148.  1765.
+## # ... with 38 more variables: hc &lt;dbl&gt;, ccon &lt;dbl&gt;, cda &lt;dbl&gt;,
+## #   cgdpe &lt;dbl&gt;, cgdpo &lt;dbl&gt;, ck &lt;dbl&gt;, ctfp &lt;dbl&gt;, cwtfp &lt;dbl&gt;,
+## #   rgdpna &lt;dbl&gt;, rconna &lt;dbl&gt;, rdana &lt;dbl&gt;, rkna &lt;dbl&gt;, rtfpna &lt;dbl&gt;,
+## #   rwtfpna &lt;dbl&gt;, labsh &lt;dbl&gt;, delta &lt;dbl&gt;, xr &lt;dbl&gt;, pl_con &lt;dbl&gt;,
+## #   pl_da &lt;dbl&gt;, pl_gdpo &lt;dbl&gt;, i_cig &lt;dbl+lbl&gt;, i_xm &lt;dbl+lbl&gt;,
+## #   i_xr &lt;dbl+lbl&gt;, i_outlier &lt;dbl+lbl&gt;, cor_exp &lt;dbl&gt;, statcap &lt;dbl&gt;,
+## #   csh_c &lt;dbl&gt;, csh_i &lt;dbl&gt;, csh_g &lt;dbl&gt;, csh_x &lt;dbl&gt;, csh_m &lt;dbl&gt;,
+## #   csh_r &lt;dbl&gt;, pl_c &lt;dbl&gt;, pl_i &lt;dbl&gt;, pl_g &lt;dbl&gt;, pl_x &lt;dbl&gt;,
+## #   pl_m &lt;dbl&gt;, pl_k &lt;dbl&gt;</code></pre>
+<p>OR 条件は <code>|</code> を使います。次のフィルターは「『日本かアメリカまたは人口が10億人以上』かつ『2013年以降』」のデータを抽出しています。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(country %in% c(&quot;Japan&quot;, &quot;United States&quot;) | pop &gt; 1000, year &gt; 2012)</code></pre>
+<pre><code>## # A tibble: 8 x 47
+##   countrycode country currency_unit  year  rgdpe  rgdpo   pop   emp   avh
+##   &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 CHN         China   Yuan Renminbi  2013 1.59e7 1.59e7 1363. 793.    NA 
+## 2 CHN         China   Yuan Renminbi  2014 1.71e7 1.71e7 1369. 798.    NA 
+## 3 IND         India   Indian Rupee   2013 6.36e6 6.59e6 1279. 501.  2162.
+## 4 IND         India   Indian Rupee   2014 6.77e6 7.06e6 1295. 510.  2162.
+## 5 JPN         Japan   Yen            2013 4.50e6 4.50e6  127.  64.6 1734 
+## 6 JPN         Japan   Yen            2014 4.48e6 4.51e6  127.  65.0 1729 
+## 7 USA         United… US Dollar      2013 1.63e7 1.62e7  317. 146.  1759.
+## 8 USA         United… US Dollar      2014 1.67e7 1.66e7  319. 148.  1765.
+## # ... with 38 more variables: hc &lt;dbl&gt;, ccon &lt;dbl&gt;, cda &lt;dbl&gt;,
+## #   cgdpe &lt;dbl&gt;, cgdpo &lt;dbl&gt;, ck &lt;dbl&gt;, ctfp &lt;dbl&gt;, cwtfp &lt;dbl&gt;,
+## #   rgdpna &lt;dbl&gt;, rconna &lt;dbl&gt;, rdana &lt;dbl&gt;, rkna &lt;dbl&gt;, rtfpna &lt;dbl&gt;,
+## #   rwtfpna &lt;dbl&gt;, labsh &lt;dbl&gt;, delta &lt;dbl&gt;, xr &lt;dbl&gt;, pl_con &lt;dbl&gt;,
+## #   pl_da &lt;dbl&gt;, pl_gdpo &lt;dbl&gt;, i_cig &lt;dbl+lbl&gt;, i_xm &lt;dbl+lbl&gt;,
+## #   i_xr &lt;dbl+lbl&gt;, i_outlier &lt;dbl+lbl&gt;, cor_exp &lt;dbl&gt;, statcap &lt;dbl&gt;,
+## #   csh_c &lt;dbl&gt;, csh_i &lt;dbl&gt;, csh_g &lt;dbl&gt;, csh_x &lt;dbl&gt;, csh_m &lt;dbl&gt;,
+## #   csh_r &lt;dbl&gt;, pl_c &lt;dbl&gt;, pl_i &lt;dbl&gt;, pl_g &lt;dbl&gt;, pl_x &lt;dbl&gt;,
+## #   pl_m &lt;dbl&gt;, pl_k &lt;dbl&gt;</code></pre>
+<p>最後に <code>select()</code> との組み合わせです。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(year &gt; 1960, country %in% c(&quot;Japan&quot;, &quot;United States&quot;, &quot;Republic of Korea&quot;)) %&gt;% 
+  select(country, year, rgdpo, pop)</code></pre>
+<pre><code>## # A tibble: 162 x 4
+##    country  year    rgdpo   pop
+##    &lt;chr&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+##  1 Japan    1961  517845.  94.4
+##  2 Japan    1962  566475.  95.2
+##  3 Japan    1963  612924.  96.2
+##  4 Japan    1964  682741.  97.2
+##  5 Japan    1965  724052.  98.3
+##  6 Japan    1966  798912   99.2
+##  7 Japan    1967  883256. 100. 
+##  8 Japan    1968  995241. 101. 
+##  9 Japan    1969 1117313. 103. 
+## 10 Japan    1970 1233349  104. 
+## # ... with 152 more rows</code></pre>
+<div class="hint">
+<h3 id="non-standard-evaluation-nse">Non-Standard Evaluation (NSE)</h3>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(year &gt; 2012, country == &quot;Japan&quot;) %&gt;% 
+  select(country, year, rgdpo, pop)</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   country  year    rgdpo   pop
+##   &lt;chr&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+## 1 Japan    2013 4504978.  127.
+## 2 Japan    2014 4509603   127.</code></pre>
+<p>このコマンドでは，列名をあたかもオブジェクト名のように扱っています。<code>year</code> や <code>country</code> や <code>rgdpo</code> という名前はどこにも定義されていませんので，「object not found」と怒られそうなものですが，上のコマンドはうまく動きます。</p>
+<p>実際，次のコマンドは失敗します。</p>
+<pre class="r"><code>year &gt; 2012</code></pre>
+<pre><code>## Error in eval(expr, envir, enclos): object &#39;year&#39; not found</code></pre>
+<p>R の関数に渡される引数は</p>
+<ul>
+<li>式を評価した値だけを使う</li>
+<li>式そのものも使う</li>
+</ul>
+<p>という2つのパターンがあります。「式そのもの」を使うというのは，例えば，次のコマンドの結果は，X軸，Y軸のラベルは特に指定しない限り引数として設定した式になります。もちろん，プロットする点を決めるためには「式の値」が使われています。</p>
+<pre class="r"><code>xval &lt;- 1:10
+random &lt;- rnorm(10)
+plot(xval, xval + random)</code></pre>
+<p><img src="/textbook/2018-lesson3-01_files/figure-html/plot-lazyeval-1.png" width="672" /></p>
+<p>要するに，<code>plot()</code> 関数は<strong>引数を式ごと受け取って必要になったら値を調べる</strong>ということをやっています。このような振る舞いは，Non-Standard Evaluation (NSE) と呼ばれ，対話的な統計環境としてのRの利便性を高めています。</p>
+<p><strong>dplyr</strong> の関数の多くも NSE を使っています。</p>
+<ul>
+<li>呼び出したときに名前が定義されていなくてもいったん式を受け取る</li>
+<li>関数が実行されているときに，tibble の中にその名前を探す</li>
+</ul>
+<pre class="r"><code>pwt90 %&gt;% 
+  select(nonexistent)</code></pre>
+<pre><code>## Error in .f(.x[[i]], ...): object &#39;nonexistent&#39; not found</code></pre>
+</div>
+</div>
+<div id="mutate-transmute" class="section level2">
+<h2>mutate / transmute</h2>
+<p>列を新たに追加するのは <code>mutate()</code> を使います。</p>
+<p>例えば，次のコマンド, 最後の行は1人あたり実質GDPを追加します。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(year &gt; 1960, country %in% c(&quot;Japan&quot;, &quot;United States&quot;, &quot;Republic of Korea&quot;)) %&gt;% 
+  select(country, year, rgdpo, pop) %&gt;% 
+  mutate(rgdpo_pc = rgdpo / pop)</code></pre>
+<pre><code>## # A tibble: 162 x 5
+##    country  year    rgdpo   pop rgdpo_pc
+##    &lt;chr&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+##  1 Japan    1961  517845.  94.4    5488.
+##  2 Japan    1962  566475.  95.2    5947.
+##  3 Japan    1963  612924.  96.2    6370.
+##  4 Japan    1964  682741.  97.2    7022.
+##  5 Japan    1965  724052.  98.3    7367.
+##  6 Japan    1966  798912   99.2    8055.
+##  7 Japan    1967  883256. 100.     8814.
+##  8 Japan    1968  995241. 101.     9821.
+##  9 Japan    1969 1117313. 103.    10896.
+## 10 Japan    1970 1233349  104.    11893.
+## # ... with 152 more rows</code></pre>
+<p>ほしいデータが <code>rgdpo_pc</code> だけで，<code>rgdpo</code>, <code>pop</code> が必要なくなるようなケースも考えられます。その場合，<code>transmute()</code> を使うことができます。これは，<code>select()</code> と <code>mutate()</code> を同時に実行してくれます。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(year &gt; 1960, country %in% c(&quot;Japan&quot;, &quot;United States&quot;, &quot;Republic of Korea&quot;)) %&gt;% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop)</code></pre>
+<pre><code>## # A tibble: 162 x 3
+##    country  year rgdpo_pc
+##    &lt;chr&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+##  1 Japan    1961    5488.
+##  2 Japan    1962    5947.
+##  3 Japan    1963    6370.
+##  4 Japan    1964    7022.
+##  5 Japan    1965    7367.
+##  6 Japan    1966    8055.
+##  7 Japan    1967    8814.
+##  8 Japan    1968    9821.
+##  9 Japan    1969   10896.
+## 10 Japan    1970   11893.
+## # ... with 152 more rows</code></pre>
+</div>
+<div id="-ggplot2" class="section level2">
+<h2>脱線: ggplot2</h2>
+<p>ここまで来るとグラフを描いてみたくなります。すこし脱線して ggplot2 を紹介しましょう。</p>
+<p>まずは，コードを見てみましょう。3行目までは前のコードと同じです。4行目からが可視化のためのコードです。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(year &gt; 1960, country %in% c(&quot;Japan&quot;, &quot;United States&quot;, &quot;Republic of Korea&quot;)) %&gt;% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop) %&gt;%    # ここまでは前と同じ
+  ggplot(aes(x = year, y = rgdpo_pc, color = country)) +
+    geom_line() + 
+    xlab(&quot;Year&quot;) + 
+    ylab(&quot;Real GDP per capita&quot;)</code></pre>
+<p><img src="/textbook/2018-lesson3-01_files/figure-html/plot-pwt-1.png" width="672" /></p>
+<p><code>ggplot()</code> という関数は「<strong>ggplot2</strong> の可視化を始めますよ」というコマンドです。第1引数としてデータを取るので，パイプを使って上手くデータを渡すことができます。</p>
+<p><code>ggplot()</code> で描画エリアを初期化した後は，<code>+</code> の記号（パイプ<code>%&gt;%</code>ではなく！）を使って，グラフのレイヤー（層）を重ねていきます。<code>aes()</code> というのはデータを外観上の特徴に対応付けるための関数です。この例では</p>
+<ul>
+<li><code>year</code> はグラフの横軸の値を定める</li>
+<li><code>rgdpo_pc</code> はグラフの縦軸の値を定める</li>
+<li><code>country</code> はグラフの色を定める（“Japan” なら赤，など）</li>
+</ul>
+<p>ということを設定しています。<code>geom_line()</code> というのは，折れ線グラフのレイヤーを作成するための関数です。引数が空の場合は，<code>ggplot()</code> に渡された データと外観特性を使って描写します。</p>
+<p><code>xlab()</code>, <code>ylab()</code> は軸のラベルのレイヤーを作ります。</p>
+</div>
+<div id="group_by" class="section level2">
+<h2>group_by</h2>
+<p>上のような図を見ると「各国の平均成長率はどれぐらいだったのか？」といった疑問が湧いてきます。このような計算をするためには，<code>group_by()</code> と <code>summarize()</code> を使います。まずは，<code>group_by()</code> です。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(year &gt; 1960, country %in% c(&quot;Japan&quot;, &quot;United States&quot;, &quot;Republic of Korea&quot;)) %&gt;% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop) %&gt;% 
+  group_by(country)</code></pre>
+<pre><code>## # A tibble: 162 x 3
+## # Groups:   country [3]
+##    country  year rgdpo_pc
+##    &lt;chr&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+##  1 Japan    1961    5488.
+##  2 Japan    1962    5947.
+##  3 Japan    1963    6370.
+##  4 Japan    1964    7022.
+##  5 Japan    1965    7367.
+##  6 Japan    1966    8055.
+##  7 Japan    1967    8814.
+##  8 Japan    1968    9821.
+##  9 Japan    1969   10896.
+## 10 Japan    1970   11893.
+## # ... with 152 more rows</code></pre>
+<p>見た目上なんの違いもないように見えますが，<code>summarize()</code> を使うと違いがはっきりと分かります。</p>
+</div>
+<div id="summarize" class="section level2">
+<h2>summarize</h2>
+<p><code>summarize()</code> は複数行にまたがる情報を集約して1つの結果を得るためのものです。例えば，何行あるかとか，平均はいくらかといった計算をするときに使います。通常の <code>mean()</code> や行数を数える <code>n()</code> という関数が使えます。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(year &gt; 1960, country %in% c(&quot;Japan&quot;, &quot;United States&quot;, &quot;Republic of Korea&quot;)) %&gt;% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop) %&gt;% 
+  summarize(mean = mean(rgdpo_pc), n = n())</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##     mean     n
+##    &lt;dbl&gt; &lt;int&gt;
+## 1 24060.   162</code></pre>
+<p>おっと，国ごとの結果にならなかったですね。これは <code>group_by()</code> を忘れたからです。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(year &gt; 1960, country %in% c(&quot;Japan&quot;, &quot;United States&quot;, &quot;Republic of Korea&quot;)) %&gt;% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop) %&gt;% 
+　group_by(country) %&gt;% 
+  summarize(mean = mean(rgdpo_pc), n = n())</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   country             mean     n
+##   &lt;chr&gt;              &lt;dbl&gt; &lt;int&gt;
+## 1 Japan             23358.    54
+## 2 Republic of Korea 13594.    54
+## 3 United States     35228.    54</code></pre>
+<p>さて，問題の平均成長率ですが，これを計算するには</p>
+<p><span class="math display">\[
+Y \text{の成長率}(t\to t+1)
+=
+\log Y_{t+1} - \log Y_t
+\]</span> すなわち</p>
+<p><span class="math display">\[
+Y \text{の平均成長率}(1 \to T)
+=
+\sum_{t=1}^{T-1} \frac{\log Y_{t+1} - \log Y_t}{T - 1}
+=
+\frac{\log Y_T - \log Y_1}{T - 1}
+\]</span> という公式を使います。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(year &gt; 1960, country %in% c(&quot;Japan&quot;, &quot;United States&quot;, &quot;Republic of Korea&quot;)) %&gt;% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop, ln_rgdpo_pc = log(rgdpo_pc)) %&gt;% 
+　group_by(country) %&gt;% 
+  summarize(avg_growth = mean(ln_rgdpo_pc - lag(ln_rgdpo_pc), na.rm = TRUE))</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   country           avg_growth
+##   &lt;chr&gt;                  &lt;dbl&gt;
+## 1 Japan                 0.0353
+## 2 Republic of Korea     0.0633
+## 3 United States         0.0203</code></pre>
+<p><code>lag()</code> はデータを1期ずらす関数です。</p>
+</div>
+<div id="arrange" class="section level2">
+<h2>arrange</h2>
+<p>上の例では行が3つだけなので大きな問題にはなりませんが，「平均成長率が最も高い国はどこか」ということを知りたい場合には，データが整列している方が何かと都合がよいです。そのために使うのが <code>arrange()</code> です。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(year &gt; 1960, country %in% c(&quot;Japan&quot;, &quot;United States&quot;, &quot;Republic of Korea&quot;)) %&gt;% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop, ln_rgdpo_pc = log(rgdpo_pc)) %&gt;% 
+　group_by(country) %&gt;% 
+  summarize(avg_growth = mean(ln_rgdpo_pc - lag(ln_rgdpo_pc), na.rm = TRUE)) %&gt;% # ココまでは上と同じ
+  arrange(avg_growth)</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   country           avg_growth
+##   &lt;chr&gt;                  &lt;dbl&gt;
+## 1 United States         0.0203
+## 2 Japan                 0.0353
+## 3 Republic of Korea     0.0633</code></pre>
+<p><code>arrange()</code> のデフォルトは小さい順です。大きい順にするには <code>desc()</code> を噛ませます。</p>
+<pre class="r"><code>pwt90 %&gt;% 
+  filter(year &gt; 1960, country %in% c(&quot;Japan&quot;, &quot;United States&quot;, &quot;Republic of Korea&quot;)) %&gt;% 
+  transmute(country, year, rgdpo_pc = rgdpo / pop, ln_rgdpo_pc = log(rgdpo_pc)) %&gt;% 
+　group_by(country) %&gt;% 
+  summarize(avg_growth = mean(ln_rgdpo_pc - lag(ln_rgdpo_pc), na.rm = TRUE)) %&gt;% # ココまでは上と同じ
+  arrange(desc(avg_growth))</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   country           avg_growth
+##   &lt;chr&gt;                  &lt;dbl&gt;
+## 1 Republic of Korea     0.0633
+## 2 Japan                 0.0353
+## 3 United States         0.0203</code></pre>
+</div>
+</div>

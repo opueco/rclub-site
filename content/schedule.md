@@ -15,8 +15,8 @@ title: スケジュール
 * 教材: 
   - [1-1: Rを使ってみよう]({{< ref "2018-lesson1-01.html" >}})
   - [1-2: はじめての R スクリプト]({{< ref "2018-lesson1-02.html" >}})
-* 参考資料
   - [スライド](http://s.opur.club/18d1)
+* 参考資料
   - [コラム: パスのお話]({{< ref "/post/2018-10-03-about-paths.html" >}})
 
 ### Lesson 2:  10/17, 10/24
@@ -25,19 +25,19 @@ title: スケジュール
 * 教材:
   - [2-1: R のベクトル]({{< ref "2018-lesson2-01.html" >}})
   - [2-2: データフレーム・tibble]({{< ref "2018-lesson2-02.html" >}})
-* 参考資料
-  - NA
+  - [スライド](http://s.opur.club/18d2)
 
 10月31日 は**全学休校日のためお休み**となります。
 
 
 ###  Lesson 3:  11/7, 11/14
 
-* テーマ: **dplyr**/**tidyr** によるデータ処理（予定）
+* テーマ: **dplyr**/**tidyr** によるデータ処理
 * 教材:
-  - NA
+  - [Lesson 3-1: dplyr入門]({{< ref "2018-lesson3-01.html" >}})
+  - [スライド](http://s.opur.club/18d3)
 * 参考資料
-  - NA
+  - Feenstra, Robert C., Robert Inklaar and Marcel P. Timmer (2015), "The Next Generation of the Penn World Table" American Economic Review, 105(10), 3150-3182, available for download at www.ggdc.net/pwt
 
 ### Lesson 4:  11/21, 11/28
 
