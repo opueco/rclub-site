@@ -36,6 +36,8 @@ title: スケジュール
 * 教材:
   - [Lesson 3-1: dplyr入門]({{< ref "2018-lesson3-01.html" >}})
   - [スライド](http://s.opur.club/18d3)
+* 参考資料
+  - Feenstra, Robert C., Robert Inklaar and Marcel P. Timmer (2015), "The Next Generation of the Penn World Table" American Economic Review, 105(10), 3150-3182, available for download at www.ggdc.net/pwt
 
 ### Lesson 4:  11/21, 11/28
 
