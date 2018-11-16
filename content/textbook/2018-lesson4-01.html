@@ -35,6 +35,7 @@ monofont: Ricty Discord
 <li><a href="#distribution">配布</a><ul>
 <li><a>軸のラベル</a></li>
 <li><a href="#annotate_partly">散布図の一部にラベルを付ける</a></li>
+<li><a href="#save">保存</a></li>
 </ul></li>
 <li><a href="#more">さらに詳しく学ぶために</a></li>
 </ul>
@@ -68,12 +69,12 @@ monofont: Ricty Discord
 <h1>準備</h1>
 <p><strong>ggplot2</strong> は <strong>tidyverse</strong> の一部です。</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
 <pre><code>## ✔ ggplot2 3.0.0     ✔ purrr   0.2.5
 ## ✔ tibble  1.4.2     ✔ dplyr   0.7.7
 ## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
 ## ✔ readr   1.1.1     ✔ forcats 0.3.0</code></pre>
-<pre><code>## ── Conflicts ───────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+<pre><code>## ── Conflicts ──────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <p>今回もPenn World Table を使っていきます。ダウンロードがお済みでない方は <a href="{{% ref "2018-lesson3-01.html#pwt" %}}">こちら</a> を参考にダウンロードしてください。</p>
@@ -319,15 +320,24 @@ ggplot(world, aes(rgdpo_pc_1965, avg_growth)) +
     y = &quot;Average GDP growth rate, 1965-2014&quot;
   ) +
   scale_x_log10()</code></pre>
-<p><img src="/textbook/2018-lesson4-01_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="/textbook/2018-lesson4-01_files/figure-html/graph-15-1.png" width="672" /></p>
+</div>
+<div id="save" class="section level2">
+<h2>保存</h2>
+<p><strong>ggplot2</strong> の画像を保存するには <code>ggsave()</code> を使うのが基本である。</p>
+<pre class="r"><code>ggsave(&quot;Graphics/figure.pdf&quot;, width = 6, height = 6 / 1.618)</code></pre>
+<p>日本語フォントの保存がうまく行かない場合には他の方法もある。<a href="https://oku.edu.mie-u.ac.jp/~okumura/stat/ggplot2.html" class="uri">https://oku.edu.mie-u.ac.jp/~okumura/stat/ggplot2.html</a> などを参照。</p>
 </div>
 </div>
 <div id="more" class="section level1">
 <h1>さらに詳しく学ぶために</h1>
-<p>このレッスンでは <strong>ggplot2</strong> のよく使う機能を紹介しました。さらに詳しく学びたい方は Wickham and Grolemund, <em>R for Data Science</em> の</p>
+<p>このレッスンでは <strong>ggplot2</strong> の機能の一部を紹介しました。さらに詳しく学びたい方は Wickham and Grolemund, <em>R for Data Science</em> の</p>
 <ul>
 <li>Data Visualisation <a href="https://r4ds.had.co.nz/data-visualisation.html" class="uri">https://r4ds.had.co.nz/data-visualisation.html</a></li>
 <li>Graphics for Communication <a href="https://r4ds.had.co.nz/graphics-for-communication.html" class="uri">https://r4ds.had.co.nz/graphics-for-communication.html</a></li>
 </ul>
-<p>が参考になります。</p>
+<p>が参考になります。分からないことがあったら <strong>ggplot2</strong> のホームページはよい出発点です。</p>
+<ul>
+<li><a href="https://ggplot2.tidyverse.org/" class="uri">https://ggplot2.tidyverse.org/</a></li>
+</ul>
 </div>

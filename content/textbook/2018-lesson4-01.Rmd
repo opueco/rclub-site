@@ -344,7 +344,7 @@ pwt90 %>%
 
 **ggrepel** というパッケージの `geom_label_repel()` を使うと読みやすいラベルを付けてくれるのでオススメである。
 
-```{r}
+```{r graph-15}
 # install.packages("ggrepel")
 library(ggrepel)
 
@@ -370,14 +370,26 @@ ggplot(world, aes(rgdpo_pc_1965, avg_growth)) +
   scale_x_log10()
 ```
 
+## 保存 {#save}
+
+**ggplot2** の画像を保存するには `ggsave()` を使うのが基本である。
+
+```{r, eval=FALSE}
+ggsave("Graphics/figure.pdf", width = 6, height = 6 / 1.618)
+```
+
+日本語フォントの保存がうまく行かない場合には他の方法もある。<https://oku.edu.mie-u.ac.jp/~okumura/stat/ggplot2.html> などを参照。
+
 # さらに詳しく学ぶために {#more}
 
-このレッスンでは **ggplot2** のよく使う機能を紹介しました。さらに詳しく学びたい方は Wickham and Grolemund, _R for Data Science_ の
+このレッスンでは **ggplot2** の機能の一部を紹介しました。さらに詳しく学びたい方は Wickham and Grolemund, _R for Data Science_ の
 
 - Data Visualisation <https://r4ds.had.co.nz/data-visualisation.html> 
 - Graphics for Communication <https://r4ds.had.co.nz/graphics-for-communication.html>
 
-が参考になります。
+が参考になります。分からないことがあったら **ggplot2** のホームページはよい出発点です。
+
+- <https://ggplot2.tidyverse.org/>
 
 
 
