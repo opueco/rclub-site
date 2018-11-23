@@ -45,6 +45,9 @@ title: スケジュール
 * 教材:
   - [Lesson 4-1: ggplot2 による可視化]({{< ref "2018-lesson4-01.html" >}})
   - [スライド](http://s.opur.club/18d4)
+* 参考資料
+  - [コラム: 箱ひげ図]({{<ref "/post/2018-11-23-box-and-whisker-plot.html" >}})
+  - [RStudio Cheat Sheets](https://www.rstudio.com/resources/cheatsheets/)
 
 
 ### Lesson 5:  12/5, 12/12

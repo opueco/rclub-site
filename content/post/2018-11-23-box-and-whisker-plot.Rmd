@@ -1,0 +1,198 @@
+---
+title: "コラム: 箱ひげ図"
+author: Kenji Sato
+date: '2018-11-23'
+slug: box-and-whisker-plot
+categories: 
+  - column
+tags:
+  - R
+  - statistics
+---
+
+箱ひげ図（Box and whisker plot）の描き方について簡単に説明します。ggplot2 を使って，箱ひげ図を描きますので，**tidyverse** を読み込んでおきます。図を描くためのデータとして，正規乱数を用意しておきましょう。
+
+```{r seed, include=FALSE}
+set.seed(100)
+```
+
+```{r setup, message=FALSE}
+library(tidyverse)
+Y <- rnorm(200)
+df <- tibble(Y)
+
+ggplot(df) + geom_histogram(aes(x = Y))
+```
+
+箱ひげ図というのは次のような図です。
+
+```{r boxexa, fig.asp=1, fig.width=4}
+ggplot(df) + 
+  geom_boxplot(aes(x = "", y = Y), width = 0.4) + 
+  labs(x = "") 
+```
+
+次のような特徴があります。
+
+- 真ん中に箱がある
+- 箱の中に線が1本引かれている
+- 箱の上下から線が出ている
+- 線の上下端のさらに外側に点がある（ただし，これらはないこともある）
+
+## データの整列と四分位数
+
+箱ひげ図を手作業で描くために必要な前処理は，データを小さい順（あるいは大きい順）に並べることです。
+そして，次のデータを調べます。
+
+- 最小値
+- 25%点（第1四分位数）
+- 中央値（第2四分位数，メディアン）
+- 75%点（第3四分位数）
+- 最大値
+
+R ではこれらの数字を `fivenum()` 関数または `quantile()` 関数で求めることができます。
+
+```{r}
+fivenum(Y)
+quantile(Y)
+```
+
+`quantile()` 関数は次のように任意の分位値を求めるために使うことができます。
+
+```{r}
+quantile(Y, c(0.1, 0.35))
+```
+
+
+箱ひげ図の箱は
+
+- 25%点が箱の上端
+- 中央値が箱の中の線
+- 75%点が箱の下端
+
+になるように描かれます。
+
+
+```{r boxexa2, fig.asp=1, fig.width=4, echo=FALSE}
+ggplot(df) + 
+  geom_boxplot(aes(x = 1, y = Y), width = 0.8) + 
+  geom_boxplot(aes(x = 2, y = 0), width = 0.8, color = "transparent") + 
+  geom_hline(aes(yintercept = quantile(Y, 0.75)), linetype = "longdash") + 
+  geom_text(x = 2, y = quantile(Y, 0.75), label = "Bottom 75%", vjust = -0.9) +
+  geom_hline(aes(yintercept = quantile(Y, 0.50)), linetype = "longdash") + 
+  geom_text(x = 2, y = quantile(Y, 0.50), label = "Median", vjust = -0.9) +
+  geom_hline(aes(yintercept = quantile(Y, 0.25)), linetype = "longdash") + 
+  geom_text(x = 2, y = quantile(Y, 0.25), label = "Bottom 25%", vjust = 1.2) +
+  labs(x = "") +
+  theme(axis.text.x = element_blank(),
+        axis.ticks = element_blank()
+  )
+```
+
+
+### IQR (Inter-Quartile Range)
+
+次に，IQR (Inter-Quartile Range) を計算します。これは
+
+$$
+\text{IQR} = \text{第3四分位数} - \text{第1四分位数}
+$$
+で定義されます。定義どおりに計算するならば，
+
+```{r}
+fivenum(Y)[4] - fivenum(Y)[2]
+```
+
+R には `IQR()` という関数があるので，そちらを使うのが標準的です。
+
+```{r}
+IQR(Y)
+```
+
+
+この IQR が箱ひげ図の「ひげの長さ」を決めます。デフォルトでは
+
+- ひげの上端の最大値 = 第3四分位数 + 1.5 × IQR
+- ひげの下端の最小値 = 第1四分位数 - 1.5 × IQR
+
+となっています。実際の上端・下端はデータで決まります。つまり，
+
+- 「第3四分位数 + 1.5 × IQR」を超えないデータのうち最大の値がひげの上端になり，
+- 「第1四分位数 - 1.5 × IQR」を下回らないデータのうち最小の値がひげの下端になります。
+
+ggplot2 のデフォルトでは（Tukey の流儀にしたがって），
+
+- 「第3四分位数 + 1.5 × IQR」より大きいデータ
+- 「第1四分位数 - 1.5 × IQR」より小さいデータ
+
+は外れ値 (outliers) として扱い，これらはひげではなく点で表示します。
+
+
+```{r boxexa3, fig.asp=1, fig.width=4, echo=FALSE}
+ggplot(df) + 
+  geom_boxplot(aes(x = 1, y = Y), width = 0.8) + 
+  geom_boxplot(aes(x = 2, y = 0), width = 0.8, color = "transparent") + 
+  geom_hline(aes(yintercept = quantile(Y, 0.75) + 1.5 * IQR(Y)), linetype = "longdash") + 
+  geom_hline(aes(yintercept = quantile(Y, 0.25) - 1.5 * IQR(Y)), linetype = "longdash") + 
+  annotate("segment", x = 1.5, xend = 1.5, 
+           y = quantile(Y, 0.25), yend = quantile(Y, 0.75), 
+           arrow = arrow(ends = "both", length = unit(.2, "cm"))) + 
+  annotate("text", x = 1.8, y = 0, label = "IQR") +
+  annotate("segment", x = 1.5, xend = 1.5, 
+           y = quantile(Y, 0.75), yend = quantile(Y, 0.75) + 1.5 * IQR(Y), 
+           arrow = arrow(ends = "both", length = unit(.2, "cm"))) + 
+  annotate("text", x = 1.8, y = quantile(Y, 0.75) + 0.75 * IQR(Y), label = "1.5 * IQR") +
+  annotate("segment", x = 1.5, xend = 1.5, 
+           y = quantile(Y, 0.25), yend = quantile(Y, 0.25) - 1.5 * IQR(Y), 
+           arrow = arrow(ends = "both", length = unit(.2, "cm"))) + 
+  annotate("text", x = 1.8, y = quantile(Y, 0.25) - 0.75 * IQR(Y), label = "1.5 * IQR") +
+  annotate("text", x = 1.5, y = max(Y) - 0.2, label = "Outliers") +
+  annotate("text", x = 1.5, y = min(Y), label = "Outliers") +
+  labs(x = "") +
+  theme(axis.text.x = element_blank(),
+        axis.ticks = element_blank()
+  )
+```
+
+
+## 箱ひげ図のカスタマイズ {#customize-boxplot}
+
+`geom_boxplot` に対応した `stat_boxplot` を使うことでカスタマイズができます。次の例で分かるように，`geom_boxplot()` を使う代わりに `stat_boxplot()` を使うことができます。
+
+```{r geomstat}
+ggplot(df) + 
+  stat_boxplot(aes(x = "stat_boxplot", y = Y), geom = "boxplot", coef = 1.5) + 
+  geom_boxplot(aes(x = "geom_boxplot", y = Y)) 
+```
+
+### ひげの先端に横線を引きたい {#whisker-ends}
+
+<https://stackoverflow.com/a/13003038>
+
+```{r whiskerends, fig.asp=1, fig.width=4}
+ggplot(df, aes(x = "", y = Y)) + 
+  stat_boxplot(geom = "errorbar", width = 0.3) +   # 横線だけを描写するコード
+  geom_boxplot() 
+```
+
+
+### 外れ値もすべてひげの中に入れたい {#no-outliers}
+
+高校の教科書ではこちらが紹介されています。`stat_boxplot()` に `coef = Inf` を渡します。デフォルトでは `coef = 1.5` ですが，これを無限に大きくするということです。
+
+```{r infcoef, fig.asp=1, fig.width=4}
+ggplot(df, aes(x = "", y = Y)) + 
+  stat_boxplot(coef = Inf)
+```
+
+
+ひげの先端に横線を引くには，先程やったのと同様に `stat_boxplot` に `geom = errorbar` を渡します。
+
+```{r infcoefend, fig.asp=1, fig.width=4}
+ggplot(df, aes(x = "", y = Y)) + 
+  stat_boxplot(geom = "errorbar", coef = Inf, width = 0.3) +
+  stat_boxplot(coef = Inf)
+```
+  
+
+

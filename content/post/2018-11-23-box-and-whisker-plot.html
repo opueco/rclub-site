@@ -1,0 +1,119 @@
+---
+title: "コラム: 箱ひげ図"
+author: Kenji Sato
+date: '2018-11-23'
+slug: box-and-whisker-plot
+categories: 
+  - column
+tags:
+  - R
+  - statistics
+---
+
+
+
+<p>箱ひげ図（Box and whisker plot）の描き方について簡単に説明します。ggplot2 を使って，箱ひげ図を描きますので，<strong>tidyverse</strong> を読み込んでおきます。図を描くためのデータとして，正規乱数を用意しておきましょう。</p>
+<pre class="r"><code>library(tidyverse)
+Y &lt;- rnorm(200)
+df &lt;- tibble(Y)
+
+ggplot(df) + geom_histogram(aes(x = Y))</code></pre>
+<p><img src="/post/2018-11-23-box-and-whisker-plot_files/figure-html/setup-1.png" width="672" /></p>
+<p>箱ひげ図というのは次のような図です。</p>
+<pre class="r"><code>ggplot(df) + 
+  geom_boxplot(aes(x = &quot;&quot;, y = Y), width = 0.4) + 
+  labs(x = &quot;&quot;) </code></pre>
+<p><img src="/post/2018-11-23-box-and-whisker-plot_files/figure-html/boxexa-1.png" width="384" /></p>
+<p>次のような特徴があります。</p>
+<ul>
+<li>真ん中に箱がある</li>
+<li>箱の中に線が1本引かれている</li>
+<li>箱の上下から線が出ている</li>
+<li>線の上下端のさらに外側に点がある（ただし，これらはないこともある）</li>
+</ul>
+<div class="section level2">
+<h2>データの整列と四分位数</h2>
+<p>箱ひげ図を手作業で描くために必要な前処理は，データを小さい順（あるいは大きい順）に並べることです。 そして，次のデータを調べます。</p>
+<ul>
+<li>最小値</li>
+<li>25%点（第1四分位数）</li>
+<li>中央値（第2四分位数，メディアン）</li>
+<li>75%点（第3四分位数）</li>
+<li>最大値</li>
+</ul>
+<p>R ではこれらの数字を <code>fivenum()</code> 関数または <code>quantile()</code> 関数で求めることができます。</p>
+<pre class="r"><code>fivenum(Y)</code></pre>
+<pre><code>## [1] -2.27192549 -0.50915180 -0.06176448  0.54389678  2.58195893</code></pre>
+<pre class="r"><code>quantile(Y)</code></pre>
+<pre><code>##          0%         25%         50%         75%        100% 
+## -2.27192549 -0.50567207 -0.06176448  0.52737652  2.58195893</code></pre>
+<p><code>quantile()</code> 関数は次のように任意の分位値を求めるために使うことができます。</p>
+<pre class="r"><code>quantile(Y, c(0.1, 0.35))</code></pre>
+<pre><code>##        10%        35% 
+## -1.1180365 -0.3316572</code></pre>
+<p>箱ひげ図の箱は</p>
+<ul>
+<li>25%点が箱の上端</li>
+<li>中央値が箱の中の線</li>
+<li>75%点が箱の下端</li>
+</ul>
+<p>になるように描かれます。</p>
+<p><img src="/post/2018-11-23-box-and-whisker-plot_files/figure-html/boxexa2-1.png" width="384" /></p>
+<div id="iqr-inter-quartile-range" class="section level3">
+<h3>IQR (Inter-Quartile Range)</h3>
+<p>次に，IQR (Inter-Quartile Range) を計算します。これは</p>
+<p><span class="math display">\[
+\text{IQR} = \text{第3四分位数} - \text{第1四分位数}
+\]</span> で定義されます。定義どおりに計算するならば，</p>
+<pre class="r"><code>fivenum(Y)[4] - fivenum(Y)[2]</code></pre>
+<pre><code>## [1] 1.053049</code></pre>
+<p>R には <code>IQR()</code> という関数があるので，そちらを使うのが標準的です。</p>
+<pre class="r"><code>IQR(Y)</code></pre>
+<pre><code>## [1] 1.033049</code></pre>
+<p>この IQR が箱ひげ図の「ひげの長さ」を決めます。デフォルトでは</p>
+<ul>
+<li>ひげの上端の最大値 = 第3四分位数 + 1.5 × IQR</li>
+<li>ひげの下端の最小値 = 第1四分位数 - 1.5 × IQR</li>
+</ul>
+<p>となっています。実際の上端・下端はデータで決まります。つまり，</p>
+<ul>
+<li>「第3四分位数 + 1.5 × IQR」を超えないデータのうち最大の値がひげの上端になり，</li>
+<li>「第1四分位数 - 1.5 × IQR」を下回らないデータのうち最小の値がひげの下端になります。</li>
+</ul>
+<p>ggplot2 のデフォルトでは（Tukey の流儀にしたがって），</p>
+<ul>
+<li>「第3四分位数 + 1.5 × IQR」より大きいデータ</li>
+<li>「第1四分位数 - 1.5 × IQR」より小さいデータ</li>
+</ul>
+<p>は外れ値 (outliers) として扱い，これらはひげではなく点で表示します。</p>
+<p><img src="/post/2018-11-23-box-and-whisker-plot_files/figure-html/boxexa3-1.png" width="384" /></p>
+</div>
+</div>
+<div id="customize-boxplot" class="section level2">
+<h2>箱ひげ図のカスタマイズ</h2>
+<p><code>geom_boxplot</code> に対応した <code>stat_boxplot</code> を使うことでカスタマイズができます。次の例で分かるように，<code>geom_boxplot()</code> を使う代わりに <code>stat_boxplot()</code> を使うことができます。</p>
+<pre class="r"><code>ggplot(df) + 
+  stat_boxplot(aes(x = &quot;stat_boxplot&quot;, y = Y), geom = &quot;boxplot&quot;, coef = 1.5) + 
+  geom_boxplot(aes(x = &quot;geom_boxplot&quot;, y = Y)) </code></pre>
+<p><img src="/post/2018-11-23-box-and-whisker-plot_files/figure-html/geomstat-1.png" width="672" /></p>
+<div id="whisker-ends" class="section level3">
+<h3>ひげの先端に横線を引きたい</h3>
+<p><a href="https://stackoverflow.com/a/13003038" class="uri">https://stackoverflow.com/a/13003038</a></p>
+<pre class="r"><code>ggplot(df, aes(x = &quot;&quot;, y = Y)) + 
+  stat_boxplot(geom = &quot;errorbar&quot;, width = 0.3) +   # 横線だけを描写するコード
+  geom_boxplot() </code></pre>
+<p><img src="/post/2018-11-23-box-and-whisker-plot_files/figure-html/whiskerends-1.png" width="384" /></p>
+</div>
+<div id="no-outliers" class="section level3">
+<h3>外れ値もすべてひげの中に入れたい</h3>
+<p>高校の教科書ではこちらが紹介されています。<code>stat_boxplot()</code> に <code>coef = Inf</code> を渡します。デフォルトでは <code>coef = 1.5</code> ですが，これを無限に大きくするということです。</p>
+<pre class="r"><code>ggplot(df, aes(x = &quot;&quot;, y = Y)) + 
+  stat_boxplot(coef = Inf)</code></pre>
+<p><img src="/post/2018-11-23-box-and-whisker-plot_files/figure-html/infcoef-1.png" width="384" /></p>
+<p>ひげの先端に横線を引くには，先程やったのと同様に <code>stat_boxplot</code> に <code>geom = errorbar</code> を渡します。</p>
+<pre class="r"><code>ggplot(df, aes(x = &quot;&quot;, y = Y)) + 
+  stat_boxplot(geom = &quot;errorbar&quot;, coef = Inf, width = 0.3) +
+  stat_boxplot(coef = Inf)</code></pre>
+<p><img src="/post/2018-11-23-box-and-whisker-plot_files/figure-html/infcoefend-1.png" width="384" /></p>
+</div>
+</div>
