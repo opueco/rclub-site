@@ -1,5 +1,5 @@
 ---
-title: 箱ひげ図
+title: "コラム: 箱ひげ図"
 author: Kenji Sato
 date: '2018-11-23'
 slug: box-and-whisker-plot
