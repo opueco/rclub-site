@@ -100,7 +100,7 @@ ggplot(df) + geom_histogram(aes(x = Y))</code></pre>
 <h3>ひげの先端に横線を引きたい</h3>
 <p><a href="https://stackoverflow.com/a/13003038" class="uri">https://stackoverflow.com/a/13003038</a></p>
 <pre class="r"><code>ggplot(df, aes(x = &quot;&quot;, y = Y)) + 
-  stat_boxplot(geom = &quot;errorbar&quot;, width = 0.3) +   # 横線だけを描写するコード
+  stat_boxplot(geom = &quot;errorbar&quot;, width = 0.3) +   # ひげと横線を描写するコード
   geom_boxplot() </code></pre>
 <p><img src="/post/2018-11-23-box-and-whisker-plot_files/figure-html/whiskerends-1.png" width="384" /></p>
 </div>

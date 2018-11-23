@@ -171,7 +171,7 @@ ggplot(df) +
 
 ```{r whiskerends, fig.asp=1, fig.width=4}
 ggplot(df, aes(x = "", y = Y)) + 
-  stat_boxplot(geom = "errorbar", width = 0.3) +   # 横線だけを描写するコード
+  stat_boxplot(geom = "errorbar", width = 0.3) +   # ひげと横線を描写するコード
   geom_boxplot() 
 ```
 
