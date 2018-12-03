@@ -1,0 +1,330 @@
+---
+title: "Lesson 5-1: R の文字列"
+date: "2018-12-03 00:00:00 +0900"
+categories:
+  - textbook
+tag:
+  - R
+slug: 2018-5-1
+output: 
+  blogdown::html_page:
+    toc: true
+monofont: Ricty Discord
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(prompt = FALSE)
+View <- knitr::kable
+pwt90 <- haven::read_dta("~/Data/pwt90.dta")
+
+source("../../R/knitr-setup.R")
+source("../../R/util.R")
+
+cnt_exe <- counter()
+cnt_exa <- counter()
+cnt_prb <- counter()
+cnt_scr <- counter()
+```
+
+# 前のステップ {#pre}
+
+[Lesson 4-1: ggplot2 による可視化](`r blogdown::shortcode("ref", "2018-lesson4-01.html")`) では次のことを勉強しました。
+
+- **ggplot2** による可視化
+- **ggrepel** を使ったグラフの改善
+
+# このセッションの目標 {#goal}
+
+R で文字列を扱う方法を学びます。特に，
+
+- **stringr**
+
+の基本を学びます。
+
+- **gutenbergr** 
+
+を使った簡単なテキスト処理を行います。
+
+# 準備 {#prep}
+
+**stringr** は **tidyverse** の一部です。
+
+```{r}
+library(tidyverse)
+```
+
+このレッスンでは Arthur Conan Doyle, _A Study in Scarlet_ (<http://www.gutenberg.org/files/244/244-h/244-h.htm>) をサンプルとして使います。
+
+Cheat Sheet はこちら <https://www.rstudio.com/resources/cheatsheets/#stringr>  です。
+
+# 文字列 {#strings}
+
+「文字列」（string）というのは，文字（a, b, c,... 0, 1, 2,..., あ, い, ...など）の1つ以上の並びのことです。ウェブは文字列（ウェブサイトは HTML というテキストで書かれている。詳しくは次回）で溢れていますし，SNS やレビューのデータを使った感情分析が盛んに行われています。文字列データを数値化して，統計解析にかける訳です。文字列を自由に操作できることが分析のスタートラインです。
+
+## 基本 {#string-basics}
+
+R は一対の二重引用符(`" "`)または一重引用符（`' '`）で括られたテキストを「文字列」と認識します。次の2つのコマンドを実行して比較してください。
+
+
+```{r simple-calc, prompt=TRUE, eval = FALSE}
+3 + 4
+"3 + 4"
+```
+
+<details>
+<summary>出力</summary>
+```{r ref.label="simple-calc"}
+```
+
+1つ目はコマンドとして認識されて計算結果が出力されますが，2つ目は「3, スペース, プラス, スペース, 4 がその順で並んでいる」という風に R は文字通り解釈します。
+</details>
+
+
+さて，次のコマンドには問題があります。それは何でしょうか？
+
+```
+> ""Good morning", he said."
+```
+
+<details>
+<summary>答え</summary>
+```
+Error: unexpected symbol in """Good"
+```
+
+二重引用符の中に二重引用符を入れることはできません。このような短い文字列であれば人間は文脈情報から区切りの場所を正しく解釈できますが，コンピュータは人間とは違います。仮に適切な区切りを判定するような機能を組み込んでしまうと，二重引用符が現れるたびにコードの全体を走査しないといけなくなりますので，ずいぶん非効率になってしまいます。コンピュータの「律儀さ」を受け入れましょう。
+
+</details>
+
+
+上の問題を回避するには，一重引用符を使って次のように書きます。
+
+```{r string-with-single, prompt=TRUE}
+'"Good morning", he said.'
+```
+
+出力をよく見てください。内側の二重引用符が `\"` と表記されています。バックスラッシュから始まるこのようなコードを「エスケープシーケンス」と呼び，特殊文字を表すために使います。二重引用符の中に二重引用符を入れたい場合は，外側を一重引用符にする代わりに，「エスケープシーケンス `\"`」 を使うこともできます。
+
+コンソールへの出力にエスケープシーケンスを表示したくない場合は `writeLines()` あるいは `cat()` という関数を使います。
+
+
+#### 問題5.1.`r cnt_prb()`  
+
+次のテキストをオブジェクト（`text`）に保存し，`writeLines(text)` を実行してみてください。
+
+```
+"That's a strange thing," remarked my companion[.]
+```
+
+<details>
+<summary>答え</summary>
+```{r}
+text <- "\"That's a strange thing,\" remarked my companion[.]"
+writeLines(text)
+```
+</details>
+
+## エスケープシーケンス {#string-escape}
+
+### 改行 `\n` {#new-line}
+
+文字列の中に改行を挿入したい場合は `\n` というエスケープシーケンスを使います。少しわかりにくいかもしれませんが，改行に対応する「文字」（改行コード）があると考えています。
+
+```{r, prompt = TRUE}
+writeLines('"And who was the first?" I asked.\n"A fellow who is working at the chemical laboratory up at the hospital."')
+```
+
+テキストが長い場合は次のようにベクトルを使うこともできます。
+
+```{r, prompt = FALSE}
+text <- c('"And who was the first?" I asked.',
+          '"A fellow who is working at the chemical laboratory up at the hospital."')
+writeLines(text)
+```
+
+`writeLines()` は文字列のベクトルを受取り，各要素を行として扱って表示します。
+
+<div class = "hint">
+
+### CR/LF v. LF
+
+<https://stackoverflow.com/a/12747850/1877682>  
+
+Microsof Windows では伝統的に CR/LF という改行コードが使われてきました。一方，macOS を含む Unix/Linux 系のOS では LF という改行コードが使われています。
+
+CRやLFという用語はタイプライターで文字を入力していた時代の名残です。タイプライターの動作原理は
+
+- キャリッジと呼ばれる紙を載せた装置を右から左に動かして左右方向の入力位置を定める，
+- ローラーを回して紙を送り，上下方向の入力位置を定める
+
+というものです。したがって，紙が左端まで動いた後に次の行の入力を始めるためには
+
+- キャリッジを右に戻して = Carriage Return, CR
+- 行（紙）を送る = Line Feed, LF
+
+という2段階の動きを組み合わせる必要がありました。
+
+Windows で CR/LF が使われているのはタイプライターの動作原理（CR + LF）を抽象化したものです。一方，Unix系のOSでは LF だけが残っています。それぞれに対応したエスケープシーケンスは以下の通りです。
+
+- CR = `\r`
+- LF = `\n`
+- CR/LF = `\r\n`
+
+なお，CR (`\r`) 単独の改行は Mac OS X 以前に Macintosh コンピュータで使われていた Classic Mac OS で使われていましたが，今はお目にかかることはほとんどありません。
+
+改行にも色々あるということを覚えておくといつか役に立つこともあるかもしれません。（テキストエディタが改行コードを判別してくれるので問題になることは少ないのですが）
+
+参考：タイプライターの動作
+
+```{r, eval=TRUE, echo=FALSE}
+blogdown::shortcode("youtube", "PEsK9oXq_2U")
+```
+
+
+</div>
+
+### タブ `\t` {#tab}
+
+タブは可変長のスペースです。`\t` でタブ文字を表します。
+次のコードはどのような結果を返すでしょうか。
+
+```{r, eval=FALSE}
+writeLines("Apple\t100\nOrange\t50")
+```
+
+## バックスラッシュ `\\` {#backslash}
+
+バックスラッシュがエスケープシーケンスの始まりとして使われているので，バックスラッシュ自身を入力するためにもエスケープシーケンスを使う必要があります。それは `\\` です。
+
+このことは正規表現を使うときに重要になります。
+
+
+<div class = "hint">
+
+Windows のファイルパスを表すためにバックスラッシュを使いますが，R ではスラッシュで置き換えることができるので，常にスラッシュを使うことを推奨します。例えば，`"C:\\Users\\Kenji\\Documents"` ではなく `"C:/Users/Kenji/Documents"` を使います。
+
+</div>
+
+## ユニコード `\u` {#unicode}
+
+顔文字などの特殊文字を使うためにエスケープシーケンス (`\U`, `\u`) を使うことができます。例えば，
+
+```{r}
+writeLines("A \U27FA B")
+writeLines("\U1F600")
+writeLines("\U1F640")
+```
+
+`\U` の後に続くコードが4桁であれば，`\u` を使うことができます。
+ユニコードの一覧は次のサイトをご覧ください。
+
+<http://www.unicode.org/charts/>
+
+# **stringr** の導入 {#stringr} 
+
+**stringr** は文字列ベクトルを操作するための関数を集めたパッケージです。例えば，次のような関数が用意されています。
+
+- 長さ `str_length()` 
+- 連結 `str_c()`, `str_flatten()`
+- 分解 `str_split()`
+- 部分の抽出 `str_sub()`
+- 空白の除去 `str_trim()`, `str_squish()`
+- 大文字小文字の変換 `str_to_lower()`, `str_to_upper()`, `str_to_title()`
+
+すべて `str_` から始まるので，関数の名前を忘れてしまったら `str_` まで入力して TAB キーを押下しましょう。RStudio が候補を教えてくれます。
+以下が使用例です。
+
+```{r}
+(x <- c("apple", "banana", "orange"))
+str_length(x)
+str_c(x, "s")
+str_flatten(x, collapse = ":")
+str_split("R is fun!", pattern = boundary("word"))
+str_sub(x, start = 2, end = 4)
+```
+
+
+```{r}
+(y <- c("   Hello, world!  ", "Good        morning"))
+str_trim(y)
+(z <- str_squish(y))
+```
+
+```{r}
+str_to_lower(z)
+str_to_upper(z)
+str_to_title(z)
+```
+
+## 単語の出現頻度 {#word-frequency}
+
+少し，実践的なテキスト処理をしてみましょう。
+
+
+まず，グーテンベルクプロジェクトから A Study in Scarlet をダウンロードします。 **gutenbergr** をインストールして， `gutenbergr::gutenberg_donwload()` を使います。
+
+```{r}
+# install.packages("gutenbergr")
+study_in_scarlet <- gutenbergr::gutenberg_download(244) 
+text <- 
+  study_in_scarlet %>% 
+  filter(row_number() > 32) %>% 
+  pull(text)
+```
+
+単語の出現頻度を調べてみましょう。 `base::table()` を使うと便利です。これは次のように使います。
+
+```{r}
+(x <- sample(c("a", "b", "A"), size = 10, replace = TRUE))
+table(x)
+```
+
+大文字・小文字を区別せずに頻度を抽出するには `str_to_lower()` を使えばよさそうですね。
+テキストの1行に1つ要素が対応するベクトルでは `table()` が使えないので，`str_flatten` でベクトルを1つの文字列に変えてしまいます。（もっといい方法があると思いますが，これが一番単純な方法です）
+
+最後に1単語1成分になるようなベクトルを作ります。これは `str_split` を使います。`boundary("word")` というのは，英語の単語境界（改行やスペースなど）を境目として分解するときに使います。
+
+```{r}
+words <- 
+  text %>% 
+  str_to_lower() %>% 
+  str_flatten(collapse = "\n") %>% 
+  str_split(boundary("word"))
+# writeLines(text_str)
+```
+
+これに `table` を適用します。最後に `tibble()` に変形して，整列しておきます。
+
+```{r}
+freq <- words %>%
+  table() %>% 
+  tibble(word = names(.), n = .) %>%      ## . は左辺のデータ
+  mutate(n = as.integer(n)) %>% 
+  arrange(desc(n))
+```
+
+
+### 問題 5.1.`r cnt_prb()`
+
+以下のコードは何を出力するか？予想したあとに，実行しなさい。
+
+```{r, eval = FALSE}
+freq %>% 
+  filter(rank(desc(n)) <= 50) %>% 
+  ggplot() + 
+  geom_col(aes(x = reorder(word, n), y = n)) + 
+  coord_flip()
+```
+
+
+### 問題 5.1.`r cnt_prb()`
+
+"sherlock", "holmes", "watson", "john" の出現頻度を調べなさい。
+
+
+
+## 次回 {#next}
+
+- [Lesson 5-2: 正規表現](`r blogdown::shortcode("ref", "2018-lesson5-02.html")`)
+
+文字列操作のための強力なツールである正規表現についてサワリの部分を紹介します。

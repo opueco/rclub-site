@@ -1,0 +1,271 @@
+---
+title: "Lesson 5-1: R の文字列"
+date: "2018-12-03 00:00:00 +0900"
+categories:
+  - textbook
+tag:
+  - R
+slug: 2018-5-1
+output: 
+  blogdown::html_page:
+    toc: true
+monofont: Ricty Discord
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#pre">前のステップ</a></li>
+<li><a href="#goal">このセッションの目標</a></li>
+<li><a href="#prep">準備</a></li>
+<li><a href="#strings">文字列</a><ul>
+<li><a href="#string-basics">基本</a></li>
+<li><a href="#string-escape">エスケープシーケンス</a><ul>
+<li><a href="#new-line">改行 <code>\n</code></a></li>
+<li><a href="#tab">タブ <code>\t</code></a></li>
+</ul></li>
+<li><a href="#backslash">バックスラッシュ <code>\\</code></a></li>
+<li><a href="#unicode">ユニコード <code>\u</code></a></li>
+</ul></li>
+<li><a href="#stringr"><strong>stringr</strong> の導入</a><ul>
+<li><a href="#word-frequency">単語の出現頻度</a><ul>
+<li><a href="#-5.1.2">問題 5.1.2</a></li>
+<li><a href="#-5.1.3">問題 5.1.3</a></li>
+</ul></li>
+<li><a href="#next">次回</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="pre" class="section level1">
+<h1>前のステップ</h1>
+<p><a href="{{% ref "2018-lesson4-01.html" %}}">Lesson 4-1: ggplot2 による可視化</a> では次のことを勉強しました。</p>
+<ul>
+<li><strong>ggplot2</strong> による可視化</li>
+<li><strong>ggrepel</strong> を使ったグラフの改善</li>
+</ul>
+</div>
+<div id="goal" class="section level1">
+<h1>このセッションの目標</h1>
+<p>R で文字列を扱う方法を学びます。特に，</p>
+<ul>
+<li><strong>stringr</strong></li>
+</ul>
+<p>の基本を学びます。</p>
+<ul>
+<li><strong>gutenbergr</strong></li>
+</ul>
+<p>を使った簡単なテキスト処理を行います。</p>
+</div>
+<div id="prep" class="section level1">
+<h1>準備</h1>
+<p><strong>stringr</strong> は <strong>tidyverse</strong> の一部です。</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.1.0     ✔ purrr   0.2.5
+## ✔ tibble  1.4.2     ✔ dplyr   0.7.8
+## ✔ tidyr   0.8.2     ✔ stringr 1.3.1
+## ✔ readr   1.1.1     ✔ forcats 0.3.0</code></pre>
+<pre><code>## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<p>このレッスンでは Arthur Conan Doyle, <em>A Study in Scarlet</em> (<a href="http://www.gutenberg.org/files/244/244-h/244-h.htm" class="uri">http://www.gutenberg.org/files/244/244-h/244-h.htm</a>) をサンプルとして使います。</p>
+<p>Cheat Sheet はこちら <a href="https://www.rstudio.com/resources/cheatsheets/#stringr" class="uri">https://www.rstudio.com/resources/cheatsheets/#stringr</a> です。</p>
+</div>
+<div id="strings" class="section level1">
+<h1>文字列</h1>
+<p>「文字列」（string）というのは，文字（a, b, c,… 0, 1, 2,…, あ, い, …など）の1つ以上の並びのことです。ウェブは文字列（ウェブサイトは HTML というテキストで書かれている。詳しくは次回）で溢れていますし，SNS やレビューのデータを使った感情分析が盛んに行われています。文字列データを数値化して，統計解析にかける訳です。文字列を自由に操作できることが分析のスタートラインです。</p>
+<div id="string-basics" class="section level2">
+<h2>基本</h2>
+<p>R は一対の二重引用符(<code>&quot; &quot;</code>)または一重引用符（<code>' '</code>）で括られたテキストを「文字列」と認識します。次の2つのコマンドを実行して比較してください。</p>
+<pre class="r"><code>&gt; 3 + 4
+&gt; &quot;3 + 4&quot;</code></pre>
+<p><details> <summary>出力</summary></p>
+<pre class="r"><code>3 + 4</code></pre>
+<pre><code>## [1] 7</code></pre>
+<pre class="r"><code>&quot;3 + 4&quot;</code></pre>
+<pre><code>## [1] &quot;3 + 4&quot;</code></pre>
+<p>1つ目はコマンドとして認識されて計算結果が出力されますが，2つ目は「3, スペース, プラス, スペース, 4 がその順で並んでいる」という風に R は文字通り解釈します。 </details></p>
+<p>さて，次のコマンドには問題があります。それは何でしょうか？</p>
+<pre><code>&gt; &quot;&quot;Good morning&quot;, he said.&quot;</code></pre>
+<p><details> <summary>答え</summary></p>
+<pre><code>Error: unexpected symbol in &quot;&quot;&quot;Good&quot;</code></pre>
+<p>二重引用符の中に二重引用符を入れることはできません。このような短い文字列であれば人間は文脈情報から区切りの場所を正しく解釈できますが，コンピュータは人間とは違います。仮に適切な区切りを判定するような機能を組み込んでしまうと，二重引用符が現れるたびにコードの全体を走査しないといけなくなりますので，ずいぶん非効率になってしまいます。コンピュータの「律儀さ」を受け入れましょう。</p>
+<p></details></p>
+<p>上の問題を回避するには，一重引用符を使って次のように書きます。</p>
+<pre class="r"><code>&gt; &#39;&quot;Good morning&quot;, he said.&#39;</code></pre>
+<pre><code>## [1] &quot;\&quot;Good morning\&quot;, he said.&quot;</code></pre>
+<p>出力をよく見てください。内側の二重引用符が <code>\&quot;</code> と表記されています。バックスラッシュから始まるこのようなコードを「エスケープシーケンス」と呼び，特殊文字を表すために使います。二重引用符の中に二重引用符を入れたい場合は，外側を一重引用符にする代わりに，「エスケープシーケンス <code>\&quot;</code>」 を使うこともできます。</p>
+<p>コンソールへの出力にエスケープシーケンスを表示したくない場合は <code>writeLines()</code> あるいは <code>cat()</code> という関数を使います。</p>
+<div id="5.1.1" class="section level4">
+<h4>問題5.1.1</h4>
+<p>次のテキストをオブジェクト（<code>text</code>）に保存し，<code>writeLines(text)</code> を実行してみてください。</p>
+<pre><code>&quot;That&#39;s a strange thing,&quot; remarked my companion[.]</code></pre>
+<p><details> <summary>答え</summary></p>
+<pre class="r"><code>text &lt;- &quot;\&quot;That&#39;s a strange thing,\&quot; remarked my companion[.]&quot;
+writeLines(text)</code></pre>
+<pre><code>## &quot;That&#39;s a strange thing,&quot; remarked my companion[.]</code></pre>
+<p></details></p>
+</div>
+</div>
+<div id="string-escape" class="section level2">
+<h2>エスケープシーケンス</h2>
+<div id="new-line" class="section level3">
+<h3>改行 <code>\n</code></h3>
+<p>文字列の中に改行を挿入したい場合は <code>\n</code> というエスケープシーケンスを使います。少しわかりにくいかもしれませんが，改行に対応する「文字」（改行コード）があると考えています。</p>
+<pre class="r"><code>&gt; writeLines(&#39;&quot;And who was the first?&quot; I asked.\n&quot;A fellow who is working at the chemical laboratory up at the hospital.&quot;&#39;)</code></pre>
+<pre><code>## &quot;And who was the first?&quot; I asked.
+## &quot;A fellow who is working at the chemical laboratory up at the hospital.&quot;</code></pre>
+<p>テキストが長い場合は次のようにベクトルを使うこともできます。</p>
+<pre class="r"><code>text &lt;- c(&#39;&quot;And who was the first?&quot; I asked.&#39;,
+          &#39;&quot;A fellow who is working at the chemical laboratory up at the hospital.&quot;&#39;)
+writeLines(text)</code></pre>
+<pre><code>## &quot;And who was the first?&quot; I asked.
+## &quot;A fellow who is working at the chemical laboratory up at the hospital.&quot;</code></pre>
+<p><code>writeLines()</code> は文字列のベクトルを受取り，各要素を行として扱って表示します。</p>
+<div class="hint">
+<h3 id="crlf-v.-lf">CR/LF v. LF</h3>
+<p><a href="https://stackoverflow.com/a/12747850/1877682" class="uri">https://stackoverflow.com/a/12747850/1877682</a></p>
+<p>Microsof Windows では伝統的に CR/LF という改行コードが使われてきました。一方，macOS を含む Unix/Linux 系のOS では LF という改行コードが使われています。</p>
+<p>CRやLFという用語はタイプライターで文字を入力していた時代の名残です。タイプライターの動作原理は</p>
+<ul>
+<li>キャリッジと呼ばれる紙を載せた装置を右から左に動かして左右方向の入力位置を定める，</li>
+<li>ローラーを回して紙を送り，上下方向の入力位置を定める</li>
+</ul>
+<p>というものです。したがって，紙が左端まで動いた後に次の行の入力を始めるためには</p>
+<ul>
+<li>キャリッジを右に戻して = Carriage Return, CR</li>
+<li>行（紙）を送る = Line Feed, LF</li>
+</ul>
+<p>という2段階の動きを組み合わせる必要がありました。</p>
+<p>Windows で CR/LF が使われているのはタイプライターの動作原理（CR + LF）を抽象化したものです。一方，Unix系のOSでは LF だけが残っています。それぞれに対応したエスケープシーケンスは以下の通りです。</p>
+<ul>
+<li>CR = <code>\r</code></li>
+<li>LF = <code>\n</code></li>
+<li>CR/LF = <code>\r\n</code></li>
+</ul>
+<p>なお，CR (<code>\r</code>) 単独の改行は Mac OS X 以前に Macintosh コンピュータで使われていた Classic Mac OS で使われていましたが，今はお目にかかることはほとんどありません。</p>
+<p>改行にも色々あるということを覚えておくといつか役に立つこともあるかもしれません。（テキストエディタが改行コードを判別してくれるので問題になることは少ないのですが）</p>
+<p>参考：タイプライターの動作</p>
+{{% youtube "PEsK9oXq_2U" %}}
+</div>
+</div>
+<div id="tab" class="section level3">
+<h3>タブ <code>\t</code></h3>
+<p>タブは可変長のスペースです。<code>\t</code> でタブ文字を表します。 次のコードはどのような結果を返すでしょうか。</p>
+<pre class="r"><code>writeLines(&quot;Apple\t100\nOrange\t50&quot;)</code></pre>
+</div>
+</div>
+<div id="backslash" class="section level2">
+<h2>バックスラッシュ <code>\\</code></h2>
+<p>バックスラッシュがエスケープシーケンスの始まりとして使われているので，バックスラッシュ自身を入力するためにもエスケープシーケンスを使う必要があります。それは <code>\\</code> です。</p>
+<p>このことは正規表現を使うときに重要になります。</p>
+<div class="hint">
+<p>Windows のファイルパスを表すためにバックスラッシュを使いますが，R ではスラッシュで置き換えることができるので，常にスラッシュを使うことを推奨します。例えば，<code>&quot;C:\\Users\\Kenji\\Documents&quot;</code> ではなく <code>&quot;C:/Users/Kenji/Documents&quot;</code> を使います。</p>
+</div>
+</div>
+<div id="unicode" class="section level2">
+<h2>ユニコード <code>\u</code></h2>
+<p>顔文字などの特殊文字を使うためにエスケープシーケンス (<code>\U</code>, <code>\u</code>) を使うことができます。例えば，</p>
+<pre class="r"><code>writeLines(&quot;A \U27FA B&quot;)</code></pre>
+<pre><code>## A ⟺ B</code></pre>
+<pre class="r"><code>writeLines(&quot;\U1F600&quot;)</code></pre>
+<pre><code>## 😀</code></pre>
+<pre class="r"><code>writeLines(&quot;\U1F640&quot;)</code></pre>
+<pre><code>## 🙀</code></pre>
+<p><code>\U</code> の後に続くコードが4桁であれば，<code>\u</code> を使うことができます。 ユニコードの一覧は次のサイトをご覧ください。</p>
+<p><a href="http://www.unicode.org/charts/" class="uri">http://www.unicode.org/charts/</a></p>
+</div>
+</div>
+<div id="stringr" class="section level1">
+<h1><strong>stringr</strong> の導入</h1>
+<p><strong>stringr</strong> は文字列ベクトルを操作するための関数を集めたパッケージです。例えば，次のような関数が用意されています。</p>
+<ul>
+<li>長さ <code>str_length()</code></li>
+<li>連結 <code>str_c()</code>, <code>str_flatten()</code></li>
+<li>分解 <code>str_split()</code></li>
+<li>部分の抽出 <code>str_sub()</code></li>
+<li>空白の除去 <code>str_trim()</code>, <code>str_squish()</code></li>
+<li>大文字小文字の変換 <code>str_to_lower()</code>, <code>str_to_upper()</code>, <code>str_to_title()</code></li>
+</ul>
+<p>すべて <code>str_</code> から始まるので，関数の名前を忘れてしまったら <code>str_</code> まで入力して TAB キーを押下しましょう。RStudio が候補を教えてくれます。 以下が使用例です。</p>
+<pre class="r"><code>(x &lt;- c(&quot;apple&quot;, &quot;banana&quot;, &quot;orange&quot;))</code></pre>
+<pre><code>## [1] &quot;apple&quot;  &quot;banana&quot; &quot;orange&quot;</code></pre>
+<pre class="r"><code>str_length(x)</code></pre>
+<pre><code>## [1] 5 6 6</code></pre>
+<pre class="r"><code>str_c(x, &quot;s&quot;)</code></pre>
+<pre><code>## [1] &quot;apples&quot;  &quot;bananas&quot; &quot;oranges&quot;</code></pre>
+<pre class="r"><code>str_flatten(x, collapse = &quot;:&quot;)</code></pre>
+<pre><code>## [1] &quot;apple:banana:orange&quot;</code></pre>
+<pre class="r"><code>str_split(&quot;R is fun!&quot;, pattern = boundary(&quot;word&quot;))</code></pre>
+<pre><code>## [[1]]
+## [1] &quot;R&quot;   &quot;is&quot;  &quot;fun&quot;</code></pre>
+<pre class="r"><code>str_sub(x, start = 2, end = 4)</code></pre>
+<pre><code>## [1] &quot;ppl&quot; &quot;ana&quot; &quot;ran&quot;</code></pre>
+<pre class="r"><code>(y &lt;- c(&quot;   Hello, world!  &quot;, &quot;Good        morning&quot;))</code></pre>
+<pre><code>## [1] &quot;   Hello, world!  &quot;  &quot;Good        morning&quot;</code></pre>
+<pre class="r"><code>str_trim(y)</code></pre>
+<pre><code>## [1] &quot;Hello, world!&quot;       &quot;Good        morning&quot;</code></pre>
+<pre class="r"><code>(z &lt;- str_squish(y))</code></pre>
+<pre><code>## [1] &quot;Hello, world!&quot; &quot;Good morning&quot;</code></pre>
+<pre class="r"><code>str_to_lower(z)</code></pre>
+<pre><code>## [1] &quot;hello, world!&quot; &quot;good morning&quot;</code></pre>
+<pre class="r"><code>str_to_upper(z)</code></pre>
+<pre><code>## [1] &quot;HELLO, WORLD!&quot; &quot;GOOD MORNING&quot;</code></pre>
+<pre class="r"><code>str_to_title(z)</code></pre>
+<pre><code>## [1] &quot;Hello, World!&quot; &quot;Good Morning&quot;</code></pre>
+<div id="word-frequency" class="section level2">
+<h2>単語の出現頻度</h2>
+<p>少し，実践的なテキスト処理をしてみましょう。</p>
+<p>まず，グーテンベルクプロジェクトから A Study in Scarlet をダウンロードします。 <strong>gutenbergr</strong> をインストールして， <code>gutenbergr::gutenberg_donwload()</code> を使います。</p>
+<pre class="r"><code># install.packages(&quot;gutenbergr&quot;)
+study_in_scarlet &lt;- gutenbergr::gutenberg_download(244) </code></pre>
+<pre><code>## Determining mirror for Project Gutenberg from http://www.gutenberg.org/robot/harvest</code></pre>
+<pre><code>## Using mirror http://aleph.gutenberg.org</code></pre>
+<pre class="r"><code>text &lt;- 
+  study_in_scarlet %&gt;% 
+  filter(row_number() &gt; 32) %&gt;% 
+  pull(text)</code></pre>
+<p>単語の出現頻度を調べてみましょう。 <code>base::table()</code> を使うと便利です。これは次のように使います。</p>
+<pre class="r"><code>(x &lt;- sample(c(&quot;a&quot;, &quot;b&quot;, &quot;A&quot;), size = 10, replace = TRUE))</code></pre>
+<pre><code>##  [1] &quot;a&quot; &quot;a&quot; &quot;b&quot; &quot;a&quot; &quot;a&quot; &quot;a&quot; &quot;a&quot; &quot;a&quot; &quot;A&quot; &quot;A&quot;</code></pre>
+<pre class="r"><code>table(x)</code></pre>
+<pre><code>## x
+## a A b 
+## 7 2 1</code></pre>
+<p>大文字・小文字を区別せずに頻度を抽出するには <code>str_to_lower()</code> を使えばよさそうですね。 テキストの1行に1つ要素が対応するベクトルでは <code>table()</code> が使えないので，<code>str_flatten</code> でベクトルを1つの文字列に変えてしまいます。（もっといい方法があると思いますが，これが一番単純な方法です）</p>
+<p>最後に1単語1成分になるようなベクトルを作ります。これは <code>str_split</code> を使います。<code>boundary(&quot;word&quot;)</code> というのは，英語の単語境界（改行やスペースなど）を境目として分解するときに使います。</p>
+<pre class="r"><code>words &lt;- 
+  text %&gt;% 
+  str_to_lower() %&gt;% 
+  str_flatten(collapse = &quot;\n&quot;) %&gt;% 
+  str_split(boundary(&quot;word&quot;))
+# writeLines(text_str)</code></pre>
+<p>これに <code>table</code> を適用します。最後に <code>tibble()</code> に変形して，整列しておきます。</p>
+<pre class="r"><code>freq &lt;- words %&gt;%
+  table() %&gt;% 
+  tibble(word = names(.), n = .) %&gt;%      ## . は左辺のデータ
+  mutate(n = as.integer(n)) %&gt;% 
+  arrange(desc(n))</code></pre>
+<div id="-5.1.2" class="section level3">
+<h3>問題 5.1.2</h3>
+<p>以下のコードは何を出力するか？予想したあとに，実行しなさい。</p>
+<pre class="r"><code>freq %&gt;% 
+  filter(rank(desc(n)) &lt;= 50) %&gt;% 
+  ggplot() + 
+  geom_col(aes(x = reorder(word, n), y = n)) + 
+  coord_flip()</code></pre>
+</div>
+<div id="-5.1.3" class="section level3">
+<h3>問題 5.1.3</h3>
+<p>“sherlock”, “holmes”, “watson”, “john” の出現頻度を調べなさい。</p>
+</div>
+</div>
+<div id="next" class="section level2">
+<h2>次回</h2>
+<ul>
+<li><a href="{{% ref "2018-lesson5-02.html" %}}">Lesson 5-2: 正規表現</a></li>
+</ul>
+<p>文字列操作のための強力なツールである正規表現についてサワリの部分を紹介します。</p>
+</div>
+</div>
