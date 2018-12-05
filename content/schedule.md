@@ -56,6 +56,7 @@ title: スケジュール
 * 教材:
   - [Lesson 5-1: Rの文字列]({{< ref "2018-lesson5-01.html" >}})
   - [Lesson 5-2: 正規表現]({{< ref "2018-lesson5-02.html" >}})
+  - [スライド](http://s.opur.club/18d5)
   
 ### Lesson 6:  12/19, 12/26
 

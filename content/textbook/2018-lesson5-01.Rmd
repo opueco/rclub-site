@@ -290,7 +290,6 @@ words <-
   str_to_lower() %>% 
   str_flatten(collapse = "\n") %>% 
   str_split(boundary("word"))
-# writeLines(text_str)
 ```
 
 これに `table` を適用します。最後に `tibble()` に変形して，整列しておきます。

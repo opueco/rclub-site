@@ -61,12 +61,12 @@ monofont: Ricty Discord
 <h1>準備</h1>
 <p><strong>stringr</strong> は <strong>tidyverse</strong> の一部です。</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
-<pre><code>## ✔ ggplot2 3.1.0     ✔ purrr   0.2.5
-## ✔ tibble  1.4.2     ✔ dplyr   0.7.8
-## ✔ tidyr   0.8.2     ✔ stringr 1.3.1
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.0.0     ✔ purrr   0.2.5
+## ✔ tibble  1.4.2     ✔ dplyr   0.7.7
+## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
 ## ✔ readr   1.1.1     ✔ forcats 0.3.0</code></pre>
-<pre><code>## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+<pre><code>## ── Conflicts ──────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <p>このレッスンでは Arthur Conan Doyle, <em>A Study in Scarlet</em> (<a href="http://www.gutenberg.org/files/244/244-h/244-h.htm" class="uri">http://www.gutenberg.org/files/244/244-h/244-h.htm</a>) をサンプルとして使います。</p>
@@ -228,19 +228,18 @@ study_in_scarlet &lt;- gutenbergr::gutenberg_download(244) </code></pre>
   pull(text)</code></pre>
 <p>単語の出現頻度を調べてみましょう。 <code>base::table()</code> を使うと便利です。これは次のように使います。</p>
 <pre class="r"><code>(x &lt;- sample(c(&quot;a&quot;, &quot;b&quot;, &quot;A&quot;), size = 10, replace = TRUE))</code></pre>
-<pre><code>##  [1] &quot;a&quot; &quot;a&quot; &quot;b&quot; &quot;a&quot; &quot;a&quot; &quot;a&quot; &quot;a&quot; &quot;a&quot; &quot;A&quot; &quot;A&quot;</code></pre>
+<pre><code>##  [1] &quot;a&quot; &quot;b&quot; &quot;a&quot; &quot;b&quot; &quot;b&quot; &quot;a&quot; &quot;b&quot; &quot;A&quot; &quot;b&quot; &quot;A&quot;</code></pre>
 <pre class="r"><code>table(x)</code></pre>
 <pre><code>## x
 ## a A b 
-## 7 2 1</code></pre>
+## 3 2 5</code></pre>
 <p>大文字・小文字を区別せずに頻度を抽出するには <code>str_to_lower()</code> を使えばよさそうですね。 テキストの1行に1つ要素が対応するベクトルでは <code>table()</code> が使えないので，<code>str_flatten</code> でベクトルを1つの文字列に変えてしまいます。（もっといい方法があると思いますが，これが一番単純な方法です）</p>
 <p>最後に1単語1成分になるようなベクトルを作ります。これは <code>str_split</code> を使います。<code>boundary(&quot;word&quot;)</code> というのは，英語の単語境界（改行やスペースなど）を境目として分解するときに使います。</p>
 <pre class="r"><code>words &lt;- 
   text %&gt;% 
   str_to_lower() %&gt;% 
   str_flatten(collapse = &quot;\n&quot;) %&gt;% 
-  str_split(boundary(&quot;word&quot;))
-# writeLines(text_str)</code></pre>
+  str_split(boundary(&quot;word&quot;))</code></pre>
 <p>これに <code>table</code> を適用します。最後に <code>tibble()</code> に変形して，整列しておきます。</p>
 <pre class="r"><code>freq &lt;- words %&gt;%
   table() %&gt;% 
