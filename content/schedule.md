@@ -67,5 +67,7 @@ title: スケジュール
 ### Lesson 7: 1/9, 1/16
 
 * テーマ: モデル
+* 教材:
+  - [スライド](https://opueco.github.io/rclub-slides/2018w-lesson7/slides.html#1)
 
 ### Lesson 8:  1/23, 1/30
