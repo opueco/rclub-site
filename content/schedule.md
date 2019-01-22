@@ -71,3 +71,7 @@ title: スケジュール
   - [スライド](https://opueco.github.io/rclub-slides/2018w-lesson7/slides.html#1)
 
 ### Lesson 8:  1/23, 1/30
+
+* テーマ: RMarkdown
+* 教材:
+  - <https://github.com/opueco/rmarkdown>
