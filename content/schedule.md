@@ -74,4 +74,4 @@ title: スケジュール
 
 * テーマ: RMarkdown
 * 教材:
-  - なし
+  - <https://github.com/opueco/rmarkdown>
