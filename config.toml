@@ -44,8 +44,13 @@ refLinksNotFoundURL = "/_future_post"
     url = "/tags/"
     weight = 7
 [[menu.main]]
+    name = "Privacy Policy"
+    url = "/privacy/"
+    weight = 8
+[[menu.main]]
     name = "RSS"
     url = "/index.xml"
+    weight = 9
 
 [params]
     description = "R Club at Osaka Prefecture University."
