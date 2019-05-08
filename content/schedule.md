@@ -13,7 +13,14 @@ title: スケジュール
 
 ### Session 1:  5/8
 
-- 未定
+- 奥村 第1章
+- [スライド](https://opueco.github.io/rclub-slides/2019f-01/slides.html#1)
+- ドリル
+
+```r
+devtools::install_github("opueco/R4FunDrill")
+R4FunDrill::start("Day01")
+```
 
 ### Session 2: 5/15
 
