@@ -1,0 +1,90 @@
+---
+title: データに関するチェビシェフの不等式
+author: kenjisato
+date: '2019-05-22'
+slug: chebyshev
+categories: []
+tags: []
+---
+
+
+
+<div class="section level2">
+<h2>チェビシェフの不等式</h2>
+<p>確率変数 <span class="math inline">\(X\)</span> に平均 <span class="math inline">\(\mu\)</span> と分散 <span class="math inline">\(\sigma^2\)</span> を持つとする。このとき任意の実数 <span class="math inline">\(a\)</span> と <span class="math inline">\(c &gt; 0\)</span> について次の不等式が成り立つ。</p>
+<p><span class="math display">\[
+\mathrm{Prob}\left\{
+  |X - a|  &gt; c
+\right\}
+\le
+\frac{\mathbb{E}[(X - a)^2]}{c^2}
+\]</span></p>
+<p>これをチェビシェフの不等式という。</p>
+<p><span class="math inline">\(a = \mathbb{E}[X] = \mu\)</span> とすれば，</p>
+<p><span class="math display">\[
+\mathrm{Prob}\left\{
+  |X - \mu|  &gt; c
+\right\}
+\le
+\frac{\sigma^2}{c^2}
+\]</span></p>
+<p>だから，チェビシェフ不等式は「平均値から離れた値を取る確率」と分散の関係を教えてくれる。
+大数の法則の証明に用いられるので知っている人も多いと思う。</p>
+<p><span class="math inline">\(k = c / \sigma\)</span> として標準化すれば</p>
+<p><span class="math display">\[
+\mathrm{Prob}\left\{
+  \left|
+    \frac{X - \mu}{\sigma}
+  \right|  &gt; k
+\right\}
+\le
+\frac{1}{k^2}
+\]</span></p>
+</div>
+<div class="section level2">
+<h2>データに関するチェビシェフの不等式</h2>
+<p><span class="math inline">\(x_1, \dots, x_n\)</span> という数値データが手元にある。標本平均 <span class="math inline">\(\bar{x}\)</span> と標本分散 <span class="math inline">\(V^2\)</span> を次のように定義する。</p>
+<p><span class="math display">\[
+\bar{x} = \frac{1}{n}\sum_{i=1}^n x_i,\qquad V^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i - \bar{x})^2
+\]</span></p>
+<p>平均から離れたデータがどれくらいあるかを知りたい。そこで， <span class="math inline">\(\bar{x} \pm kV\)</span> の外側にあるデータの個数を <span class="math inline">\(n_k\)</span> とする。
+このとき，</p>
+<p><span class="math display">\[
+\frac{n_k }{n-1} &lt; \frac{1}{k^2}
+\]</span></p>
+<p>が成り立つことが知られている。</p>
+<div class="section level3">
+<h3>証明</h3>
+<p><span class="math inline">\(R = [\bar{x} - kV, \bar{x} + kV]\)</span> とする。<span class="math inline">\(x_i \not\in R\)</span> のとき，<span class="math inline">\((x_i - \bar{x})^2 &gt; k^2V^2\)</span>
+に注意する。また，<span class="math inline">\(x_i \not\in R\)</span> であるようなデータの数が <span class="math inline">\(n_k\)</span> である。</p>
+<p><span class="math display">\[
+\begin{aligned}
+  V^2 
+  &amp;= \frac{1}{n-1}\sum_{i=1}^n (x_i - \bar{x})^2 \\
+  &amp;= \frac{1}{n-1}\left[
+    \sum_{x_i \in R} (x_i - \bar{x})^2 + \sum_{x_i \not\in R} (x_i - \bar{x})^2
+  \right]\\
+  &amp;&gt; \frac{1}{n-1}\left[
+    \sum_{x_i \in R} (x_i - \bar{x})^2 + n_k k^2 V^2
+  \right]\\
+  &amp;\ge \frac{n_k k^2 V^2}{n-1}
+\end{aligned}
+\]</span></p>
+<p><span class="math inline">\(V^2\)</span> で割って整理すると</p>
+<p><span class="math display">\[
+\frac{n_k}{n-1} &lt; \frac{1}{k^2}
+\]</span></p>
+<p>を得る。</p>
+</div>
+<div class="section level3">
+<h3>保守性</h3>
+<p>上の証明では，</p>
+<p><span class="math display">\[
+\sum_{x_i \in R} (x_i - \bar{x})^2 \ge 0 
+\]</span></p>
+<p>としてこの部分をバッサリ落としてしまっている。したがって，よっぽど特殊なデータでもない限りこの不等式は，平均から外れたデータの割合に関するかなり保守的な上限になっている。逆に言えば，平均に近いデータの割合に関するかなり保守的な下限を与えている。</p>
+<p>実際，正規分布の場合には平均 <span class="math inline">\(\pm \sigma\)</span> の範囲の内側におよそ 68% の点が入ると見積もれるが，チェビシェフ不等式を使うと，必ず 2点は内側にあることしか分からない。</p>
+<p><span class="math inline">\(k = 2\)</span> としても，正規分布の場合には平均 <span class="math inline">\(\pm 2\sigma\)</span> の範囲の中におよそ95% のデータが入ることが分かるが，チェビシェフ不等式によれば，およそ 75% が必ず 平均 <span class="math inline">\(\pm \times 2\times\)</span> 標準偏差の範囲に入るということが言えるにとどまっている。</p>
+<p>チェビシェフ不等式は分布の情報をまったく使わないことがこのような差を生んでいることに注意をしておこう。分布を仮定しなくてよいので安心ではあるが，分布に関する確かな先見情報があればそれを有効活用してより精密な見積もりを引き出すことができる。（例えば中心極限定理などを使う）</p>
+</div>
+</div>
