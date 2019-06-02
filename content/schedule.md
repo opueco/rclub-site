@@ -58,7 +58,17 @@ R4FunDrill::start("Day04")
 ### Session 5: 6/5
 
 - 奥村 第3章・4節以降
+- [スライド](https://opueco.github.io/rclub-slides/2019f-05/slides.html#1)
+- ドリル
 
+```r
+devtools::install_github("opueco/R4FunDrill")
+R4FunDrill::start("Day05")
+```
+
+### Session 6: 6/12
+
+- 奥村 第4章・4節くらいまで
 
 ## 過去のスケジュール
 
