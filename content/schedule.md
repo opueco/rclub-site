@@ -99,6 +99,18 @@ devtools::install_github("opueco/R4FunDrill")
 R4FunDrill::start("Day08")
 ```
 
+### Session 9: 7/3
+
+第7章はスキップします。
+
+- 奥村 第8章
+- [スライド](https://opueco.github.io/rclub-slides/2019f-09/slides.html#1)
+- ドリル
+
+```r
+devtools::install_github("opueco/R4FunDrill")
+R4FunDrill::start("Day09")
+```
 
 ## 過去のスケジュール
 
