@@ -11,6 +11,10 @@ title: スケジュール
 を使用します。（1章分を1〜2回でカバーするくらいのペースを想定しています）
 
 
+このページが更新されていない場合でも，以下のスライド置き場にはスライドがある場合があります。合わせて確認してください。  
+<https://opueco.github.io/rclub-slides/>
+
+
 ### Session 1:  5/8
 
 - 奥村 第1章
@@ -99,6 +103,18 @@ devtools::install_github("opueco/R4FunDrill")
 R4FunDrill::start("Day08")
 ```
 
+### Session 9: 7/3
+
+第7章はスキップします。
+
+- 奥村 第8章
+- [スライド](https://opueco.github.io/rclub-slides/2019f-09/slides.html#1)
+- ドリル
+
+```r
+devtools::install_github("opueco/R4FunDrill")
+R4FunDrill::start("Day09")
+```
 
 ## 過去のスケジュール
 
