@@ -1,0 +1,543 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass scrartcl
+\begin_preamble
+\usepackage[margin=2cm, includefoot]{geometry}
+\usepackage{newpxmath,newpxtext}
+\usepackage{pgfpages}
+\end_preamble
+\options a4paper,dvipdfmx
+\use_default_options true
+\begin_modules
+enumitem
+theorems-ams
+theorems-ams-extended
+\end_modules
+\maintain_unincluded_children false
+\language japanese
+\language_package default
+\inputencoding utf8-platex
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement th
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style cjk
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+OLS係数についての補足
+\end_layout
+
+\begin_layout Author
+佐藤
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $Y\in\mathbb{R}^{n}=\mathbb{R}^{n\times1}$
+\end_inset
+
+, 
+\begin_inset Formula $X^{n\times p}\in\mathbb{R}$
+\end_inset
+
+ とする
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+ベクトル・行列であっても太字で書かないので注意する
+\end_layout
+
+\end_inset
+
+。
+\begin_inset Formula $n$
+\end_inset
+
+ は観測の数，
+\begin_inset Formula $p$
+\end_inset
+
+ は定数項を含めた説明変数の数である。線形回帰モデル
+\begin_inset Formula 
+\[
+Y=X\beta+u
+\]
+
+\end_inset
+
+の回帰係数を最小2乗法で計算したものを 
+\begin_inset Formula $\hat{\beta}\in\mathbb{R}^{p}$
+\end_inset
+
+ とする。係数が 
+\begin_inset Formula $\beta$
+\end_inset
+
+ であるときの 
+\begin_inset Formula $Y$
+\end_inset
+
+ の予測を 
+\begin_inset Formula 
+\[
+\hat{Y}\left(\beta\right)=X\beta
+\]
+
+\end_inset
+
+と書けば，予測誤差
+\begin_inset Formula 
+\[
+e\left(\beta\right)=Y-\hat{Y}\left(\beta\right)\in\mathbb{R}^{n}
+\]
+
+\end_inset
+
+のユークリッドノルムの2乗（成分ごとの誤差の2乗和）を最小化するように 
+\begin_inset Formula $\beta=\hat{\beta}$
+\end_inset
+
+ が定まっている。
+\begin_inset Formula 
+\[
+\min\|e\left(\beta\right)\|^{2}
+\]
+
+\end_inset
+
+の必要十分条件は
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\|e\left(\beta\right)\|^{2}}{\partial\beta_{0}}=0,\quad\frac{\partial\|e\left(\beta\right)\|^{2}}{\partial\beta_{1}}=0,\dots,\quad\frac{\partial\|e\left(\beta\right)\|^{2}}{\partial\beta_{p-1}}=0\label{eq:1}
+\end{equation}
+
+\end_inset
+
+であるから，連立方程式 (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:1"
+
+\end_inset
+
+) を解けば 
+\begin_inset Formula $\hat{\beta}$
+\end_inset
+
+ が求まる。
+\end_layout
+
+\begin_layout Section*
+ノルムの計算
+\end_layout
+
+\begin_layout Standard
+式 (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:1"
+
+\end_inset
+
+) のような連立方程式を
+\begin_inset Formula 
+\[
+\frac{\partial\|e\left(\beta\right)\|^{2}}{\partial\beta}=0
+\]
+
+\end_inset
+
+と書くことにしよう。もちろん，
+\begin_inset Formula $\beta$
+\end_inset
+
+ はベクトルなので文字通り偏微分を計算するわけではなく，成分ごとに偏微分した結果を並べたものと理解する。すなわち，
+\begin_inset Formula 
+\[
+\begin{bmatrix}\frac{\partial\|e\left(\beta\right)\|^{2}}{\partial\beta_{0}}\\
+\frac{\partial\|e\left(\beta\right)\|^{2}}{\partial\beta_{1}}\\
+\vdots\\
+\frac{\partial\|e\left(\beta\right)\|^{2}}{\partial\beta_{p-1}}
+\end{bmatrix}=0
+\]
+
+\end_inset
+
+実は， 
+\begin_inset Formula $\|e\left(\beta\right)\|^{2}$
+\end_inset
+
+ は 
+\begin_inset Formula $\beta$
+\end_inset
+
+ の2次式なので左辺の偏微分ベクトルを行列で書くことができる。
+\begin_inset Formula 
+\begin{align*}
+\|e\left(\beta\right)\|^{2} & =e\left(\beta\right)^{\top}e\left(\beta\right)\\
+ & =\left(Y-X\beta\right)^{\top}\left(Y-X\beta\right)\\
+ & =Y^{\top}Y-\beta^{\top}X^{\top}Y-Y^{\top}X\beta+\beta^{\top}X^{\top}X\beta
+\end{align*}
+
+\end_inset
+
+ここで，最右辺の各項がスカラーであることに注意すると，
+\begin_inset Formula 
+\[
+\beta^{\top}X^{\top}Y=\left(\beta^{\top}X^{\top}Y\right)^{\top}=Y^{\top}X\beta
+\]
+
+\end_inset
+
+ であることに気がつく。したがって，
+\begin_inset Formula 
+\begin{equation}
+\|e\left(\beta\right)\|^{2}=Y^{\top}Y-2\beta^{\top}X^{\top}Y+\beta^{\top}X^{\top}X\beta\label{eq:2}
+\end{equation}
+
+\end_inset
+
+である。
+\end_layout
+
+\begin_layout Section*
+ベクトルによる微分
+\end_layout
+
+\begin_layout Standard
+式 (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:2"
+
+\end_inset
+
+) で 
+\begin_inset Formula $\beta$
+\end_inset
+
+ に関係があるのは
+\begin_inset Formula 
+\[
+\beta^{\top}X^{\top}Y,\qquad\beta^{\top}X^{\top}X\beta
+\]
+
+\end_inset
+
+ の2つであるから，これらの項の微分がわかればよい。（
+\begin_inset Formula $Y^{\top}Y$
+\end_inset
+
+ は微分するとゼロになる）
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $X^{\top}Y\in\mathbb{R}^{p}$
+\end_inset
+
+, 
+\begin_inset Formula $X^{\top}X\in\mathbb{R}^{p\times p}$
+\end_inset
+
+ であることに注意しておこう。
+\end_layout
+
+\begin_layout Theorem
+\begin_inset Formula $\alpha\in\mathbb{R}^{p}$
+\end_inset
+
+, 
+\begin_inset Formula $\beta\in\mathbb{R}^{p}$
+\end_inset
+
+ とする。このとき
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial\beta}\left[\beta^{\top}\alpha\right]=\alpha.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+\begin_inset Formula $\beta^{\top}\alpha=\sum_{i=0}^{p-1}\beta_{i}\alpha_{i}$
+\end_inset
+
+ なので，
+\begin_inset Formula $\frac{\partial}{\partial\beta_{i}}\left[\beta^{\top}\alpha\right]=\alpha_{i}$
+\end_inset
+
+, 
+\begin_inset Formula $i=0,1,\dots,p-1$
+\end_inset
+
+。したがって，
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial\beta}\left[\beta^{\top}\alpha\right]=\begin{bmatrix}\frac{\partial}{\partial\beta_{0}}\left[\beta^{\top}\alpha\right]\\
+\frac{\partial}{\partial\beta_{1}}\left[\beta^{\top}\alpha\right]\\
+\vdots\\
+\frac{\partial}{\partial\beta_{p-1}}\left[\beta^{\top}\alpha\right]
+\end{bmatrix}=\begin{bmatrix}\alpha_{0}\\
+\alpha_{1}\\
+\vdots\\
+\alpha_{p-1}
+\end{bmatrix}=\alpha.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Theorem
+\begin_inset CommandInset label
+LatexCommand label
+name "thm:01"
+
+\end_inset
+
+
+\begin_inset Formula $A\in\mathbb{R}^{p\times p}$
+\end_inset
+
+, 
+\begin_inset Formula $\beta\in\mathbb{R}^{p}$
+\end_inset
+
+ とする。このとき
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial\beta}\left[\beta^{\top}A\beta\right]=\left(A+A^{\top}\right)\beta.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+\begin_inset Formula $\left[A\beta\right]_{j}$
+\end_inset
+
+ を 
+\begin_inset Formula $A\beta\in\mathbb{R}^{p}$
+\end_inset
+
+ の第 
+\begin_inset Formula $j$
+\end_inset
+
+ 成分，
+\begin_inset Formula $A_{jk}$
+\end_inset
+
+ を行列 
+\begin_inset Formula $A$
+\end_inset
+
+ の第 
+\begin_inset Formula $(j,k)$
+\end_inset
+
+ 成分とすると，
+\begin_inset Formula 
+\begin{align*}
+\beta^{\top}A\beta & =\sum_{j=0}^{p-1}\beta_{j}\left[A\beta\right]_{j}=\\
+ & =\sum_{j=0}^{p-1}\beta_{j}\left[\sum_{k=0}^{p-1}A_{jk}\beta_{k}\right]\\
+ & =\sum_{j=0}^{p-1}\sum_{k=0}^{p-1}A_{jk}\beta_{j}\beta_{k}
+\end{align*}
+
+\end_inset
+
+と書ける。したがって，
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial}{\partial\beta_{i}}\left[\beta^{\top}A\beta\right] & =\frac{\partial}{\partial\beta_{i}}\left[\sum_{j=0}^{p-1}\sum_{k=0}^{p-1}A_{jk}\beta_{j}\beta_{k}\right]\\
+ & =\sum_{k=0}^{p-1}A_{ik}\beta_{k}+\sum_{j=0}^{p-1}A_{ji}\beta_{j}\\
+ & =\sum_{j=0}^{p-1}A_{ij}\beta_{j}+\sum_{j=0}^{p-1}A_{ji}\beta_{j}\\
+ & =A\beta+A^{\top}\beta\\
+ & =\left(A+A^{\top}\right)\beta
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Corollary
+\begin_inset Formula $A\in\mathbb{R}^{p\times p}$
+\end_inset
+
+, 
+\begin_inset Formula $\beta\in\mathbb{R}^{p}$
+\end_inset
+
+, 
+\begin_inset Formula $A$
+\end_inset
+
+ は対称行列とする。このとき，
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial\beta}\left[\beta^{\top}A\beta\right]=2A\beta.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+\begin_inset Formula $A^{\top}=A$
+\end_inset
+
+ と定理
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "thm:01"
+
+\end_inset
+
+より直ちに示せる。
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+正規方程式の解
+\end_layout
+
+\begin_layout Standard
+上で示した定理，系を式 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:2"
+
+\end_inset
+
+ に適用しよう。偏微分がゼロになる条件は
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial}{\partial\beta}\|e\left(\beta\right)\|^{2} & =\frac{\partial}{\partial\beta}\left[Y^{\top}Y-2\beta^{\top}X^{\top}Y+\beta^{\top}X^{\top}X\beta\right]\\
+ & =-2X^{\top}Y+2X^{\top}X\beta\\
+ & =0
+\end{align*}
+
+\end_inset
+
+である。これを 
+\begin_inset Formula $\beta$
+\end_inset
+
+ について解けばよい。解 
+\begin_inset Formula $\hat{\beta}$
+\end_inset
+
+ は次の公式によって定まる。 
+\begin_inset Formula 
+\[
+\hat{\beta}=\left(X^{\top}X\right)^{-1}X^{\top}Y
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

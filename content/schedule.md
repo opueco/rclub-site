@@ -133,6 +133,7 @@ R4FunDrill::start("Day10")
 - 重回帰分析など
   - 奥村 9.1-9.3 に沿った独自資料
 - [スライド](https://opueco.github.io/rclub-slides/2019f-11/slides.html#1)
+- [OLS係数に関する補足資料 (PDF)](/files/notes/ols.pdf)
 - ドリル
 
 ```r
