@@ -116,6 +116,35 @@ devtools::install_github("opueco/R4FunDrill")
 R4FunDrill::start("Day09")
 ```
 
+### Session 10: 7/10
+
+- 単回帰分析など
+  - 奥村 9.1-9.3 に沿った独自資料
+- [スライド](https://opueco.github.io/rclub-slides/2019f-10/slides.html#1)
+- ドリル
+
+```r
+devtools::install_github("opueco/R4FunDrill")
+R4FunDrill::start("Day10")
+```
+
+### Session 11: 7/17
+
+- 重回帰分析など
+  - 奥村 9.1-9.3 に沿った独自資料
+- [スライド](https://opueco.github.io/rclub-slides/2019f-11/slides.html#1)
+- ドリル
+
+```r
+devtools::install_github("opueco/R4FunDrill")
+R4FunDrill::start("Day11")
+```
+
+### 今後の予定
+
+7/24 (#13), 7/31 (#14) に最尤法，ポアソン回帰，ロジスティック回帰を扱って今期のRClub は終わりになります。奥村 10〜12章の内容はカバーできませんがご容赦ください。
+
+
 ## 過去のスケジュール
 
 - [2018年度後期]({{<ref "/schedule-2018f.md">}})
