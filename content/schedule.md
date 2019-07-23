@@ -141,9 +141,20 @@ devtools::install_github("opueco/R4FunDrill")
 R4FunDrill::start("Day11")
 ```
 
-### 今後の予定
+### Session 12: 7/24
 
-7/24 (#13), 7/31 (#14) に最尤法，ポアソン回帰，ロジスティック回帰を扱って今期のRClub は終わりになります。奥村 10〜12章の内容はカバーできませんがご容赦ください。
+- プロビット，ロジット
+
+```r
+devtools::install_github("opueco/R4FunDrill")
+R4FunDrill::start("Day12")
+```
+
+
+### Session 13 (前期最終回): 7/31
+
+- ポアソン回帰
+- 他の理論の紹介
 
 
 ## 過去のスケジュール
